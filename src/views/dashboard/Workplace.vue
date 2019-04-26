@@ -1,7 +1,7 @@
 
 <template>
   <page-view :avatar="avatar" :title="false">
-    <div slot="headerContent">
+    <!-- <div slot="headerContent">
       <div class="title">{{ timeFix }}，{{ user.name }}<span class="welcome-text">，{{ welcome() }}</span></div>
       <div>前端工程师 | 蚂蚁金服 - 某某某事业群 - VUE平台</div>
     </div>
@@ -89,7 +89,7 @@
           <a-card title="XX 指数" style="margin-bottom: 24px" :loading="radarLoading" :bordered="false" :body-style="{ padding: 0 }">
             <div style="min-height: 400px;">
               <!-- :scale="scale" :axis1Opts="axis1Opts" :axis2Opts="axis2Opts"  -->
-              <radar :data="radarData" />
+              <!-- <radar :data="radarData" />
             </div>
           </a-card>
           <a-card :loading="loading" title="团队" :bordered="false">
@@ -105,8 +105,8 @@
             </div>
           </a-card>
         </a-col>
-      </a-row>
-    </div>
+      </a-row> -->
+    <!-- </div> --> 
   </page-view>
 </template>
 
@@ -116,7 +116,7 @@ import { mapGetters } from 'vuex'
 
 import { PageView } from '@/layouts'
 import HeadInfo from '@/components/tools/HeadInfo'
-import { Radar } from '@/components'
+// import { Radar } from '@/components'
 
 import { getRoleList, getServiceList } from '@/api/manage'
 
@@ -127,7 +127,7 @@ export default {
   components: {
     PageView,
     HeadInfo,
-    Radar
+    // Radar
   },
   data () {
     return {
