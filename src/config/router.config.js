@@ -18,14 +18,14 @@ export const asyncRouterMap = [
         redirect: '/dashboard/workplace',
         component: RouteView,
         hideChildrenInMenu: true,
-        meta: { title: '仪表盘', keepAlive: true, icon: bxAnaalyse, permission: [ 'dashboard' ] },
+        meta: { title: '工作台', keepAlive: true, icon: bxAnaalyse, permission: [ 'dashboard' ] },
         children: [
-          {
-            path: '/dashboard/analysis',
-            name: 'Analysis',
-            component: () => import('@/views/dashboard/Analysis'),
-            meta: { title: '分析页', keepAlive: false, permission: [ 'dashboard' ] }
-          },
+          // {
+          //   path: '/dashboard/analysis',
+          //   name: 'Analysis',
+          //   component: () => import('@/views/dashboard/Analysis'),
+          //   meta: { title: '分析页', keepAlive: false, permission: [ 'dashboard' ] }
+          // },
           {
             path: '/dashboard/workplace',
             name: 'Workplace',
