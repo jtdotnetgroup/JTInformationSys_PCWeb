@@ -33,6 +33,37 @@ export const asyncRouterMap = [
             meta: { title: '工作台', keepAlive: true, permission: [ 'dashboard' ] }
           }
         ]
+      },
+
+      // production
+      {
+        path: '/production',
+        redirect: '/production/Taskscheduling/Pscheduling',
+        component: RouteView,
+        meta: { title: '生产管理', icon: 'form', permission: [ 'form' ] },
+        children: [
+          {
+            path: '/production/Taskscheduling',
+            name: 'Pscheduling',
+            component: () => import('@/views/production/Taskscheduling/Pscheduling'),
+            meta: { title: '任务排产', keepAlive: true, permission: [ 'form' ] }
+          },
+
+          {
+            path: '/production/Taskassignment',
+            name: 'Dworker',
+            component: () => import('@/views/production/Taskassignment/Dworker'),
+            meta: { title: '任务派工', keepAlive: true, permission: [ 'form' ] }
+          }
+          // ,
+          // {
+          //   path: '/form/base-form',
+          //   name: 'BaseForm',
+          //   component: () => import('@/views/form/BasicForm'),
+          //   meta: { title: '基础表单', keepAlive: true, permission: [ 'form' ] }
+          // }
+        ]
+
       }
 
       // forms
