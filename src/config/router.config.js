@@ -20,17 +20,51 @@ export const asyncRouterMap = [
         hideChildrenInMenu: true,
         meta: { title: '工作台', keepAlive: true, icon: bxAnaalyse, permission: [ 'dashboard' ] },
         children: [
-          // {
-          //   path: '/dashboard/analysis',
-          //   name: 'Analysis',
-          //   component: () => import('@/views/dashboard/Analysis'),
-          //   meta: { title: '分析页', keepAlive: false, permission: [ 'dashboard' ] }
-          // },
           {
             path: '/dashboard/workplace',
             name: 'Workplace',
             component: () => import('@/views/dashboard/Workplace'),
             meta: { title: '工作台', keepAlive: true, permission: [ 'dashboard' ] }
+          }
+        ]
+      },
+
+      // 系统管理
+      {
+        path: '/systemmanage',
+        name: 'systemmanage',
+        component: RouteView,
+        hideChildrenInMenu: false,
+        meta: { title: '系统管理', keepAlive: true, icon: bxAnaalyse, permission: ['dashboard'] },
+        children: [
+          {
+            path: '/systemmanage/usermanage',
+            name: 'usermanage',
+            component: () => import('@/views/user/UserList'),
+            meta: { title: '用户管理', keepAlive: true, permission: ['dashboard'] }
+          },
+          {
+            path: '/systemmanage/rolemanage',
+            name: 'rolemanage',
+            component: () => import('@/views/role/RoleTable'),
+            meta: { title: '角色管理', keepAlive: true, permission: ['dashboard'] }
+          }
+        ]
+      },
+
+      // 基础资料
+      {
+        path: '/basicdata',
+        name: 'basicdata',
+        component: RouteView,
+        hideChildrenInMenu: false,
+        meta: { title: '基础资料', keepAlive: true, icon: bxAnaalyse, permission: ['dashboard'] },
+        children: [
+          {
+            path: '/basicdata/organization',
+            name: 'organization',
+            meta: { title: '组织架构', keepAlive: true, permission: ['dashboard'] },
+            component: () => import('@/views/organization/Organization')
           }
         ]
       }
@@ -67,19 +101,6 @@ export const constantRouterMap = [
         path: 'register-result',
         name: 'registerResult',
         component: () => import(/* webpackChunkName: "user" */ '@/views/user/RegisterResult')
-      }
-    ]
-  },
-
-  {
-    path: '/test',
-    component: BlankLayout,
-    redirect: '/test/home',
-    children: [
-      {
-        path: 'home',
-        name: 'TestHome',
-        component: () => import('@/views/Home')
       }
     ]
   },

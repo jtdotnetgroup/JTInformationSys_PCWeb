@@ -26,4 +26,7 @@ export default {
   #app {
     height: 100%;
   }
+  .ant-layout-content{
+    margin-left: 5px;
+  }
 </style>
