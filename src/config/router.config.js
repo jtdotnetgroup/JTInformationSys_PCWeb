@@ -40,19 +40,20 @@ export const asyncRouterMap = [
           {
             path: '/systemmanage/usermanage',
             name: 'usermanage',
-            component: () => import('@/views/user/UserList'),
+            component: () => import('@/views/systemsetting/user/UserList'),
             meta: { title: '用户管理', keepAlive: true, permission: ['dashboard'] }
           },
           {
             path: '/systemmanage/rolemanage',
             name: 'rolemanage',
-            component: () => import('@/views/role/RoleTable'),
+            component: () => import('@/views/systemsetting/role/RoleTable'),
             meta: { title: '角色管理', keepAlive: true, permission: ['dashboard'] }
           }
         ]
       },
 
       // 基础资料
+
       {
         path: '/basicdata',
         name: 'basicdata',
@@ -64,7 +65,7 @@ export const asyncRouterMap = [
             path: '/basicdata/organization',
             name: 'organization',
             meta: { title: '组织架构', keepAlive: true, permission: ['dashboard'] },
-            component: () => import('@/views/organization/Organization')
+            component: () => import('@/views/basicdata/organization/Organization')
           }
         ]
       }
@@ -90,17 +91,17 @@ export const constantRouterMap = [
       {
         path: 'login',
         name: 'login',
-        component: () => import(/* webpackChunkName: "user" */ '@/views/user/Login')
+        component: () => import(/* webpackChunkName: "user" */ '@/views/systemsetting/user/Login')
       },
       {
         path: 'register',
         name: 'register',
-        component: () => import(/* webpackChunkName: "user" */ '@/views/user/Register')
+        component: () => import(/* webpackChunkName: "user" */ '@/views/systemsetting/user/Register')
       },
       {
         path: 'register-result',
         name: 'registerResult',
-        component: () => import(/* webpackChunkName: "user" */ '@/views/user/RegisterResult')
+        component: () => import(/* webpackChunkName: "user" */ '@/views/systemsetting/user/RegisterResult')
       }
     ]
   },

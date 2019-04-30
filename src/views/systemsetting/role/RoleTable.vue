@@ -5,7 +5,10 @@
     
     <pagination :current="pagination.current" :total="pagination.total"/>
 
-    <a-table :dataSource="tableData" :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :columns="columns" :pagination="false"></a-table>
+    <a-table :dataSource="tableData" :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" 
+    :columns="columns" :pagination="false"></a-table>
+    
+    <createOrEditForm ref="createOrEditForm"  :visiable="createForm" title="新建角色" :fields="fields" />
 
   </a-card>
 </template>
@@ -14,17 +17,20 @@
 
 import tableOperatorBtn from '@/JtComponents/TableOperatorButton'
 import pagination from '@/JtComponents/Pagination'
-import { constants } from 'crypto';
+import createOrEditForm from '@/JtComponents/CreateOrEditForm'
+import { constants } from 'crypto'
+import Fields from './roleField.js'
 
   export default {
     components: {
-      tableOperatorBtn,pagination
+      tableOperatorBtn,pagination,createOrEditForm
     },
     data() {
       return {
         queryParam:{
           rolename:'',
         },
+        fields:Fields,
         columns:[
           {title:'名称',dataIndex:'name'},
           {title:'显示名称',dataIndex:'displayName'},
@@ -40,9 +46,9 @@ import { constants } from 'crypto';
         pagination:{
           current:1,
           total:50,
-
         },
-        advanced:false
+        advanced:false,
+        createForm:false,
       }
     },
     methods: {
@@ -51,7 +57,11 @@ import { constants } from 'crypto';
       this.selectedRows = selectedRows
     },
     handleBtnClick(val){
-      console.log(val);
+      switch(val){
+        case '新建':{
+          this.$refs.createOrEditForm.add();
+        }
+      }
     }
     },
     computed: {
@@ -63,9 +73,7 @@ import { constants } from 'crypto';
     },
   }
 </script>
-
-<style  scoped>
-  .table-operator{
-    margin-bottom: 1vh;
-  }
+<style scope>
+  
 </style>
+
