@@ -1,7 +1,7 @@
 <template>
     <a-card >
      
-           <a-button-group >
+           <!-- <a-button-group >
            <a-button  @click="showModal">
                查询            
             </a-button>
@@ -17,12 +17,16 @@
             <a-button >
                 反挂起
             </a-button>
-         </a-button-group>
-  
-        <a-pagination id="card"  style="background-color:#E6F7FF" showSizeChanger showQuickJumper :total="50"  />     
+         </a-button-group> -->
+         <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonp"/>
+
+
+        <!-- <a-pagination id="card"  style="background-color:#E6F7FF" showSizeChanger showQuickJumper :total="50"  />      -->
+
+        <pagination :current="pagination.current" :total="pagination.total"/>
 
      
-        <a-table id="card" :rowSelection="rowSelection" :dataSource="dataSource" :columns="columns" :pagination="pagination"  />
+        <a-table id="card" :rowSelection="rowSelection" :dataSource="dataSource" :columns="columns" :pagination="paginations"  />
 
         <div id="button"  >
             <a-button style="background-color: #E6F7FF;border-color:#E6F7FF">
@@ -30,7 +34,7 @@
             </a-button>
         </div>
 
-         <a-table id="card"  bordered  :dataSource="dataSourceMX" :columns="columnsMX" :pagination="pagination" >
+         <a-table id="card"  bordered  :dataSource="dataSourceMX" :columns="columnsMX" :pagination="paginations" >
          
            <!-- <a-table-coml v-for="" >         
            </a-table-coml> -->
@@ -54,8 +58,7 @@
    
     >
 
-     <a-button-group  >
-           
+        <!-- <a-button-group  >          
             <a-button >
                 排产
             </a-button>
@@ -68,7 +71,13 @@
             <a-button >
                 派工
             </a-button>
-         </a-button-group>
+         </a-button-group> -->
+
+          <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonps"/>
+
+
+
+
 
            <div class="table-page-search-wrapper"  id="card">
       <a-form layout="inline">
@@ -130,7 +139,7 @@
     </div>
 
 
-      <a-table id="card"  bordered  :dataSource="dataSourceMX" :columns="columnsMT" :pagination="pagination" >
+      <a-table id="card"  bordered  :dataSource="dataSourceMX" :columns="columnsMT" :pagination="paginations" >
          
            <!-- <a-table-coml v-for="" >         
            </a-table-coml> -->
@@ -151,28 +160,39 @@
 
 <script>
 
-
+import buttons from './buttons'
 import tableheader  from './tableheader';
 import { getRoleList, getServiceList } from '@/api/manage';
 
 
-    export default {   
+    export default {
+      components:{
+        // @是根目录 。。是上一级 。是当前目录
+          tableOperatorBtn:()=>import('@/JtComponents/TableOperatorButton'),
+            pagination:()=>import('@/JtComponents/Pagination'),
+      },   
         data() {
             return {
+              pagination: {
+                    current:1,
+                    total:50
+                },
+                buttonp:buttons.buttonp,
+
+                buttonps:buttons.buttonps,
                    // 高级搜索 展开/关闭
                 advanced: false,
 
                 queryParam: {},
                 maskClosable:false,
-
                  visible: false,
                  dataSource:tableheader.dataSource,
                  columns:tableheader.columns,
-                 pagination:{position:'false'},
-                columnsMT:tableheader.columnsMT,
+                 paginations:{position:'false'},
+                 columnsMT:tableheader.columnsMT,
 
-                   columnsMX:tableheader.columnsMX,
-                   dataSourceMX:tableheader.dataSourceMX,
+                 columnsMX:tableheader.columnsMX,
+                 dataSourceMX:tableheader.dataSourceMX,
             }
         }, 
          created () {
@@ -205,11 +225,18 @@ import { getRoleList, getServiceList } from '@/api/manage';
       this.advanced = !this.advanced
     },
 
+    handleBtnClick(val){
+      if(val=="查询"){
+
+     this.visible = true
+      }
+    }
+
   } 
     }
 </script>
 
-<style lang="less"  scoped>
+<style   scoped>
 #card{
 
 margin-top: 10px
@@ -220,24 +247,8 @@ margin-top: 10px;
 background-color:#E6F7FF
 
 }
- .ant-modal{
-     font-family: "Chinese Quote", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    font-size: 14px;
-    font-variant: tabular-nums;
-    line-height: 1.5;
-    color: rgba(0, 0, 0, 0.65);
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    position: relative;
-    width: auto;
-    margin: 0 auto;
-    top: 100px;
-    padding-bottom: 24px;
-    width: 900px;
-} 
+ 
+ 
 
 #divmodal{
    width: 900px;

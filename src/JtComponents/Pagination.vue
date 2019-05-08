@@ -16,7 +16,8 @@
         props: {
             current: {
                 type: Number,
-                default: 1
+                default: 1,
+               //required:
             },
             total:{
                 type:Number,
