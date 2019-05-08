@@ -1,159 +1,64 @@
 const result = {
   // eslint-disable-next-line no-sparse-arrays
-  dataSource: [{
-    key: '1',
-    name1: '胡彦斌',
-    name2: '胡彦祖2',
-    name3: '胡彦祖2',
-    name4: '胡彦祖2',
-    name5: '胡彦祖2',
-    name6: '胡彦祖2',
-    name7: '胡彦祖2',
-    name8: '胡彦祖2',
-    name9: '胡彦祖2',
-    age9: 38,
-    address10: '西湖区湖底公园1号',
-    address1: '西湖区湖底公园1号'
-  }, {
-    key: '2',
-    name1: '胡彦斌',
-    name2: '胡彦祖2',
-    name3: '胡彦祖2',
-    name4: '胡彦祖2',
-    name5: '胡彦祖2',
-    name6: '胡彦祖2',
-    name7: '胡彦祖2',
-    name8: '胡彦祖2',
-    name9: '胡彦祖2',
-    age9: 38,
-    address10: '西湖区湖底公园1号',
-    address1: '西湖区湖底公园1号'
-  }, {
-    key: '3',
-    name1: '胡彦斌',
-    name2: '胡彦祖2',
-    name3: '胡彦祖2',
-    name4: '胡彦祖2',
-    name5: '胡彦祖2',
-    name6: '胡彦祖2',
-    name7: '胡彦祖2',
-    name8: '胡彦祖2',
-    name9: '胡彦祖2',
-    age9: 38,
-    address10: '西湖区湖底公园1号',
-    address1: '西湖区湖底公园1号'
-  }, {
-    key: '4',
-    name1: '胡彦斌',
-    name2: '胡彦祖2',
-    name3: '胡彦祖2',
-    name4: '胡彦祖2',
-    name5: '胡彦祖2',
-    name6: '胡彦祖2',
-    name7: '胡彦祖2',
-    name8: '胡彦祖2',
-    name9: '胡彦祖2',
-    age9: 38,
-    address10: '西湖区湖底公园1号',
-    address1: '西湖区湖底公园1号'
-  }, {
-    key: '5',
-    name1: '胡彦斌',
-    name2: '胡彦祖2',
-    name3: '胡彦祖2',
-    name4: '胡彦祖2',
-    name5: '胡彦祖2',
-    name6: '胡彦祖2',
-    name7: '胡彦祖2',
-    name8: '胡彦祖2',
-    name9: '胡彦祖2',
-    age9: 38,
-    address10: '西湖区湖底公园1号'
-  }, {
-    key: '6',
-    name1: '胡彦斌',
-    name2: '胡彦祖2',
-    name3: '胡彦祖2',
-    name4: '胡彦祖2',
-    name5: '胡彦祖2',
-    name6: '胡彦祖2',
-    name7: '胡彦祖2',
-    name8: '胡彦祖2',
-    name9: '胡彦祖2',
-    age9: 38,
-    address10: '西湖区湖底公园1号',
-    address1: '西湖区湖底公园1号'
-  }, {
-    key: '6',
-    name1: '胡彦斌',
-    name2: '胡彦祖2',
-    name3: '胡彦祖2',
-    name4: '胡彦祖2',
-    name5: '胡彦祖2',
-    name6: '胡彦祖2',
-    name7: '胡彦祖2',
-    name8: '胡彦祖2',
-    name9: '胡彦祖2',
-    age9: 38,
-    address10: '西湖区湖底公园1号',
-    address1: '西湖区湖底公园1号'
-  }],
 
   columns: [{
     title: '序号',
-    dataIndex: 'name1',
+    dataIndex: 'FEntryID',
     width: 200,
-    key: 'name1'
+    key: 'FEntryID'
   }, {
     title: '日期',
-    dataIndex: 'name2',
+    dataIndex: 'FDate',
     width: 200,
-    key: 'name2'
+    key: 'FDate'
   }, {
     title: '计划单号',
-    dataIndex: 'name3',
+    dataIndex: 'FBillNo',
     width: 200,
-    key: 'name3'
+    key: 'FBillNo'
   }, {
     title: '任务单号',
-    dataIndex: 'name4',
+    dataIndex: 'FMOBillNo',
     width: 200,
-    key: 'name4'
+    key: 'FMOBillNo'
   }, {
     title: '车间',
     width: 200,
-    dataIndex: 'name5',
-    key: 'name5'
-  }, {
-    title: '产品代码',
-    width: 200,
-    dataIndex: 'name6',
-    key: 'name6'
-  }, {
-    title: '产品名称',
-    width: 200,
-    dataIndex: 'name7',
-    key: 'name7'
-  }, {
-    title: '规格型号',
-    width: 200,
-    dataIndex: 'name8',
-    key: 'name8'
-  }, {
+    dataIndex: 'FWorkCenterID',
+    key: 'FWorkCenterID'
+  },
+  // {
+  //   title: '产品代码',
+  //   width: 200,
+  //   dataIndex: 'name6',
+  //   key: 'name6'
+  // }, {
+  //   title: '产品名称',
+  //   width: 200,
+  //   dataIndex: 'name7',
+  //   key: 'name7'
+  // },
+  // {
+  //   title: '规格型号',
+  //   width: 200,
+  //   dataIndex: 'name8',
+  //   key: 'name8'
+  // },
+  {
     title: '计划生产',
     width: 200,
-    dataIndex: 'age9',
-    key: 'age9'
+    dataIndex: 'FPlanAuxQty',
+    key: 'FPlanAuxQty'
   }, {
     title: '实际完成',
     width: 200,
-    dataIndex: 'address10',
-    key: 'address10'
+    dataIndex: 'FFinishAuxQty',
+    key: 'FFinishAuxQty'
   }, {
     title: '合格入库',
     width: 200,
-    dataIndex: 'address1',
-    key: 'address1'
+    dataIndex: 'FPassAuxQty',
+    key: 'FPassAuxQty'
   }
   ],
 

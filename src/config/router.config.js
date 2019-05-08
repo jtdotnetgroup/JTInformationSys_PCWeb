@@ -18,13 +18,13 @@ export const asyncRouterMap = [
         redirect: '/dashboard/workplace',
         component: RouteView,
         hideChildrenInMenu: true,
-        meta: { title: '工作台', keepAlive: true, icon: bxAnaalyse, permission: [ 'Pages.Users' ] },
+        meta: { title: '工作台', keepAlive: true, icon: bxAnaalyse, permission: [ 'dashboard' ] },
         children: [
           {
             path: '/dashboard/workplace',
             name: 'Workplace',
             component: () => import('@/views/dashboard/Workplace'),
-            meta: { title: '工作台', keepAlive: true, permission: [ 'Pages.Users' ] }
+            meta: { title: '工作台', keepAlive: true, permission: [ 'dashboard' ] }
           }
         ]
       },
@@ -72,13 +72,13 @@ export const asyncRouterMap = [
             path: '/systemmanage/usermanage',
             name: 'usermanage',
             component: () => import('@/views/systemsetting/user/UserList'),
-            meta: { title: '用户管理', keepAlive: true, permission: ['Pages.Users'] }
+            meta: { title: '用户管理', keepAlive: true, permission: ['dashboard'] }
           },
           {
             path: '/systemmanage/rolemanage',
             name: 'rolemanage',
             component: () => import('@/views/systemsetting/role/RoleTable'),
-            meta: { title: '角色管理', keepAlive: true, permission: ['Pages.Roles'] }
+            meta: { title: '角色管理', keepAlive: true, permission: ['dashboard'] }
           }
         ]
       },
@@ -99,22 +99,22 @@ export const asyncRouterMap = [
             component: () => import('@/views/basicdata/organization/Organization')
           }
         ]
-      },
-      {
-        path: '/production',
-        name: 'production',
-        component: RouteView,
-        hideChildrenInMenu: false,
-        meta: { title: '生产计划', keepAlive: true, permission: ['dashboard'] },
-        children: [
-          {
-            path: '/production/scheduling',
-            name: 'scheduling',
-            meta: { title: '任务排产', keepAlive: true, permission: ['dashboard'] },
-            component: () => import('@/views/jtproduction/production')
-          }
-        ]
       }
+      // {
+      //   path: '/production',
+      //   name: 'production',
+      //   component: RouteView,
+      //   hideChildrenInMenu: false,
+      //   meta: { title: '生产计划', keepAlive: true, permission: ['dashboard'] },
+      //   children: [
+      //     {
+      //       path: '/production/scheduling',
+      //       name: 'scheduling',
+      //       meta: { title: '任务排产', keepAlive: true, permission: ['dashboard'] },
+      //       component: () => import('@/views/jtproduction/production')
+      //     }
+      //   ]
+      // }
 
     ]
   },

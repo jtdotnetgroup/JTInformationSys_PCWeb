@@ -34,7 +34,7 @@
 
 
         <!-- 表格 -->
-        <a-table id="card" :rowSelection="rowSelection" :dataSource="dataSource" :columns="columns" :pagination="paginations"  />
+        <a-table id="ICMODailyTable" :rowSelection="rowSelection" :dataSource="dataTable" :columns="columns" :pagination="false"  />
 
         <div id="button"  >
             <a-button style="background-color: #E6F7FF;border-color:#E6F7FF">
@@ -42,7 +42,7 @@
             </a-button>
         </div>
 
-         <a-table id="card"  bordered  :dataSource="dataSourceMX" :columns="columnsMX" :pagination="paginations" >
+         <a-table id="cardd"  bordered  :dataSource="dataSourceMX" :columns="columnsMX" :pagination="false" >
          
            <!-- <a-table-coml v-for="" >         
            </a-table-coml> -->
@@ -141,7 +141,7 @@
     </div>
 
 
-      <a-table id="card"  bordered  :dataSource="dataSourceMX" :columns="columnsMT" :pagination="paginations" >
+      <a-table id="cards"  bordered  :dataSource="dataSourceMX" :columns="columnsMT" :pagination="false" >
          
            <!-- <a-table-coml v-for="" >         
            </a-table-coml> -->
@@ -165,7 +165,7 @@
 import buttons from './buttons'
 import tableheader  from './tableheader';
 import { getRoleList, getServiceList } from '@/api/manage';
-
+import {get} from '@/api/test/get'
 
     export default {
        components:{
@@ -189,9 +189,13 @@ import { getRoleList, getServiceList } from '@/api/manage';
                 maskClosable:false,
 
                  visible: false,
-                 dataSource:tableheader.dataSource,
+                 
+
+                 dataTable:"",
+
                  columns:tableheader.columns,
-                 paginations:{position:'false'},
+
+
                  columnsMT:tableheader.columnsMT,
 
                    columnsMX:tableheader.columnsMX,
@@ -213,6 +217,12 @@ import { getRoleList, getServiceList } from '@/api/manage';
     }
   },
   methods:{
+//     Data(){
+// 
+//     },
+
+
+
       showModal() {
       this.visible = true
     },
@@ -228,11 +238,25 @@ import { getRoleList, getServiceList } from '@/api/manage';
       this.advanced = !this.advanced
     },
 
-handleBtnClick(val){
+       handleBtnClick(val){
       if(val=="查询"){
 
      this.visible = true
       }
+      else if(val=="派工"){
+        
+        //this.axios.headers={'Content-Type': 'application/json;charset=UTF-8'}
+        get(1).
+        then(function(response){
+
+          console.log(response)
+        }).
+        catch(function(error){console.log(error)})
+
+
+      }
+
+
     }
 
   }
