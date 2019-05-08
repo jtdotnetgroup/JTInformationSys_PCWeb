@@ -61,7 +61,7 @@ const fields = [
       // 是否显示今天
       showToday: true,
       // 日期格式
-      format: 'YYYY-MM-DD HH:mm:ss'
+      format: 'YYYY-MM-DD hh:mm:ss'
     },
     // 校验规则
     decorator: [

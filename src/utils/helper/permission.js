@@ -8,7 +8,7 @@ const PERMISSION_ENUM = {
   'disable': { key: 'disable', label: '禁用' },
   'import': { key: 'import', label: '导入' },
   'export': { key: 'export', label: '导出' },
-  'print' : {key :'print',label:'打印'}
+  'print': { key: 'print', label: '打印' }
 }
 
 function plugin (Vue) {

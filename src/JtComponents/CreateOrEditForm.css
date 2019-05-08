@@ -1,0 +1,10 @@
+.ant-modal {
+    /* width: 60vw !important; */
+    /* overflow-y: auto; */
+  }
+  .ant-form {
+    /* display: flex;
+    flex-direction: row; */
+    height: 50vh !important;
+    overflow-y: auto;
+  }
