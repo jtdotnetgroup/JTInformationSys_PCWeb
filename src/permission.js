@@ -21,14 +21,13 @@ router.beforeEach((to, from, next) => {
       next({ path: '/dashboard/workplace' })
       NProgress.done()
     } else {
-      if (store.getters.roles.length === 0) {
+      if (!store.getters.permissions) {
         store
           .dispatch('GetInfo')
           .then(res => {
-            const roles = res.result && res.result.role
-            store.dispatch('GenerateRoutes', { roles }).then(() => {
-              // 根据roles权限生成可访问的路由表
-              // 动态添加可访问路由表
+            const permissions = res.result.auth.grantedPermissions
+
+            store.dispatch('GenerateRoutes', { permissions }).then(() => {
               router.addRoutes(store.getters.addRouters)
               const redirect = decodeURIComponent(from.query.redirect || to.path)
               if (to.path === redirect) {
@@ -39,8 +38,24 @@ router.beforeEach((to, from, next) => {
                 next({ path: redirect })
               }
             })
+
+            // const roles = res.result && res.result.role
+            // store.dispatch('GenerateRoutes', { permissions }).then(() => {
+            //   // 根据roles权限生成可访问的路由表
+            //   // 动态添加可访问路由表
+            //   router.addRoutes(store.getters.addRouters)
+            //   const redirect = decodeURIComponent(from.query.redirect || to.path)
+            //   if (to.path === redirect) {
+            //     // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
+            //     next({ ...to, replace: true })
+            //   } else {
+            //     // 跳转到目的路由
+            //     next({ path: redirect })
+            //   }
+            // })
           })
-          .catch(() => {
+          .catch((err) => {
+            console.log(err)
             notification.error({
               message: '错误',
               description: '请求用户信息失败，请重试'

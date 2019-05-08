@@ -9,8 +9,9 @@ const user = {
     name: '',
     welcome: '',
     avatar: '',
-    roles: [],
-    info: {}
+    // roles: [],
+    info: {},
+    permissions: ''
   },
 
   mutations: {
@@ -29,6 +30,9 @@ const user = {
     },
     SET_INFO: (state, info) => {
       state.info = info
+    },
+    SET_PERMISSIONS: (state, permissions) => {
+      state.permissions = permissions
     }
   },
 
@@ -38,7 +42,7 @@ const user = {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
           const result = response.result
-          Vue.ls.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
+          Vue.ls.set(ACCESS_TOKEN, result.accessToken, 7 * 24 * 60 * 60 * 1000)
           commit('SET_TOKEN', result.token)
           resolve()
         }).catch(error => {
@@ -52,19 +56,20 @@ const user = {
       return new Promise((resolve, reject) => {
         getInfo().then(response => {
           const result = response.result
-
-          if (result.role && result.role.permissions.length > 0) {
-            const role = result.role
-            role.permissions = result.role.permissions
-            role.permissions.map(per => {
-              if (per.actionEntitySet != null && per.actionEntitySet.length > 0) {
-                const action = per.actionEntitySet.map(action => { return action.action })
-                per.actionList = action
-              }
-            })
-            role.permissionList = role.permissions.map(permission => { return permission.permissionId })
-            commit('SET_ROLES', result.role)
-            commit('SET_INFO', result)
+          // if (result.role && result.role.permissions.length > 0) {
+          if (result.auth.grantedPermissions) {
+            // const role = result.role
+            // role.permissions = result.role.permissions
+            // role.permissions.map(per => {
+            //   if (per.actionEntitySet != null && per.actionEntitySet.length > 0) {
+            //     const action = per.actionEntitySet.map(action => { return action.action })
+            //     per.actionList = action
+            //   }
+            // })
+            // role.permissionList = role.permissions.map(permission => { return permission.permissionId })
+            // commit('SET_ROLES', result.role)
+            // commit('SET_INFO', result)
+            commit('SET_PERMISSIONS', result.auth.grantedPermissions)
           } else {
             reject(new Error('getInfo: roles must be a non-null array !'))
           }
@@ -83,7 +88,7 @@ const user = {
     Logout ({ commit, state }) {
       return new Promise((resolve) => {
         commit('SET_TOKEN', '')
-        commit('SET_ROLES', [])
+        // commit('SET_ROLES', [])
         Vue.ls.remove(ACCESS_TOKEN)
 
         logout(state.token).then(() => {
