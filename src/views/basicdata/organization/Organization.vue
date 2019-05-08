@@ -2,16 +2,16 @@
     <a-card>
         <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons"/>
     
-        <pagination :current="pagination.current" :total="pagination.total"/>
+        
 
         <div>
             <a-row :gutter="10">
             <a-col :span="4">
                 <a-tree :treeData="organizations" defaultExpandAll>
-
                 </a-tree>
             </a-col>
               <a-col :span="20">
+                  <pagination :current="pagination.current" :total="pagination.total"/>
                   <a-table :dataSource="tableData" :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" 
                   :columns="columns" :pagination="false">
 
@@ -71,7 +71,3 @@
         },
     }
 </script>
-
-<style lang="scss" scoped>
-
-</style>

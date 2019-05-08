@@ -18,13 +18,13 @@ export const asyncRouterMap = [
         redirect: '/dashboard/workplace',
         component: RouteView,
         hideChildrenInMenu: true,
-        meta: { title: '工作台', keepAlive: true, icon: bxAnaalyse, permission: [ 'dashboard' ] },
+        meta: { title: '工作台', keepAlive: true, icon: bxAnaalyse, permission: [ 'Pages.Users' ] },
         children: [
           {
             path: '/dashboard/workplace',
             name: 'Workplace',
             component: () => import('@/views/dashboard/Workplace'),
-            meta: { title: '工作台', keepAlive: true, permission: [ 'dashboard' ] }
+            meta: { title: '工作台', keepAlive: true, permission: [ 'Pages.Users' ] }
           }
         ]
       },
@@ -66,24 +66,25 @@ export const asyncRouterMap = [
         name: 'systemmanage',
         component: RouteView,
         hideChildrenInMenu: false,
-        meta: { title: '系统管理', keepAlive: true, icon: bxAnaalyse, permission: ['dashboard'] },
+        meta: { title: '系统管理', keepAlive: true, icon: bxAnaalyse },
         children: [
           {
             path: '/systemmanage/usermanage',
             name: 'usermanage',
-            component: () => import('@/views/user/UserList'),
-            meta: { title: '用户管理', keepAlive: true, permission: ['dashboard'] }
+            component: () => import('@/views/systemsetting/user/UserList'),
+            meta: { title: '用户管理', keepAlive: true, permission: ['Pages.Users'] }
           },
           {
             path: '/systemmanage/rolemanage',
             name: 'rolemanage',
-            component: () => import('@/views/role/RoleTable'),
-            meta: { title: '角色管理', keepAlive: true, permission: ['dashboard'] }
+            component: () => import('@/views/systemsetting/role/RoleTable'),
+            meta: { title: '角色管理', keepAlive: true, permission: ['Pages.Roles'] }
           }
         ]
       },
 
       // 基础资料
+
       {
         path: '/basicdata',
         name: 'basicdata',
@@ -95,7 +96,22 @@ export const asyncRouterMap = [
             path: '/basicdata/organization',
             name: 'organization',
             meta: { title: '组织架构', keepAlive: true, permission: ['dashboard'] },
-            component: () => import('@/views/organization/Organization')
+            component: () => import('@/views/basicdata/organization/Organization')
+          }
+        ]
+      },
+      {
+        path: '/production',
+        name: 'production',
+        component: RouteView,
+        hideChildrenInMenu: false,
+        meta: { title: '生产计划', keepAlive: true, permission: ['dashboard'] },
+        children: [
+          {
+            path: '/production/scheduling',
+            name: 'scheduling',
+            meta: { title: '任务排产', keepAlive: true, permission: ['dashboard'] },
+            component: () => import('@/views/jtproduction/production')
           }
         ]
       }
@@ -121,23 +137,24 @@ export const constantRouterMap = [
       {
         path: 'login',
         name: 'login',
-        component: () => import(/* webpackChunkName: "user" */ '@/views/user/Login')
+        component: () => import(/* webpackChunkName: "user" */ '@/views/systemsetting/user/Login')
       },
       {
         path: 'register',
         name: 'register',
-        component: () => import(/* webpackChunkName: "user" */ '@/views/user/Register')
+        component: () => import(/* webpackChunkName: "user" */ '@/views/systemsetting/user/Register')
       },
       {
         path: 'register-result',
         name: 'registerResult',
-        component: () => import(/* webpackChunkName: "user" */ '@/views/user/RegisterResult')
+        component: () => import(/* webpackChunkName: "user" */ '@/views/systemsetting/user/RegisterResult')
       }
     ]
   },
 
   {
     path: '/404',
+    name: '404',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
   }
 
