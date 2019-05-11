@@ -10,7 +10,7 @@ export function GetDaily (Id) {
 
 export function GetDailyAll (Sorting, SkipCount, MaxResultCount) {
   return axios({
-    url: '/api/services/app/VW_MOBillList/GetDaTask', // /api/services/app/VW_MOBillList/GetDaTask
+    url: '/api/services/app/ICMODispBill/GetDaTask', // /api/services/app/VW_MOBillList/GetDaTask
     method: 'get',
     params: { Sorting, SkipCount, MaxResultCount }
 

@@ -176,14 +176,14 @@ export default {
       var _this = this
       GetDailyAll('任务单号', this.pagination.current, this.pagination.pageSize)
         .then(res => {
-          // _this.dataTable= []
-          // var data = res.result
-          // if (data.items.length == 0) {
-          //   return
-          // }
+          _this.dataTable = []
+          var data = res.result
+          if (data.items.length == 0) {
+            return
+          }
           _this.pagination.total = data.totalCount
-          //console.log(data)
-          _this.dataTable = res.result.items
+          console.log(data)
+          _this.dataTable = data.items
         })
         .catch(function(error) {
           console.log(error)
