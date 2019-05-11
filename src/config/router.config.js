@@ -17,13 +17,13 @@ export const asyncRouterMap = [
         redirect: '/dashboard/workplace',
         component: RouteView,
         hideChildrenInMenu: true,
-        meta: { title: '工作台', keepAlive: true, icon: bxAnaalyse, permission: [ 'dashboard' ] },
+        meta: { title: '工作台', keepAlive: true, icon: bxAnaalyse },
         children: [
           {
             path: '/dashboard/workplace',
             name: 'Workplace',
             component: () => import('@/views/dashboard/Workplace'),
-            meta: { title: '工作台', keepAlive: true, permission: [ 'dashboard' ] }
+            meta: { title: '工作台', keepAlive: true }
           }
         ]
       },
@@ -33,7 +33,7 @@ export const asyncRouterMap = [
         path: '/production',
         redirect: '/production/Taskscheduling/Pscheduling',
         component: RouteView,
-        meta: { title: '生产管理', icon: 'form', permission: [ 'form' ] },
+        meta: { title: '生产管理', icon: 'form' },
         children: [
           {
             path: '/production/Taskscheduling',
@@ -46,7 +46,7 @@ export const asyncRouterMap = [
             path: '/production/Taskassignment',
             name: 'Dworker',
             component: () => import('@/views/production/Taskassignment/Dworker'),
-            meta: { title: '任务派工', keepAlive: true, permission: [ 'form' ] }
+            meta: { title: '任务派工', keepAlive: true }
           }
           // ,
           // {
@@ -71,7 +71,7 @@ export const asyncRouterMap = [
             path: '/systemmanage/usermanage',
             name: 'usermanage',
             component: () => import('@/views/systemsetting/user/UserList'),
-            meta: { title: '用户管理', keepAlive: true, permission: ['dashboard'] }
+            meta: { title: '用户管理', keepAlive: true }
           },
           {
             path: '/systemmanage/rolemanage',

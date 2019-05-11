@@ -163,10 +163,10 @@ export default {
           console.log('login form', values)
           const loginParams = { ...values }
           delete loginParams.username
-          loginParams[!state.loginType ? 'email' : 'username'] = values.username
-          loginParams.password = md5(values.password)
-          // loginParams.userNameOrEmailAddress=values.username
-          // loginParams.password=values.password
+          // loginParams[!state.loginType ? 'email' : 'username'] = values.username
+          // loginParams.password = md5(values.password)
+           loginParams.userNameOrEmailAddress=values.username
+           loginParams.password=values.password
           Login(loginParams)
             .then((res) => this.loginSuccess(res))
             .catch(err => this.requestFailed(err))

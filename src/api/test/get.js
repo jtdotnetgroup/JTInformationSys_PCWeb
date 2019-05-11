@@ -1,8 +1,18 @@
 import { axios } from '@/utils/request'
 
-export function get (id) {
+export function GetDaily (Id) {
   return axios({
-    url: 'http://localhost:21021/api/services/app/ICMODaily/Get?Id=1',
-    method: 'get'
+    url: '/api/services/app/ICMODaily/Get',
+    method: 'get',
+    params: { Id }
+  })
+}
+
+export function GetDailyAll (Sorting, SkipCount, MaxResultCount) {
+  return axios({
+    url: '/api/services/app/VW_MOBillList/GetDaTask', // /api/services/app/VW_MOBillList/GetDaTask
+    method: 'get',
+    params: { Sorting, SkipCount, MaxResultCount }
+
   })
 }
