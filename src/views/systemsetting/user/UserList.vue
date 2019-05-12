@@ -4,9 +4,9 @@
 
     <pagination :current="pagination.current" :total="pagination.total"/>
 
-    <a-table :pagination="false" :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :dataSource="loadData.result.data" :columns="columns">
+    <a-table :pagination="false" :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :dataSource="loadData" :columns="columns">
       <template slot="serial" slot-scope="text">
-        <span>{{loadData.result.data.indexOf(text)+1}}</span>
+        <span>{{loadData.indexOf(text)+1}}</span>
       </template>
 
       <template slot="isActived" slot-scope="checked">
@@ -24,8 +24,7 @@ import moment from 'moment'
 import { STable } from '@/components'
 // import StepByStepModal from './modules/StepByStepModal'
 // import CreateForm from './modules/CreateForm'
-import { getRoleList, getServiceList } from '@/api/manage'
-
+import { getRoleList, getServiceList,getUserList } from '@/api/manage'
 import mockdata from './userlistData'
 
 export default {
@@ -102,7 +101,15 @@ export default {
     this.tableOption()
     getRoleList({ t: new Date() })
   },
+  mounted(){
+    this.updateUserList();
+  },
   methods: {
+    updateUserList(){
+      getUserList().then(res=>{
+        this.loadData=res.result.items;
+      })
+    },
     tableOption () {
       if (!this.optionAlertShow) {
         this.options = {
@@ -139,7 +146,8 @@ export default {
         date: moment(new Date())
       }
     }
-  }
+  },
+  
 }
 </script>
 

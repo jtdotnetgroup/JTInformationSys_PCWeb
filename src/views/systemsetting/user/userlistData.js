@@ -1,48 +1,7 @@
 const data = {
   'message': '',
   'result': {
-    'data': [{
-      userName: 'test1',
-      name: 'Alipay',
-      isActived: true,
-      creationTime: '2018-07-26 00:00:00',
-      lastLoginTime: '2018-07-26 00:00:00'
-    },
-    {
-      userName: 'test2',
-      name: 'Alipay',
-      isActived: true,
-      creationTime: '2018-07-26 00:00:00',
-      lastLoginTime: '2018-07-26 00:00:00'
-    },
-    {
-      userName: 'test3',
-      name: 'Alipay',
-      isActived: true,
-      creationTime: '2018-07-26 00:00:00',
-      lastLoginTime: '2018-07-26 00:00:00'
-    },
-    {
-      userName: 'test4',
-      name: 'Alipay',
-      isActived: true,
-      creationTime: '2018-07-26 00:00:00',
-      lastLoginTime: '2018-07-26 00:00:00'
-    },
-    {
-      userName: 'test5',
-      name: 'Alipay',
-      isActived: true,
-      creationTime: '2018-07-26 00:00:00',
-      lastLoginTime: '2018-07-26 00:00:00'
-    },
-    {
-      userName: 'test6',
-      name: 'Alipay',
-      isActived: true,
-      creationTime: '2018-07-26 00:00:00',
-      lastLoginTime: '2018-07-26 00:00:00'
-    }
+    'items': [
     ],
     'pageSize': 10,
     'pageNo': 0,
