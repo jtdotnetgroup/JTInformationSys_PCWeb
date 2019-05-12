@@ -1,8 +1,8 @@
 import { axios } from '@/utils/request'
 
 const api = {
-  user: '/api/services/app/User/GetAll',
-  role: '/api/services/app/Role/GetAll',
+  user: '/user',
+  role: '/role',
   service: '/service',
   permission: '/permission',
   permissionNoPager: '/permission/no-pager',
