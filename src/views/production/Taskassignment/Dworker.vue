@@ -1,261 +1,263 @@
 <template>
-    <a-card >
-     
-           <!-- <a-button-group >
-           <a-button  @click="showModal">
-               查询            
-            </a-button>
-            <a-button >
-                派工
-            </a-button>
-            <a-button >
-                导出
-            </a-button>
-            <a-button >
-                结转
-            </a-button>
-            <a-button >
-                暂停
-            </a-button>
-            <a-button >
-                启动
-            </a-button>
-         </a-button-group>
-        <a-pagination id="card"  style="background-color:#E6F7FF" showSizeChanger showQuickJumper :total="50"  />      -->
+  <a-card>
+    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonp"/>
 
-        <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonp"/>
+    <pagination
+      :current="pagination.current"
+      :pageSizeOptions="pagination.pageSizeOptions"
+      :defaultPageSize="pagination.defaultPageSize"
+      :total="pagination.total"
+      @pageChange="pageChangeClick"
+    />
 
-
-        <!-- <a-pagination id="card"  style="background-color:#E6F7FF" showSizeChanger showQuickJumper :total="50"  />      -->
-
-        <pagination :current="pagination.current" :total="pagination.total"/>
-
-
-
-
-        <!-- 表格 -->
-        <a-table id="card" :rowSelection="rowSelection" :dataSource="dataSource" :columns="columns" :pagination="paginations"  />
-
-        <div id="button"  >
-            <a-button style="background-color: #E6F7FF;border-color:#E6F7FF">
-            <a-icon type="schedule"/>排产明细
-            </a-button>
-        </div>
-
-         <a-table id="card"  bordered  :dataSource="dataSourceMX" :columns="columnsMX" :pagination="paginations" >
-         
-           <!-- <a-table-coml v-for="" >         
-           </a-table-coml> -->
-
-
-         </a-table>
-
-
-  <div id="divmodal">
-
-  <a-modal
-      title="新增/维护"
-      v-model="visible"
-      @ok="hideModal"
-      okText="确认"
-      cancelText="取消"
-     
-      width="1000px"
-      style="left:80px"
-      :maskClosable="maskClosable"
-   
+    <!-- 表格 -->
+    <a-table
+      :rowSelection="rowSelection"
+      :dataSource="dataTable"
+      :columns="columnsjs"
+      :scroll="{ x: 1300, y: 500 }"
+      bordered
+      :pagination="false"
     >
+      <!-- <template slot="serial" slot-scope="indexname">
+      <span>{{dataTable.indexOf(indexname)+1}}</span>-->
+      <!-- <span>{{dataTable.forEach((item)=>{item.indexname=indexname+1})}}</span>  -->
+      <!-- <span>{{dataTable.forEach((item)=>{item.indexname = (this.pagination.current-1)*this.pagination.pageSize+indexname+1})}}</span> -->
+      <!-- </template> -->
+    </a-table>
 
-       <!-- <a-button-group  >
-           
-            <a-button >
-                新增
-            </a-button>
-            <a-button >
-                保存
-            </a-button>
-            <a-button >
-                审核
-            </a-button>
-            <a-button >
-                派工
-            </a-button>
-         </a-button-group> -->
-
-        <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonps"/>
-
-
-           <div class="table-page-search-wrapper"  id="card">
-      <a-form layout="inline">
-        <a-row :gutter="48">
-          <a-col :md="8" :sm="24">
-            <a-form-item label="派工单号">
-              <a-input v-model="queryParam.id" placeholder=""/>
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="任务单号">
-              <a-input v-model="queryParam.id" placeholder=""/>
-              </a-form-item>
-          </a-col>
-
-        
-
-          <template v-if="advanced">
-
-
-   <a-col :md="8" :sm="24">
-            <a-form-item label="排产数量">
-                 <a-input v-model="queryParam.id" placeholder=""/>
-              </a-form-item>
-          </a-col>
-
-            <a-col :md="8" :sm="24">
-              <a-form-item label="派工数量">
-               <a-input v-model="queryParam.id" placeholder=""/>
-              </a-form-item>
-            </a-col>
-
-            <a-col :md="8" :sm="24">
-              <a-form-item label="备注">
-                <a-input-number v-model="queryParam.callNo" style="width: 100%"/>
-              </a-form-item>
-            </a-col>
-
-          
-          
-          
-          </template>
-          <a-col :md="!advanced && 8 || 24" :sm="24">
-            <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-              <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-              <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
-              <a @click="toggleAdvanced" style="margin-left: 8px">
-                {{ advanced ? '收起' : '展开' }}
-                <a-icon :type="advanced ? 'up' : 'down'"/>
-              </a>
-            </span>
-          </a-col>
-        </a-row>
-      </a-form>
+    <div id="button">
+      <a-button style="background-color: #E6F7FF;border-color:#E6F7FF">
+        <a-icon type="schedule"/>排产明细
+      </a-button>
     </div>
 
+    <a-table id="cardd" bordered :columns="columnsMX" :pagination="false"></a-table>
 
-      <a-table id="card"  bordered  :dataSource="dataSourceMX" :columns="columnsMT" :pagination="paginations" >
-         
-           <!-- <a-table-coml v-for="" >         
-           </a-table-coml> -->
+    <div id="divmodal">
+      <a-modal
+        title="新增/维护"
+        v-model="visible"
+        @ok="hideModal"
+        okText="确认"
+        cancelText="取消"
+        width="1000px"
+        style="left:80px"
+        :maskClosable="maskClosable"
+      >
+        <tableOperatorBtn @btnClick="handleBtnClickModal" :buttons="buttonps"/>
 
+        <!-- :columns="columnsMT" -->
+        <a-table
+          id="cards"
+          bordered
+          :dataSource="dataSource"
+          :columns="columns"
+          :pagination="false"
+        >
+          <template slot="operation" slot-scope="text, record">
+            <a-popconfirm v-if="dataSource.length" @click="() => edit(record.key)">
+              <a>Edit</a>
+            </a-popconfirm>
 
-         </a-table>
+            <a-popconfirm
+              v-if="dataSource.length"
+              title="Sure to delete?"
+              @confirm="() => onDelete(record.key)"
+            >
+              <a href="javascript:;" style="margin-left: 20px">Delete</a>
+            </a-popconfirm>
+          </template>
 
-      
-
-    </a-modal>
-
-
-      </div>
-
-
-    </a-card>
+          <!-- <template slot="operation" slot-scope="text, record">
+         <a-popconfirm 
+          v-if="dataSource.length"
+          @click="() => onEdit(record.key)">
+            
+        </a-popconfirm>
+       
+          </template>-->
+        </a-table>
+      </a-modal>
+    </div>
+  </a-card>
 </template>
 
 <script>
-
 import buttons from './buttons'
-import tableheader  from './tableheader';
-import { getRoleList, getServiceList } from '@/api/manage';
+import tableheader from './tableheader'
+import { getRoleList, getServiceList } from '@/api/manage'
+import { GetDaily, GetDailyAll } from '@/api/test/get'
 
-
-    export default {
-       components:{
-        // @是根目录 。。是上一级 。是当前目录
-          tableOperatorBtn:()=>import('@/JtComponents/TableOperatorButton'),
-            pagination:()=>import('@/JtComponents/Pagination'),
-      },        
-        data() {
-            return {
-              pagination: {
-                    current:1,
-                    total:50
-                },
-                buttonp:buttons.buttonp,
-
-                buttonps:buttons.buttonps,
-                   // 高级搜索 展开/关闭
-                advanced: false,
-
-                queryParam: {},
-                maskClosable:false,
-
-                 visible: false,
-                 dataSource:tableheader.dataSource,
-                 columns:tableheader.columns,
-                 paginations:{position:'false'},
-                 columnsMT:tableheader.columnsMT,
-
-                   columnsMX:tableheader.columnsMX,
-                   dataSourceMX:tableheader.dataSourceMX,
-            }
-        }, 
-         created () {
-
-    getRoleList({ t: new Date() })
+export default {
+  components: {
+    // @是根目录 。。是上一级 。是当前目录
+    tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
+    pagination: () => import('@/JtComponents/Pagination')
   },
-    computed: {
-       rowSelection() {
-       const { selectedRowKeys } = this;
-       return {
+  data() {
+    return {
+      pagination: {
+        current: 1,
+        total: 50,
+        pageSize: 100,
+        pageSizeOptions: ['100', '200', '300'],
+        defaultPageSize: 100
+        // pageSizeOptions:['10']
+      },
+      buttonp: buttons.buttonp,
+
+      buttonps: buttons.buttonps,
+      // 高级搜索 展开/关闭
+      advanced: false,
+
+      queryParam: {},
+      maskClosable: false,
+
+      visible: false,
+
+      dataTable: [],
+
+      columnsjs: tableheader.columns,
+
+      columnsMT: tableheader.columnsMT,
+
+      columnsMX: tableheader.columnsMX,
+
+      dataSource: [
+        {
+          key: '0',
+          age: '32',
+          address: 'London, Park Lane no. 0'
+        },
+        {
+          key: '1',
+          age: '32',
+          address: 'London, Park Lane no. 1'
+        }
+      ],
+      count: 2,
+      columns: [
+        {
+          title: 'age',
+          dataIndex: 'age'
+        },
+        {
+          title: 'address',
+          dataIndex: 'address'
+        },
+        {
+          title: 'operation',
+          dataIndex: 'operation',
+          scopedSlots: { customRender: 'operation' }
+        }
+      ]
+    }
+  },
+
+  //一开始就执行的方法
+  created() {
+    getRoleList({ t: new Date() }), this.pageData()
+  },
+  computed: {
+    rowSelection() {
+      const { selectedRowKeys } = this
+      return {
         onChange: (selectedRowKeys, selectedRows) => {
-          console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-        },      
+          console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
+        }
       }
     }
   },
-  methods:{
-      showModal() {
+
+  methods: {
+    //查询分页的方法
+    pageData() {
+      var _this = this
+      GetDailyAll('任务单号', this.pagination.current, this.pagination.pageSize)
+        .then(res => {
+          // _this.dataTable= []
+          // var data = res.result
+          // if (data.items.length == 0) {
+          //   return
+          // }
+          _this.pagination.total = data.totalCount
+          //console.log(data)
+          _this.dataTable = res.result.items
+        })
+        .catch(function(error) {
+          console.log(error)
+        })
+    },
+
+    pageChangeClick(page, pageSize) {
+      ;(this.pagination.current = page), (this.pagination.pageSize = pageSize)
+      this.pageData()
+    },
+
+    onDelete(key) {
+      const dataSource = [...this.dataSource]
+      this.dataSource = dataSource.filter(item => item.key !== key)
+    },
+
+    onCellChange(key, dataIndex, value) {
+      const dataSource = [...this.dataSource]
+      const target = dataSource.find(item => item.key === key)
+      if (target) {
+        target[dataIndex] = value
+        this.dataSource = dataSource
+      }
+    },
+
+    showModal() {
       this.visible = true
     },
-     hideModal() {
+    hideModal() {
       this.visible = false
     },
-    resetSearchForm () {
+    resetSearchForm() {
       this.queryParam = {
         date: moment(new Date())
       }
     },
-     toggleAdvanced () {
+    toggleAdvanced() {
       this.advanced = !this.advanced
     },
 
-handleBtnClick(val){
-      if(val=="查询"){
+    handleBtnClickModal(val) {
+      if (val == '新增') {
+        const { count, dataSource } = this
+        const newData = {
+          key: count,
+          name: `Edward King ${count}`,
+          age: `32. ${count}`,
+          address: `London, Park Lane no. ${count}`
+        }
+        this.dataSource = [...dataSource, newData]
+        this.count = count + 1
+      }
+    },
 
-     this.visible = true
+    handleBtnClick(val) {
+      if (val == '查询') {
+      } else if (val == '派工') {
+        this.visible = true
       }
     }
-
   }
 }
-
 </script>
 
 <style  scoped>
-#card{
-
-margin-top: 10px
-
+#card {
+  margin-top: 10px;
 }
-#button{
-margin-top: 10px;
-background-color:#E6F7FF
-
+#button {
+  margin-top: 10px;
+  background-color: #e6f7ff;
 }
 
-
-#divmodal{
-   width: 900px;
+#divmodal {
+  width: 900px;
 }
-
-
 </style>

@@ -11,8 +11,8 @@ import {
 
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: 'http://localhost:21021', // api base_url
-  timeout: 6000 // 请求超时时间
+  baseURL: 'http://localhost:21021',
+  timeout: 40000 // 请求超时时间
 })
 
 const err = (error) => {
@@ -49,6 +49,7 @@ service.interceptors.request.use(config => {
     // config.headers['Access-Token'] = token // 让每个请求携带自定义 token 请根据实际情况自行修改
     config.headers.common['Authorization'] = 'Bearer ' + token
   }
+
   return config
 }, err)
 

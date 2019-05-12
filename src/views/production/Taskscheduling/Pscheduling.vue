@@ -26,7 +26,7 @@
         <pagination :current="pagination.current" :total="pagination.total"/>
 
      
-        <a-table id="card" :rowSelection="rowSelection" :dataSource="dataSource" :columns="columns" :pagination="paginations"  />
+        <a-table id="card" :rowSelection="rowSelection" :dataSource="dataSource" :columns="columns" :pagination="false"  />
 
         <div id="button"  >
             <a-button style="background-color: #E6F7FF;border-color:#E6F7FF">
@@ -34,7 +34,7 @@
             </a-button>
         </div>
 
-         <a-table id="card"  bordered  :dataSource="dataSourceMX" :columns="columnsMX" :pagination="paginations" >
+         <a-table id="card"  bordered  :dataSource="dataSourceMX" :columns="columnsMX" :pagination="false" >
          
            <!-- <a-table-coml v-for="" >         
            </a-table-coml> -->
@@ -139,7 +139,7 @@
     </div>
 
 
-      <a-table id="card"  bordered  :dataSource="dataSourceMX" :columns="columnsMT" :pagination="paginations" >
+      <a-table id="card"  bordered  :dataSource="dataSourceMX" :columns="columnsMT" :pagination="false" >
          
            <!-- <a-table-coml v-for="" >         
            </a-table-coml> -->
@@ -188,7 +188,6 @@ import { getRoleList, getServiceList } from '@/api/manage';
                  visible: false,
                  dataSource:tableheader.dataSource,
                  columns:tableheader.columns,
-                 paginations:{position:'false'},
                  columnsMT:tableheader.columnsMT,
 
                  columnsMX:tableheader.columnsMX,

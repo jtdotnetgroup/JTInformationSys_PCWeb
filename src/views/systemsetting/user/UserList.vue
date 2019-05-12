@@ -2,7 +2,7 @@
   <a-card :bordered="false">
     <tableOperatorBtn @btnClick="handleBtnClick"/>
 
-    <pagination :current="pagination.current" :total="pagination.total"/>
+    <pagination :current="pagination.current" :total="pagination.total" />
 
     <a-table :pagination="false" :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :dataSource="loadData.result.data" :columns="columns">
       <template slot="serial" slot-scope="text">
