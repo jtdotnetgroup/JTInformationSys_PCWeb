@@ -1,133 +1,52 @@
 const result = {
-  dataSource: [{
-    key: '1',
-    name1: '胡彦斌',
-    name2: '胡彦祖2',
-    name3: '胡彦祖2',
-    name4: '胡彦祖2',
-    name5: '胡彦祖2',
-    name6: '胡彦祖2',
-    name7: '胡彦祖2',
-    name8: '胡彦祖2',
-    name9: '胡彦祖2',
-    age9: 38,
-    address10: '西湖区湖底公园1号'
-  }, {
-    key: '2',
-    name1: '胡彦斌',
-    name2: '胡彦祖2',
-    name3: '胡彦祖2',
-    name4: '胡彦祖2',
-    name5: '胡彦祖2',
-    name6: '胡彦祖2',
-    name7: '胡彦祖2',
-    name8: '胡彦祖2',
-    name9: '胡彦祖2',
-    age9: 38,
-    address10: '西湖区湖底公园1号'
-  }, {
-    key: '3',
-    name1: '胡彦斌',
-    name2: '胡彦祖2',
-    name3: '胡彦祖2',
-    name4: '胡彦祖2',
-    name5: '胡彦祖2',
-    name6: '胡彦祖2',
-    name7: '胡彦祖2',
-    name8: '胡彦祖2',
-    name9: '胡彦祖2',
-    age9: 38,
-    address10: '西湖区湖底公园1号'
-  }, {
-    key: '4',
-    name1: '胡彦斌',
-    name2: '胡彦祖2',
-    name3: '胡彦祖2',
-    name4: '胡彦祖2',
-    name5: '胡彦祖2',
-    name6: '胡彦祖2',
-    name7: '胡彦祖2',
-    name8: '胡彦祖2',
-    name9: '胡彦祖2',
-    age9: 38,
-    address10: '西湖区湖底公园1号'
-  }, {
-    key: '5',
-    name1: '胡彦斌',
-    name2: '胡彦祖2',
-    name3: '胡彦祖2',
-    name4: '胡彦祖2',
-    name5: '胡彦祖2',
-    name6: '胡彦祖2',
-    name7: '胡彦祖2',
-    name8: '胡彦祖2',
-    name9: '胡彦祖2',
-    age9: 38,
-    address10: '西湖区湖底公园1号'
-  }, {
-    key: '6',
-    name1: '胡彦斌',
-    name2: '胡彦祖2',
-    name3: '胡彦祖2',
-    name4: '胡彦祖2',
-    name5: '胡彦祖2',
-    name6: '胡彦祖2',
-    name7: '胡彦祖2',
-    name8: '胡彦祖2',
-    name9: '胡彦祖2',
-    age9: 38,
-    address10: '西湖区湖底公园1号'
-  }],
 
   columns: [{
     title: '序号',
     dataIndex: 'name1',
-    width: 200,
     key: 'name1'
   }, {
     title: '车间',
-    dataIndex: 'name2',
-    width: 200,
+    dataIndex: '车间',
     key: 'name2'
   }, {
     title: '任务单号',
-    dataIndex: 'name3',
-    width: 200,
+    dataIndex: '任务单号',
+
     key: 'name3'
   }, {
     title: '状态',
-    dataIndex: 'name4',
-    width: 200,
+    dataIndex: '状态',
+
     key: 'name4'
   }, {
     title: '产品代码',
-    width: 200,
-    dataIndex: 'name5',
+
+    dataIndex: '产品代码',
     key: 'name5'
   }, {
     title: '产品名称',
-    width: 200,
-    dataIndex: 'name6',
+
+    dataIndex: '产品名称',
     key: 'name6'
   }, {
     title: '规格型号',
-    width: 200,
-    dataIndex: 'name7',
+
+    dataIndex: '规格型号',
     key: 'name7'
   }, {
     title: '计划完成日期',
-    width: 200,
-    dataIndex: 'name8',
+
+    dataIndex: '计划完成日期',
     key: 'name8'
   }, {
     title: '计划生产',
-    width: 200,
-    dataIndex: 'age9',
+
+    dataIndex: '计划生产',
     key: 'age9'
   }, {
     title: '实际入库',
-    width: 200,
-    dataIndex: 'address10',
+
+    dataIndex: '实际入库',
     key: 'address10'
   }],
 
@@ -192,7 +111,7 @@ const result = {
     agew: '西湖区湖底公园1号'
   },
   {
-    key: '1',
+    key: '2',
     nameb: '胡彦斌',
     agea: 32,
     ageb: '西湖区湖底公园1号',
@@ -202,7 +121,7 @@ const result = {
     agew: '西湖区湖底公园1号'
   },
   {
-    key: '1',
+    key: '3',
     namec: '胡彦斌',
     agea: 32,
     ageb: '西湖区湖底公园1号',

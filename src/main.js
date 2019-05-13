@@ -15,7 +15,10 @@ import './core/use'
 import './permission' // permission control
 import './utils/filter' // global filter
 
+import moment from 'moment'
+
 Vue.config.productionTip = false
+Vue.prototype.$moment = moment
 
 // mount axios Vue.$http and this.$http
 Vue.use(VueAxios)

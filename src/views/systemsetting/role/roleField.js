@@ -12,7 +12,6 @@ const fields = [
       required: true,
       // 占位内容
       placeholder: ''
-
     },
     decorator: [
       'rolename',
