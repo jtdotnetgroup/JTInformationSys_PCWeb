@@ -18,7 +18,7 @@
 <script>
 import tableOperatorBtn from '@/JtComponents/TableOperatorButton'
 import pagination from '@/JtComponents/Pagination'
-import createOrEditForm from '@/JtComponents/CreateOrEditForm'
+import createOrEditForm from '@/JtComponents/CreateOrEditFormModal'
 import Fields from './roleField.js'
 
 export default {

@@ -1,7 +1,8 @@
 <template>
     <div class="jtPagination">
 <!-- showSizeChanger  @showSizeChange="onChange" -->
-        <a-pagination v-model="currentPage" showQuickJumper size="small" :defaultPageSize="defaultPageSize" :pageSizeOptions="pageSizeOptions" showSizeChanger  @showSizeChange="onChange"  @change="onChange" 
+        <a-pagination v-model="currentPage" showQuickJumper size="small" :defaultPageSize="defaultPageSize"
+         :pageSizeOptions="pageSizeOptions" showSizeChanger  @showSizeChange="onChange"  @change="onChange" 
             :showTotal="total => `总共 ${total} 条数据`"
          :total="total"></a-pagination>
     </div>
@@ -12,7 +13,6 @@
         data() {
             return {
                 currentPage: this.current,
-               
             }
         },
         props: {
@@ -27,11 +27,11 @@
             },
             defaultPageSize:{
                  type:Number,
-                default:5
+                default:10
             },
              pageSizeOptions:{
                  type:Array,
-                 default:["5","10","15"]
+                 default:()=>['10','50','100']
             }
 
         },

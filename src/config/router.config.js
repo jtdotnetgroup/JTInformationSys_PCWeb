@@ -39,7 +39,7 @@ export const asyncRouterMap = [
             path: '/production/Taskscheduling',
             name: 'Pscheduling',
             component: () => import('@/views/production/Taskscheduling/Pscheduling'),
-            meta: { title: '任务排产', keepAlive: true, permission: [ 'form' ] }
+            meta: { title: '任务排产', keepAlive: true }
           },
 
           {
