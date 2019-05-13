@@ -27,11 +27,11 @@
             },
             defaultPageSize:{
                  type:Number,
-                default:5
+                 default:10
             },
              pageSizeOptions:{
                  type:Array,
-                 default:["5","10","15"]
+                 default:["10","20","30"]
             }
 
         },

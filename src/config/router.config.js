@@ -39,7 +39,7 @@ export const asyncRouterMap = [
             path: '/production/Taskscheduling',
             name: 'Pscheduling',
             component: () => import('@/views/production/Taskscheduling/Pscheduling'),
-            meta: { title: '任务排产', keepAlive: true, permission: [ 'form' ] }
+            meta: { title: '任务排产', keepAlive: true }
           },
 
           {
@@ -89,13 +89,19 @@ export const asyncRouterMap = [
         name: 'basicdata',
         component: RouteView,
         hideChildrenInMenu: false,
-        meta: { title: '基础资料', keepAlive: true, icon: bxAnaalyse, permission: ['dashboard'] },
+        meta: { title: '基础资料', keepAlive: true, icon: bxAnaalyse },
         children: [
           {
             path: '/basicdata/organization',
             name: 'organization',
-            meta: { title: '组织架构', keepAlive: true, permission: ['dashboard'] },
+            meta: { title: '组织架构', keepAlive: true },
             component: () => import('@/views/basicdata/organization/Organization')
+          },
+          {
+            path: '/basicdata/equipmentarchives',
+            name: 'equipmentarchives',
+            meta: { title: '设备档案', keepAlive: true },
+            component: () => import('@/views/basicdata/equipmentarchives/EquipmentArchives')
           }
         ]
       }

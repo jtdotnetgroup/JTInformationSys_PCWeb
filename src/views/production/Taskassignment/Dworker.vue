@@ -15,15 +15,14 @@
       :rowSelection="rowSelection"
       :dataSource="dataTable"
       :columns="columnsjs"
-      :scroll="{ x: 1300, y: 500 }"
+      :scroll="{ x: 3100, y: 500 }"
       bordered
       :pagination="false"
     >
-      <!-- <template slot="serial" slot-scope="indexname">
-      <span>{{dataTable.indexOf(indexname)+1}}</span>-->
-      <!-- <span>{{dataTable.forEach((item)=>{item.indexname=indexname+1})}}</span>  -->
-      <!-- <span>{{dataTable.forEach((item)=>{item.indexname = (this.pagination.current-1)*this.pagination.pageSize+indexname+1})}}</span> -->
-      <!-- </template> -->
+      <template slot="serial" slot-scope="indexname">
+      <span>{{dataTable.indexOf(indexname)+1}}</span>
+   
+       </template>
     </a-table>
 
     <div id="button">
@@ -34,7 +33,7 @@
 
     <a-table id="cardd" bordered :columns="columnsMX" :pagination="false"></a-table>
 
-    <div id="divmodal">
+    <div >
       <a-modal
         title="新增/维护"
         v-model="visible"
@@ -52,14 +51,35 @@
           id="cards"
           bordered
           :dataSource="dataSource"
-          :columns="columns"
+          :columns="columnsMT"
           :pagination="false"
+          :scroll="{ x: 2600, y: 500 }"    
         >
-          <template slot="operation" slot-scope="text, record">
-            <a-popconfirm v-if="dataSource.length" @click="() => edit(record.key)">
-              <a>Edit</a>
-            </a-popconfirm>
 
+          <template slot="serial" slot-scope="index">
+             <span>{{dataTable.indexOf(index)+1}}</span>
+   
+            </template>
+
+
+
+          <template slot="机台/设备" slot-scope="text, record">
+            <EditableCell :text="text" @change="onCellChange(record.key, '机台/设备', $event)"/>
+          </template>
+
+          <template slot="操作员" slot-scope="text, record">
+            <EditableCell :text="text" @change="onCellChange(record.key, '操作员', $event)"/>
+          </template>
+
+          <template slot="班次" slot-scope="text, record">
+            <EditableCellInput :text="text" @change="onCellChange(record.key, '班次', $event)"/>
+          </template>
+
+          <template slot="派工数量" slot-scope="text, record">
+            <EditableCellInput :text="text" @change="onCellChange(record.key, '派工数量', $event)"/>
+          </template>
+
+          <template slot="operation" slot-scope="text, record">
             <a-popconfirm
               v-if="dataSource.length"
               title="Sure to delete?"
@@ -68,24 +88,17 @@
               <a href="javascript:;" style="margin-left: 20px">Delete</a>
             </a-popconfirm>
           </template>
-
-          <!-- <template slot="operation" slot-scope="text, record">
-         <a-popconfirm 
-          v-if="dataSource.length"
-          @click="() => onEdit(record.key)">
-            
-        </a-popconfirm>
-       
-          </template>-->
         </a-table>
       </a-modal>
     </div>
+
+    
   </a-card>
 </template>
 
 <script>
-import buttons from './buttons'
-import tableheader from './tableheader'
+import buttons from './js/buttons'
+import tableheader from './js/tableheader'
 import { getRoleList, getServiceList } from '@/api/manage'
 import { GetDaily, GetDailyAll } from '@/api/test/get'
 
@@ -93,7 +106,9 @@ export default {
   components: {
     // @是根目录 。。是上一级 。是当前目录
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
-    pagination: () => import('@/JtComponents/Pagination')
+    pagination: () => import('@/JtComponents/Pagination'),
+    EditableCell: () => import('./pubilcvue/EditableCellSelect'),
+    EditableCellInput: () => import('./pubilcvue/EditableCellInput')
   },
   data() {
     return {
@@ -127,31 +142,31 @@ export default {
       dataSource: [
         {
           key: '0',
-          age: '32',
-          address: 'London, Park Lane no. 0'
+          日期: 'Edward King 0',
+         "机台/设备": '32',
+          操作员: 'London, Park Lane no. 0',
+          班次: 'London, Park Lane no. 0',
+          派工数量: 'London, Park Lane no. 0',
+          派工单号: 'London, Park Lane no. 0',
+          派单时间: '2019-5-13',
+          计划员: 'London, Park Lane no. 0',
+          备注: 'London, Park Lane no. 0',
         },
         {
           key: '1',
-          age: '32',
-          address: 'London, Park Lane no. 1'
+          日期: 'Edward King 0',
+          "机台/设备": 'London, Park Lane no. 0',
+          操作员: '男',
+          班次: '男d',
+          派工数量: 'London, Park Lane no. 0',
+          派工单号: 'London, Park Lane no. 0',
+          派单时间: '2019-5-13',
+          计划员: 'London, Park Lane no. 0',
+          备注: 'London, Park Lane no. 0',
         }
       ],
       count: 2,
-      columns: [
-        {
-          title: 'age',
-          dataIndex: 'age'
-        },
-        {
-          title: 'address',
-          dataIndex: 'address'
-        },
-        {
-          title: 'operation',
-          dataIndex: 'operation',
-          scopedSlots: { customRender: 'operation' }
-        }
-      ]
+      
     }
   },
 
@@ -171,6 +186,15 @@ export default {
   },
 
   methods: {
+    onCellChange(key, dataIndex, value) {
+      const dataSource = [...this.dataSource]
+      const target = dataSource.find(item => item.key === key)
+      if (target) {
+        target[dataIndex] = value
+        this.dataSource = dataSource
+      }
+    },
+
     //查询分页的方法
     pageData() {
       var _this = this
@@ -198,15 +222,6 @@ export default {
     onDelete(key) {
       const dataSource = [...this.dataSource]
       this.dataSource = dataSource.filter(item => item.key !== key)
-    },
-
-    onCellChange(key, dataIndex, value) {
-      const dataSource = [...this.dataSource]
-      const target = dataSource.find(item => item.key === key)
-      if (target) {
-        target[dataIndex] = value
-        this.dataSource = dataSource
-      }
     },
 
     showModal() {
@@ -257,7 +272,5 @@ export default {
   background-color: #e6f7ff;
 }
 
-#divmodal {
-  width: 900px;
-}
+
 </style>
