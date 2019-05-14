@@ -5,8 +5,7 @@ const result = {
     {
       title: '序号',
       width: 80,
-      name: 'indexname',
-      scopedSlots: { customRender: 'serial' }
+      dataIndex: 'indexname'
     },
     {
       title: '日期',
@@ -121,7 +120,7 @@ const result = {
       width: 160,
       title: '班次',
       dataIndex: '班组',
-      scopedSlots: { customRender: '班次' }
+      scopedSlots: { customRender: '班组' }
     },
     {
       key: '派工数量',
@@ -152,20 +151,22 @@ const result = {
       width: 160,
       title: '备注',
       dataIndex: '备注'
-    }, {
-      // colSpan: 0,
-      key: 'fSrcID',
-      width: 160,
-      title: 'fSrcID',
-      dataIndex: 'fSrcID'
     },
+    //, {
+    //   // colSpan: 0,
+    //   key: 'fSrcID',
+    //   width: 160,
+    //   title: 'fSrcID',
+    //   dataIndex: 'fSrcID'
+    // },
+    // {
+    //   // colSpan: 0,
+    //   key: 'fmoInterID',
+    //   width: 160,
+    //   title: 'fmoInterID',
+    //   dataIndex: 'fmoInterID'
+    // },
     {
-      // colSpan: 0,
-      key: 'fmoInterID',
-      width: 160,
-      title: 'fmoInterID',
-      dataIndex: 'fmoInterID'
-    }, {
       key: '1',
       width: 160,
       title: '操作',

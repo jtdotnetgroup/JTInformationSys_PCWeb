@@ -10,7 +10,7 @@ export function GetDaily (Id) {
 
 export function GetDailyAll (params) {
   return axios({
-    url: '/api/services/app/ICMODaily/GetAll', // /api/services/app/VW_MOBillList/GetDaTask
+    url: '/api/services/app/ICMODispBill/GetDailyGroup', // /api/services/app/VW_MOBillList/GetDaTask
     method: 'get',
     params: params
 
@@ -19,7 +19,7 @@ export function GetDailyAll (params) {
 
 export function GetDispBillAll (params) {
   return axios({
-    url: '/api/services/app/ICMODispBill/GetAll', // /api/services/app/VW_MOBillList/GetDaTask
+    url: '/api/services/app/ICMODispBill/GetDailyFsrIdTask', // /api/services/app/VW_MOBillList/GetDaTask 模态表
     method: 'get',
     params: params
 
