@@ -7,3 +7,19 @@ export function GetTaskSchedulData (params) {
     params: params
   })
 }
+
+export function GetAllDailyList (params) {
+  return axios({
+    url: 'api/services/app/ICMODispBill/GetAll',
+    method: 'get',
+    params: params
+  })
+}
+
+export function SaveDailyList (data) {
+  return axios({
+    url: '/api/services/app/ICMODaily/Create',
+    method: 'post',
+    data: data
+  })
+}

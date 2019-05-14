@@ -9,6 +9,8 @@ import {
   ACCESS_TOKEN
 } from '@/store/mutation-types'
 
+import message from 'ant-design-vue/es/message'
+
 // 创建 axios 实例
 const service = axios.create({
   baseURL: 'http://localhost:21021',
@@ -21,14 +23,14 @@ const err = (error) => {
     const token = Vue.ls.get(ACCESS_TOKEN)
     if (error.response.status === 403) {
       notification.error({
-        message: 'Forbidden',
+        message: '没有权限',
         description: data.message
       })
     }
     if (error.response.status === 401 && !(data.result && data.result.isLogin)) {
       notification.error({
-        message: 'Unauthorized',
-        description: 'Authorization verification failed'
+        message: '未授权',
+        description: '未登录'
       })
       if (token) {
         store.dispatch('Logout').then(() => {
@@ -55,6 +57,14 @@ service.interceptors.request.use(config => {
 
 // response interceptor
 service.interceptors.response.use((response) => {
+  console.log('OK')
+  var resData = response.data
+  if (resData.success) {
+    message.success('操作成功', 3)
+  } else {
+    message.error('操作异常请联系网管或稍候再试', 3)
+  }
+
   return response.data
 }, err)
 
