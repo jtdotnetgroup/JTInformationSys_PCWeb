@@ -13,20 +13,28 @@ const dataExample = {
   'id': null
 }
 
+export const editColumns = [
+
+  '计划数量'
+]
+
 const keys = Object.keys(dataExample)
-const columns = []
+export const columns = []
 
 keys.forEach(key => {
   if (key.match(/[\u4e00-\u9fa5]*/)[0].length !== 0) {
     var col = {
       title: key,
       dataIndex: key,
-      align: 'center',
-      key: key
+      key: key,
+      width: 60,
+      align: 'center'
+    }
+
+    if (editColumns.includes(key)) {
+      col.scopedSlots = { customRender: key }
     }
 
     columns.push(col)
   }
 })
-
-export default columns
