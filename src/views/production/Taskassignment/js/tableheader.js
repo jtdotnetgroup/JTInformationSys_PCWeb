@@ -1,11 +1,54 @@
 
+const example = {
+  '日期': '2015-12-01T00:00:00',
+  '计划单号': 'DA20190514091846-001',
+  '任务单号': 'WORK000245',
+  '车间': 'RI车间',
+  '产品编码': '03.02.0259',
+  '产品名称': '17880-0V230-00',
+  '规格型号': '进气管',
+  '计划数量': 369,
+  '计划开工日期': '2015-12-01T00:00:00',
+  '计划完工日期': '2015-12-23T00:00:00',
+  '完成数量': 0,
+  'FID': null
+}
+
+export const columns = []
+columns.push(
+  {
+    title: '序号',
+    key: 'index',
+    scopedSlots: { customRender: 'serial' },
+    width: 40
+  }
+)
+const keys = Object.keys(example)
+
+keys.forEach(key => {
+  if (key.match(/[\u4e00-\u9fa5]*/)[0].length !== 0) {
+    var col = {
+      title: key,
+      dataIndex: key,
+      key: key,
+      align: 'center'
+    }
+
+    // if (editColumns.includes(key)) {
+    //   col.scopedSlots = { customRender: key }
+    // }
+
+    columns.push(col)
+  }
+})
+
 const result = {
 
   columns: [
     {
       title: '序号',
-      width: 100,
-      dataIndex: 'indexname'
+      key: 'index',
+      scopedSlots: { customRender: 'serial' }
     },
     {
       title: '日期',

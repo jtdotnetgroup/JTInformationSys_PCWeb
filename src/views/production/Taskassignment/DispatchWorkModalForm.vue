@@ -103,7 +103,7 @@ export default {
       this._LoadData();
     },
     _LoadData() {
-      var params={FSrcID:this.DailyData.fSrcID}
+      var params={FSrcID:this.DailyData.fid}
       GetDispBillAll(params).then(res=>{
         console.log(res)
         this.loading=false
@@ -113,6 +113,7 @@ export default {
           result.forEach(e => {
             e.key=index;
             index++;
+            e.日期=this.$moment(e.日期).format('YYYY-MM-D')
           });
 
           this.dataSource=result
