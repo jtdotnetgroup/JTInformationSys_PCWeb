@@ -37,7 +37,8 @@
 
     <a-table id="cardd" bordered :columns="columnsMX" :pagination="false"></a-table>
 
-    <div>
+    <DispatchWorkModalForm ref='DispatchWorkModalForm' />
+    <!-- <div>
       <a-modal
         title="新增/维护"
         v-model="visible"
@@ -90,7 +91,7 @@
           </template>
         </a-table>
       </a-modal>
-    </div>
+    </div> -->
 
     <!-- <modalt ref="taskDispatch"/> -->
   </a-card>
@@ -102,19 +103,18 @@ import tableheader from './js/tableheader'
 import {columns} from './js/tablehhe'
 
 import { getRoleList, getServiceList } from '@/api/manage'
-import { GetDailyAll, GetDispBillAll, CreateAll } from '@/api/test/get'
+import { GetDailyAll, GetDispBillAll, CreateAll, GetDaily } from '@/api/test/get'
+import { constants } from 'crypto';
 
 export default {
-
-
-
   components: {
     // @是根目录 。。是上一级 。是当前目录
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
     pagination: () => import('@/JtComponents/Pagination'),
   
     EditableCell: () => import('./pubilcvue/EditableCellSelect'),
-    EditableCellInput: () => import('./pubilcvue/EditableCellInput')
+    EditableCellInput: () => import('./pubilcvue/EditableCellInput'),
+    DispatchWorkModalForm:()=>import('./DispatchWorkModalForm')
   },
   data() {
     return {
@@ -154,65 +154,84 @@ export default {
 
     }
   },
-
-  //一开始就执行的方法
-  created() {
-    getRoleList({ t: new Date() }), this.pageData()
+  mounted () {
+    this._LoadMainData();
   },
 
+  //一开始就执行的方法
   methods: {
-    //查询分页的方法
-    pageData() {
-      this.taskschedulLoading = true
-      var params = {
+    // //查询分页的方法
+    // pageData() {
+    //   this.taskschedulLoading = true
+    //   var params = {
+    //     SkipCount: this.pagination.current - 1,
+    //     MaxResultCount: this.pagination.pageSize
+    //   }
+
+    //   var _this = this
+    //   GetDailyAll(params)
+    //     .then(res => {
+    //       _this.dataTable = []
+    //       var data = res.result
+    //       if (data.items.length == 0) {
+    //         return
+    //       }
+    //       this.taskschedulLoading = false
+    //       _this.pagination.total = data.totalCount
+    //       console.log(data)
+         
+    //      //服务端数据库
+    //      _this.dataTableArry=data.items;
+    //     var result = []
+    //     var index = 0
+    //      data.items.forEach(item => {
+    //       index = index + 1
+    //       var datasss = {
+    //       key:index,
+    //       indexname:index,
+    //       日期: item.日期,
+    //       机台: item.机台,
+    //       班组: item.班组,
+    //       操作员: item.操作员,
+    //       派工数量: item.派工数量,
+    //       完成数量: item.完成数量,
+    //       合格数量: item.合格数量,
+    //       计划数量: item.计划数量,
+    //       任务单号: item.fmoBillNo
+    //     }          
+    //       result.push(datasss)
+    //      });
+ 
+    //     // // console.log(dataTableArry)      
+
+    //     //  console.log(result)      
+    //       _this.dataTable=data.items;
+
+    //     })
+    //     .catch(function(error) {
+    //       this.taskschedulLoading = false
+    //       console.log(error)
+    //     })
+    // },
+
+    _LoadMainData(){
+
+      const params={
         SkipCount: this.pagination.current - 1,
         MaxResultCount: this.pagination.pageSize
       }
+      //后端获取数据
+      GetDailyAll(params).then(res=>{
+        const result=res.result;
 
-      var _this = this
-      GetDailyAll(params)
-        .then(res => {
-          _this.dataTable = []
-          var data = res.result
-          if (data.items.length == 0) {
-            return
-          }
-          this.taskschedulLoading = false
-          _this.pagination.total = data.totalCount
-          console.log(data)
-         
-         //服务端数据库
-         _this.dataTableArry=data.items;
-        var result = []
-        var index = 0
-         data.items.forEach(item => {
-          index = index + 1
-          var datasss = {
-          key:index,
-          indexname:index,
-          日期: item.日期,
-          机台: item.机台,
-          班组: item.班组,
-          操作员: item.操作员,
-          派工数量: item.派工数量,
-          完成数量: item.完成数量,
-          合格数量: item.合格数量,
-          计划数量: item.计划数量,
-          任务单号: item.fmoBillNo
-        }          
-          result.push(datasss)
-         });
- 
-        // // console.log(dataTableArry)      
+        if(result&&result.items.length>0){
+          //绑定到表格上
+          this.dataTable=result.items
+        }
 
-        //  console.log(result)      
-          _this.dataTable=result;
-
-        })
-        .catch(function(error) {
-          this.taskschedulLoading = false
-          console.log(error)
-        })
+      }).catch(err=>{
+        console.log(err)
+      })
     },
 
     pageChangeClick(page, pageSize) {
@@ -293,13 +312,14 @@ export default {
 
     onCellChange(key, dataIndex, value) {
 
-
-    
+      //后端返回的数据集
       const dataTableArrget = [...this.dataTableArrget]
+      //动态生成的数据
       const dataSource = [...this.dataSource]
       console.log(dataTableArrget);
+      //判断是否已存在数据
       const dstarget = dataTableArrget.find(item =>item.dataIndex  === dataIndex)
-
+      //
       const target = dataSource.find(item => item.key === dataIndex)
 
 
@@ -343,7 +363,7 @@ export default {
           var datasss = {
           key:index,
           indexname:index,
-          日期: item.日期,
+          日期: this.$moment(item.日期).format('YYYY-MM-DD'),
           机台: item.机台,
           班组: item.班组,
           操作员: item.操作员,
@@ -367,19 +387,25 @@ export default {
     },
 
     handleBtnClick(val) {
-      if (val == '查询') {
-      } else if (val == '派工') {
-    if (this.selectedRowKeys.length === 1) 
+    //   if (val == '查询') {
+    //   } else if (val == '派工') {
+    // if (this.selectedRowKeys.length === 1) 
+    //     console.log(this.selectedRows[0])
+    //  this.visible = true
+    //  const dataTableArry = [...this.dataTableArry]
+    //  const dstarget = dataTableArry.find(item =>item.日期  === this.selectedRows[0].日期)
+    //   console.log(dstarget)
+    //     this._loadData(dstarget.fSrcID)
+    //   }
 
-        console.log(this.selectedRows[0])
-
-     this.visible = true
-     const dataTableArry = [...this.dataTableArry]
-     const dstarget = dataTableArry.find(item =>item.日期  === this.selectedRows[0].日期)
-       
-      console.log(dstarget)
-        this._loadData(dstarget.fSrcID)
+    switch(val){
+      case '派工':{
+        if(this.selectedRows.length===1){
+          var row=this.selectedRows[0]
+          this.$refs.DispatchWorkModalForm.show(row)
+        }
       }
+    }
     },
 
     onSelectChange(selectedRowKeys, selectedRows) {

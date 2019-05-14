@@ -40,7 +40,6 @@
   </div>
 </template>
 <script>
-import jsonp from 'fetch-jsonp'
 import querystring from 'querystring'
 import { alias } from 'ant-design-vue/es/icon/utils';
 let timeout
@@ -58,21 +57,21 @@ function fetch(value, callback) {
       code: 'utf-8',
       q: value
     })
-    jsonp(`https://suggest.taobao.com/sug?${str}`)
-      .then(response => response.json())
-      .then(d => {
-        if (currentValue === value) {
-          const result = d.result
-          const data = []
-          result.forEach(r => {
-            data.push({
-              value: r[0],
-              text: r[0]
-            })
-          })
-          callback(data)
-        }
-      })
+    // jsonp(`https://suggest.taobao.com/sug?${str}`)
+    //   .then(response => response.json())
+    //   .then(d => {
+    //     if (currentValue === value) {
+    //       const result = d.result
+    //       const data = []
+    //       result.forEach(r => {
+    //         data.push({
+    //           value: r[0],
+    //           text: r[0]
+    //         })
+    //       })
+    //       callback(data)
+    //     }
+    //   })
   }
 
   timeout = setTimeout(fake, 300)
