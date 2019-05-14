@@ -42,11 +42,11 @@ const result = {
     {
       width: 180,
       title: '计划生产',
-      dataIndex: '计划生产数量'
+      dataIndex: '计划数量'
     }, {
       width: 180,
       title: '汇报数量',
-      dataIndex: '汇报数量'
+      dataIndex: '完成数量'
     },
     {
       width: 180,
@@ -90,60 +90,84 @@ const result = {
   }],
 
   columnsMT: [
+    // {
+    //   title: '序号',
+    //   width: 80,
+    //   dataIndex: 'index',
+    //   scopedSlots: { customRender: 'serial' }
+    // },
     {
-      title: '序号',
-      width: 80,
-      dataIndex: 'index',
-      scopedSlots: { customRender: 'serial' }
-    }, {
+      key: '日期',
       title: '日期',
-      width: 120,
+      width: 160,
       dataIndex: '日期'
     },
     {
-      width: 120,
+      key: '机台',
+      width: 160,
       title: '机台/设备',
-      dataIndex: '机台/设备',
-      scopedSlots: { customRender: '机台/设备' }
+      dataIndex: '机台',
+      scopedSlots: { customRender: '机台' }
     },
     {
-      width: 120,
+      key: '操作员',
+      width: 160,
       title: '操作员',
       dataIndex: '操作员',
       scopedSlots: { customRender: '操作员' }
     },
     {
-      width: 120,
+      key: '班次',
+      width: 160,
       title: '班次',
-      dataIndex: '班次',
+      dataIndex: '班组',
       scopedSlots: { customRender: '班次' }
     },
     {
-      width: 120,
+      key: '派工数量',
+      width: 160,
       title: '派工数量',
       dataIndex: '派工数量',
       scopedSlots: { customRender: '派工数量' }
     },
     {
-      width: 120,
+      key: '派工单号',
+      width: 160,
       title: '派工单号',
-      dataIndex: '派工单号'
+      dataIndex: 'fmoBillNo'
     },
     {
-      width: 120,
+      key: '派单时间',
+      width: 160,
       title: '派单时间',
       dataIndex: '派单时间'
     },
     {
-      width: 120,
+      key: '计划员',
+      width: 160,
       title: '计划员',
       dataIndex: '计划员'
     }, {
-      width: 120,
+      key: '备注',
+      width: 160,
       title: '备注',
       dataIndex: '备注'
     }, {
-      width: 120,
+      // colSpan: 0,
+      key: 'fSrcID',
+      width: 160,
+      title: 'fSrcID',
+      dataIndex: 'fSrcID'
+    },
+    {
+      // colSpan: 0,
+      key: 'fmoInterID',
+      width: 160,
+      title: 'fmoInterID',
+      dataIndex: 'fmoInterID'
+    }, {
+      key: '1',
+      width: 160,
       title: '操作',
       dataIndex: 'operation',
       scopedSlots: { customRender: 'operation' }

@@ -33,8 +33,20 @@
 <script>
     export default {
         props: {
-    text: String,
-  },
+           text:{
+             type:Number,
+              default:1
+           },
+           IntVue:{
+             type:Number,
+              default:1
+           },
+          //  valuesInt:{
+          //    type: Number,
+          //    default: 1,
+          //  },
+
+         },
   data () {
     return {
       value: this.text,

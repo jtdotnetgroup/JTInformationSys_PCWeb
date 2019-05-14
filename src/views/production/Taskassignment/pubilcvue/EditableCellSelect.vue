@@ -17,7 +17,7 @@
     @change="handleChange"
     :notFoundContent="null"
   >
-    <a-select-option v-for="d in data" :key="d.value">{{d.text}}</a-select-option>
+    <a-select-option v-for="d in data" :key="d.value">{{d.value}}</a-select-option>
   </a-select>
       
       <a-icon
@@ -80,7 +80,11 @@ function fetch(value, callback) {
 
 export default {
   props: {
-    text: String
+    text: {
+      type:Number,
+       default: 1
+    }
+
   },
   data() {
     return {
