@@ -40,6 +40,7 @@
   </div>
 </template>
 <script>
+// import jsonp from 'fetch-jsonp'
 import querystring from 'querystring'
 import { alias } from 'ant-design-vue/es/icon/utils';
 let timeout

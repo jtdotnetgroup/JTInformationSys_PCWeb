@@ -70,13 +70,13 @@ export default {
           this.dataSource.forEach(row => {
             data.push({
               fid:row.fid,
-              fSrcID:row.fSrcID,
+              fSrcID:this.DailyData.fid,
               fShift:row.班次,
               fMachineID:row.设备,
               fWorkCenterID:0,
               fCommitAuxQty:row.派工数量,
               fWorker:row.操作员,
-              fmoBillNo:this.DailyData.fmoBillNo,
+              fmoBillNo:this.DailyData.任务单号,
               fmoInterID:this.DailyData.fmoInterID
             })
           });

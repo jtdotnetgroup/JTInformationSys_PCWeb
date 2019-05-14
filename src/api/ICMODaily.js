@@ -7,3 +7,11 @@ export function ICMODailyGetAll (params) {
     params: params
   })
 }
+
+export function GetDailyListByFMOInterID (params) {
+  return axios({
+    url: '/api/services/app/ICMODaily/GetDailyListByFMOInterID',
+    method: 'get',
+    params: params
+  })
+}
