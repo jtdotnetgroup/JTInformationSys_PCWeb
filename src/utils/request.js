@@ -13,7 +13,7 @@ import message from 'ant-design-vue/es/message'
 
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: 'http://192.168.1.168:21021',
+  baseURL: 'http://localhost:21021',
   timeout: 40000 // 请求超时时间
 })
 
