@@ -14,7 +14,6 @@ const dataExample = {
 }
 
 export const editColumns = [
-
   '计划数量'
 ]
 
