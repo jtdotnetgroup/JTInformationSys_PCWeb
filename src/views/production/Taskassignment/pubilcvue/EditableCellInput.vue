@@ -34,18 +34,11 @@
     export default {
         props: {
            text:{
-             type:Number,
-              default:1
+             type:String|Number,
+         
            },
-           IntVue:{
-             type:Number,
-              default:1
-           },
-          //  valuesInt:{
-          //    type: Number,
-          //    default: 1,
-          //  },
-
+          
+    
          },
   data () {
     return {
@@ -92,18 +85,18 @@
   cursor: pointer;
 }
 
-.editable-cell-icon {
+/* .editable-cell-icon {
   line-height: 18px;
   display: none;
-}
+} */
 
 .editable-cell-icon-check {
   line-height: 28px;
 }
 
-.editable-cell:hover .editable-cell-icon {
+/* .editable-cell:hover .editable-cell-icon {
   display: inline-block;
-}
+} */
 
 .editable-cell-icon:hover,
 .editable-cell-icon-check:hover {

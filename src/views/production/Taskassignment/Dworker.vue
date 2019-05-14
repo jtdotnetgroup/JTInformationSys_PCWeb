@@ -12,7 +12,7 @@
 
     <!-- 表格 -->
     <a-table
-       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
       :dataSource="dataTable"
       :columns="columnsjs"
       :scroll="{ x: 3100, y: 500 }"
@@ -22,9 +22,8 @@
       rowKey="计划单号"
     >
       <template slot="serial" slot-scope="indexname">
-      <span>{{dataTable.indexOf(indexname)+1}}</span>
-   
-       </template>
+        <span>{{dataTable.indexOf(indexname)+1}}</span>
+      </template>
     </a-table>
 
     <div id="button">
@@ -35,7 +34,7 @@
 
     <a-table id="cardd" bordered :columns="columnsMX" :pagination="false"></a-table>
 
-     <div >
+    <div>
       <a-modal
         title="新增/维护"
         v-model="visible"
@@ -54,29 +53,28 @@
           :dataSource="dataSource"
           :columns="columnsMT"
           :pagination="false"
-          :scroll="{ x: 2000, y: 500 }"    
+          :scroll="{ x: 2000, y: 500 }"
           :loading="taskschedulLoadings"
           rowKey="fSrcID"
         >
-
-          
-         <template slot="机台" slot-scope="text, record">
-            <EditableCell :text="text" @change="onCellChange(record.dataIndex, '机台', $event)"/>
+          <template slot="机台" slot-scope="text, record">
+            <EditableCell :text="text" @change="onCellChange(record.机台, '机台', $event)"/>
           </template>
 
-            <template slot="派工数量" slot-scope="text, record">
-            <EditableCellInput :text="text" @change="onCellChange(record.dataIndex, '派工数量', $event)"/>
-          </template> 
+          <template slot="派工数量" slot-scope="text, record">
+            <EditableCellInput
+              :text="text"
+              @change="onCellChange(record.派工数量, '派工数量', $event)"
+            />
+          </template>
 
-           <template slot="操作员" slot-scope="text, record">
-            <EditableCell :text="text" @change="onCellChange(record.dataIndex, '操作员', $event)"/>
-          </template> 
+          <template slot="操作员" slot-scope="text, record">
+            <EditableCell :text="text" @change="onCellChange(record.操作员, '操作员', $event)"/>
+          </template>
 
-           
           <template slot="班次" slot-scope="text, record">
-            <EditableCellInput :text="text" @change="onCellChange(record.key, '班次', $event)"/>
+            <EditableCellInput :text="text" @change="onCellChange(record.班次, '班次', $event)"/>
           </template>
-
 
           <template slot="operation" slot-scope="text, record">
             <a-popconfirm
@@ -89,30 +87,27 @@
           </template>
         </a-table>
       </a-modal>
-    </div> 
+    </div>
 
     <!-- <modalt ref="taskDispatch"/> -->
-
-    
   </a-card>
 </template>
 
 <script>
 import buttons from './js/buttons'
 import tableheader from './js/tableheader'
+
 import { getRoleList, getServiceList } from '@/api/manage'
-import {  GetDailyAll,GetDispBillAll,CreateAll } from '@/api/test/get'
+import { GetDailyAll, GetDispBillAll, CreateAll } from '@/api/test/get'
 
 export default {
   components: {
     // @是根目录 。。是上一级 。是当前目录
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
     pagination: () => import('@/JtComponents/Pagination'),
-    // modealt: () => import('./pubilcvue/ModalT'),
-
+  
     EditableCell: () => import('./pubilcvue/EditableCellSelect'),
     EditableCellInput: () => import('./pubilcvue/EditableCellInput')
-    // EditableCellInput: () => import('./pubilcvue/EditableCellInput')
   },
   data() {
     return {
@@ -128,8 +123,8 @@ export default {
       columnsMT: tableheader.columnsMT,
       // 高级搜索 展开/关闭
       advanced: false,
-       selectedRowKeys: [],
-      selectedRows:[],
+      selectedRowKeys: [],
+      selectedRows: [],
 
       queryParam: {},
       maskClosable: false,
@@ -139,39 +134,10 @@ export default {
       dataTable: [],
 
       columnsjs: tableheader.columns,
-      columnsMX: tableheader.columnsMX,  
-      taskschedulLoading:false,
-      taskschedulLoadings:false,
-      dataSource:[],
-    //   dataSource: [
-    //     {
-    //       key: '0',
-    //       日期: 'Edward King 0',
-    //       '机台/设备': '32',
-    //       操作员: 'London, Park Lane no. 0',
-    //       班次: 'London, Park Lane no. 0',
-    //       派工数量: 'London, Park Lane no. 0',
-    //       派工单号: 'London, Park Lane no. 0',
-    //       派单时间: '2019-5-13',
-    //       计划员: 'London, Park Lane no. 0',
-    //       备注: 'London, Park Lane no. 0'
-    //     },
-    //     {
-    //       key: '1',
-    //       日期: 'Edward King 0',
-    //       '机台/设备': 'London, Park Lane no. 0',
-    //       操作员: '男',
-    //       班次: '男d',
-    //       派工数量: 'London, Park Lane no. 0',
-    //       派工单号: 'London, Park Lane no. 0',
-    //       派单时间: '2019-5-13',
-    //       计划员: 'London, Park Lane no. 0',
-    //       备注: 'London, Park Lane no. 0'
-    //     }
-    //   ],
-    //   count: 2
-      
-      
+      columnsMX: tableheader.columnsMX,
+      taskschedulLoading: false,
+      taskschedulLoadings: false,
+      dataSource: []
     }
   },
 
@@ -179,14 +145,12 @@ export default {
   created() {
     getRoleList({ t: new Date() }), this.pageData()
   },
- 
-  methods: {
-   
 
+  methods: {
     //查询分页的方法
     pageData() {
-     this.taskschedulLoading=true
-        var params = {
+      this.taskschedulLoading = true
+      var params = {
         SkipCount: this.pagination.current - 1,
         MaxResultCount: this.pagination.pageSize
       }
@@ -199,16 +163,14 @@ export default {
           if (data.items.length == 0) {
             return
           }
-          this.taskschedulLoading=false
+          this.taskschedulLoading = false
           _this.pagination.total = data.totalCount
           console.log(data)
           _this.dataTable = data.items
-           
         })
         .catch(function(error) {
-           this.taskschedulLoading=false
+          this.taskschedulLoading = false
           console.log(error)
-          
         })
     },
 
@@ -217,9 +179,6 @@ export default {
       this.pageData()
     },
 
-    
-
-    
     hideModal() {
       this.visible = false
     },
@@ -232,69 +191,65 @@ export default {
       this.advanced = !this.advanced
     },
 
-     handleBtnClickModal(val) {
+    handleBtnClickModal(val) {
       if (val == '新增') {
         const { count, dataSource } = this
         const newData = {
-          日期:this.dataSource[dataSource.length-1].日期,
-          机台: '',
-          机台: '',
-          操作员: '',
-          派工数量:'',
-          fSrcID:this.dataSource[dataSource.length-1].fSrcID,
-          fmoBillNo:this.dataSource[dataSource.length-1].fmoBillNo,
-          fmoInterID:this.dataSource[dataSource.length-1].fmoInterID,
-          
-
+          日期: this.dataSource[dataSource.length - 1].日期,
+          FShift: 0,
+          FMachineID: 0,
+          FWorker: '',
+          FCommitAuxQty: 0,
+          FSrcID: this.dataSource[dataSource.length - 1].fSrcID,
+          FMOBillNo: this.dataSource[dataSource.length - 1].fmoBillNo,
+          FMOInterID: this.dataSource[dataSource.length - 1].fmoInterID
         }
         this.dataSource = [...dataSource, newData]
         this.count = count + 1
+      } else if (val == '保存') {
+        alert('保存')
+
+        console.log(this.dataSource)
+        //  var params = {
+        //   details:this.dataSource
+        //  }
+
+        // CreateAll(params)
+        //   .then(res => {
+        //       console.log(res)
+        //   })
+        //   .catch(function(error) {
+        //     console.log(error)
+        //   })
       }
-      else if(val == '保存'){
-
-            alert("保存")
-
-        
-       var params = {
-        details:this.dataSource
-       }
-
-      CreateAll(params)
-        .then(res => {         
-            console.log(res)      
-        })
-        .catch(function(error) {
-          console.log(error)
-        })
-        }
     },
 
-     onDelete(key) {
-         alert(key)
+    onDelete(key) {
+      alert(key)
       const dataSource = [...this.dataSource]
       this.dataSource = dataSource.filter(item => item.key !== key)
     },
 
     onCellChange(key, dataIndex, value) {
+    
       const dataSource = [...this.dataSource]
-      const target = dataSource.find(item => item.key === key)
+
+      const target = dataSource.find(item => item.dataIndex === dataIndex)
       if (target) {
         target[dataIndex] = value
         this.dataSource = dataSource
       }
     },
- 
-    
-   _loadData(FDates){
 
-    this.taskschedulLoadings=true
-        var params = {
+    _loadData(FDates) {
+      this.taskschedulLoadings = true
+      var params = {
         SkipCount: this.pagination.current - 1,
         MaxResultCount: this.pagination.pageSize,
-        FDate:FDates
+        FDate: FDates
       }
 
-       var _this = this
+      var _this = this
       GetDispBillAll(params)
         .then(res => {
           _this.dataSource = []
@@ -304,41 +259,38 @@ export default {
           }
           //_this.pagination.total = data.totalCount
           console.log(data)
-          _this.dataSource = data.items
-           this.taskschedulLoadings=false
+
+      
+
+          _this.dataSource =data.items
+          this.taskschedulLoadings = false
+
+
+          
+
+
+
         })
         .catch(function(error) {
           console.log(error)
-           this.taskschedulLoadings=false
+          this.taskschedulLoadings = false
         })
-
-
-
-   },
-   
+    },
 
     handleBtnClick(val) {
       if (val == '查询') {
-      } 
-      else if (val == '派工') {
-      
-         if(this.selectedRowKeys.length===1)      
-           this.visible = true
+      } else if (val == '派工') {
+        if (this.selectedRowKeys.length === 1) this.visible = true
 
-            this._loadData(this.selectedRows[0].日期)
-        }
-        
-      },
+        this._loadData(this.selectedRows[0].日期)
+      }
+    },
 
-      onSelectChange (selectedRowKeys, selectedRows) {
-
+    onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
       console.log(selectedRows)
-    },
-
-
-     
+    }
   }
 }
 </script>
@@ -351,6 +303,4 @@ export default {
   margin-top: 10px;
   background-color: #e6f7ff;
 }
-
-
 </style>

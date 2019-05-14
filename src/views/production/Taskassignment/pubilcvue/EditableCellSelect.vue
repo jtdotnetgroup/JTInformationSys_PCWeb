@@ -81,10 +81,8 @@ function fetch(value, callback) {
 export default {
   props: {
     text: {
-      type:Number,
-       default: 1
+      type:String|Number,
     }
-
   },
   data() {
     return {
@@ -138,18 +136,18 @@ export default {
   cursor: pointer;
 }
 
-.editable-cell-icon {
+/* .editable-cell-icon {
   line-height: 18px;
   display: none;
-}
+} */
 
 .editable-cell-icon-check {
   line-height: 28px;
 }
 
-.editable-cell:hover .editable-cell-icon {
+/* .editable-cell:hover .editable-cell-icon {
   display: inline-block;
-}
+} */
 
 .editable-cell-icon:hover,
 .editable-cell-icon-check:hover {
