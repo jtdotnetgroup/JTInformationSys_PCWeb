@@ -264,6 +264,8 @@ export default {
 .editable-cell-input-wrapper,
 .editable-cell-text-wrapper {
   padding-right: 24px;
+
+  
 }
 
 .editable-cell-text-wrapper {
