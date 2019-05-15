@@ -15,16 +15,14 @@
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
       :dataSource="dataTable"
       :columns="columnsjs"
+      :scroll="{ x: 3100, y: 500 }"
       :loading="taskschedulLoading"
       bordered
-      onRow="{this.onClickRow}"
+      
       :pagination="false"
       rowKey="计划单号"
       :customRow="OnClickJH"
     >
-      <template slot="serial" slot-scope="text">
-        <span>{{dataTable.indexOf(text)+1}}</span>
-      </template>
       <!-- <template slot="serial" slot-scope="indexname">
      <span  >{{dataTable.indexOf(indexname)+1}}</span>
       </template>-->
@@ -38,8 +36,7 @@
 
     <a-table id="cardd" bordered :columns="columnsMX" :pagination="false"></a-table>
 
-    <DispatchWorkModalForm ref="DispatchWorkModalForm"/>
-    <!-- <div>
+    <div>
       <a-modal
         title="新增/维护"
         v-model="visible"
@@ -89,7 +86,7 @@
           </template>
         </a-table>
       </a-modal>
-    </div>-->
+    </div>
 
     <!-- <modalt ref="taskDispatch"/> -->
   </a-card>
@@ -98,13 +95,10 @@
 <script>
 import buttons from './js/buttons'
 import tableheader from './js/tableheader'
-import { columns as mainColumns } from './js/tableheader'
 import { columns } from './js/tablehhe'
 
 import { getRoleList, getServiceList } from '@/api/manage'
-import { GetDailyAll, GetDispBillAll, CreateAll, GetDaily } from '@/api/test/get'
-import{ICMODailyGetAll} from '@/api/ICMODaily'
-import { constants } from 'crypto'
+import { GetDailyAll, GetDispBillAll, CreateAll } from '@/api/test/get'
 
 export default {
   components: {
@@ -113,8 +107,7 @@ export default {
     pagination: () => import('@/JtComponents/Pagination'),
 
     EditableCell: () => import('./pubilcvue/EditableCellSelect'),
-    EditableCellInput: () => import('./pubilcvue/EditableCellInput'),
-    DispatchWorkModalForm: () => import('./DispatchWorkModalForm')
+    EditableCellInput: () => import('./pubilcvue/EditableCellInput')
   },
   data() {
     return {
@@ -140,7 +133,7 @@ export default {
 
       dataTable: [],
 
-      columnsjs: mainColumns,
+      columnsjs: tableheader.columns,
 
       columnsMX: tableheader.columnsMX,
       taskschedulLoading: false,
@@ -151,83 +144,85 @@ export default {
       dataTableArrget: []
     }
   },
-  mounted() {
-    this._LoadMainData()
-  },
 
   //一开始就执行的方法
+  created() {
+    this.pageData()
+  },
+
+  // onClickRow = (record) => {
+  //   return {
+  //     onClick: () => {
+  //       alert("单击反复")
+  //     },
+  //   };
+  // },
+
   methods: {
-    // //查询分页的方法
-    // pageData() {
-    //   this.taskschedulLoading = true
-    //   var params = {
-    //     SkipCount: this.pagination.current - 1,
-    //     MaxResultCount: this.pagination.pageSize
-    //   }
 
-    //   var _this = this
-    //   GetDailyAll(params)
-    //     .then(res => {
-    //       _this.dataTable = []
-    //       var data = res.result
-    //       if (data.items.length == 0) {
-    //         return
-    //       }
-    //       this.taskschedulLoading = false
-    //       _this.pagination.total = data.totalCount
-    //       console.log(data)
 
-    //      //服务端数据库
-    //      _this.dataTableArry=data.items;
-    //     var result = []
-    //     var index = 0
-    //      data.items.forEach(item => {
-    //       index = index + 1
-    //       var datasss = {
-    //       key:index,
-    //       indexname:index,
-    //       日期: item.日期,
-    //       机台: item.机台,
-    //       班组: item.班组,
-    //       操作员: item.操作员,
-    //       派工数量: item.派工数量,
-    //       完成数量: item.完成数量,
-    //       合格数量: item.合格数量,
-    //       计划数量: item.计划数量,
-    //       任务单号: item.fmoBillNo
-    //     }
-    //       result.push(datasss)
-    //      });
+    OnClickJH(){(record)=>{
+      return {
 
-    //     // // console.log(dataTableArry)
+        on: { 
+        click: () => {
+          alert("单击")
+        },       // 点击行
+        
+      },
 
-    //     //  console.log(result)
-    //       _this.dataTable=data.items;
+      }
 
-    //     })
-    //     .catch(function(error) {
-    //       this.taskschedulLoading = false
-    //       console.log(error)
-    //     })
-    // },
-
-    _LoadMainData() {
-      const params = {
+    }
+    },
+    //查询分页的方法
+    pageData() {
+      this.taskschedulLoading = true
+      var params = {
         SkipCount: this.pagination.current - 1,
         MaxResultCount: this.pagination.pageSize
       }
-      //后端获取数据
-      ICMODailyGetAll(params)
-        .then(res => {
-          const result = res.result
 
-          if (result && result.items.length > 0) {
-            //绑定到表格上
-            this.dataTable = result.items
+      var _this = this
+      GetDailyAll(params)
+        .then(res => {
+          _this.dataTable = []
+          var data = res.result
+          if (data.items.length == 0) {
+            return
           }
+          this.taskschedulLoading = false
+          _this.pagination.total = data.totalCount
+          console.log(data)
+
+          //服务端数据库
+          //  _this.dataTableArry=data.items;
+          // var result = []
+          // var index = 0
+          //  data.items.forEach(item => {
+          //   index = index + 1
+          //   var datasss = {
+          //   key:index,
+          //   indexname:index,
+          //   日期: item.日期,
+          //   机台: item.机台,
+          //   班组: item.班组,
+          //   操作员: item.操作员,
+          //   派工数量: item.派工数量,
+          //   完成数量: item.完成数量,
+          //   合格数量: item.合格数量,
+          //   计划数量: item.计划数量,
+          //   任务单号: item.fmoBillNo
+          // }
+          //   result.push(datasss)
+          //  });
+          // // console.log(dataTableArry)
+          //  console.log(result)
+          _this.dataTable = data.items
         })
-        .catch(err => {
-          console.log(err)
+        .catch(function(error) {
+          this.taskschedulLoading = false
+          console.log(error)
         })
     },
 
@@ -250,43 +245,51 @@ export default {
 
     handleBtnClickModal(val) {
       if (val == '新增') {
-        const { count, dataSource } = this
-
-        if (dataSource.length == 0) {
-          const newData = {
-            日期: '',
-            FShift: 0,
-            FMachineID: 0,
-            FWorker: '',
-            FCommitAuxQty: 0,
-            FSrcID: '',
-            FMOBillNo: '',
-            FMOInterID: ''
-          }
-          this.dataSource = [...dataSource, newData]
-        } else {
-          const newData = {
-            日期: this.dataSource[dataSource.length - 1].日期,
-            FShift: 0,
-            FMachineID: 0,
-            FWorker: '',
-            FCommitAuxQty: 0,
-            FSrcID: this.dataSource[dataSource.length - 1].fSrcID,
-            FMOBillNo: this.dataSource[dataSource.length - 1].fmoBillNo,
-            FMOInterID: this.dataSource[dataSource.length - 1].fmoInterID
-          }
-          this.dataSource = [...dataSource, newData]
+        const { count, dataSource, selectedRows } = this
+        const newData = {
+          // 日期: selectedRows[0].日期,
+          // FShift: 0,
+          // FMachineID: 1,
+          // FWorker: '',
+          // FCommitAuxQty: 0,
+          // FSrcID: '',
+          // FMOBillNo: selectedRows[0].fmoBillNo,
+          // FMOInterID: selectedRows[0].fmoInterID
+          日期: selectedRows[0].日期,
+          机台: 0,
+          班组: 0,
+          操作员: '',
+          派工数量: 0,
+          完成数量: 0,
+          合格数量: 0,
+          计划数量: 0,
+          任务单号: selectedRows[0].fmoBillNo
         }
-
+        this.dataSource = [...dataSource, newData]
         this.count = count + 1
       } else if (val == '保存') {
         alert('保存')
 
-        console.log(this.dataSource)
-        var params = {
-          details: this.dataSource
+        var data = {
+          // fmoInterID: 123,
+          // fmoBillNo: 'dddd',
+          dailies: []
         }
-        CreateAll(params)
+        //添加明细
+        this.dataSource.forEach(row => {
+          data.dailies.push({
+            fSrcID: row.fSrcID,
+            fShift:  row.fShift,
+            fMachineID: row.fmoInterID,
+            fWorkCenterID: row.fWorkCenterID,
+            fCommitAuxQty: row.派工数量,
+            fWorker: row.fWorker,
+            fmoBillNo: row.fmoBillNo,
+            fmoInterID: row.fmoInterID
+          })
+        })
+
+        CreateAll(data)
           .then(res => {
             console.log(res)
           })
@@ -303,20 +306,28 @@ export default {
     },
 
     onCellChange(key, dataIndex, value) {
-      //后端返回的数据集
-      const dataTableArrget = [...this.dataTableArrget]
-      //动态生成的数据
       const dataSource = [...this.dataSource]
-      console.log(dataTableArrget)
-      //判断是否已存在数据
-      const dstarget = dataTableArrget.find(item => item.dataIndex === dataIndex)
-      //
-      const target = dataSource.find(item => item.key === dataIndex)
+
+      const target = dataSource.find(item => item.key === key.key)
 
       if (target) {
         target[dataIndex] = value
         this.dataSource = dataSource
       }
+
+      console.log(this.dataSource)
+
+      // const dataTableArrget = [...this.dataTableArrget]
+      // const dataSource = [...this.dataSource]
+      // console.log(dataTableArrget)
+      // const dstarget = dataTableArrget.find(item => item.dataIndex === dataIndex)
+
+      // const target = dataSource.find(item => item.key === dataIndex)
+
+      // if (target) {
+      //   target[dataIndex] = value
+      //   this.dataSource = dataSource
+      // }
     },
 
     _loadData(fSrcID) {
@@ -336,29 +347,29 @@ export default {
           if (data.items.length == 0) {
             return
           }
-          _this.dataTableArrget.push(data.items)
 
-          var result = []
-          var index = 0
-          data.items.forEach(item => {
-            index = index + 1
-            var datasss = {
-              key: index,
-              indexname: index,
-              日期: this.$moment(item.日期).format('YYYY-MM-DD'),
-              机台: item.机台,
-              班组: item.班组,
-              操作员: item.操作员,
-              派工数量: item.派工数量,
-              完成数量: item.完成数量,
-              合格数量: item.合格数量,
-              计划数量: item.计划数量,
-              任务单号: item.fmoBillNo
-            }
-            result.push(datasss)
-          })
+          //   _this.dataTableArrget.push(data.items)
+          //    var result = []
+          //   var index = 0
+          //   data.items.forEach(item => {
+          //   index = index + 1
+          //   var datasss = {
+          //   key:index,
+          //   indexname:index,
+          //   日期: item.日期,
+          //   机台: item.机台,
+          //   班组: item.班组,
+          //   操作员: item.操作员,
+          //   派工数量: item.派工数量,
+          //   完成数量: item.完成数量,
+          //   合格数量: item.合格数量,
+          //   计划数量: item.计划数量,
+          //   任务单号: item.fmoBillNo
+          // }
+          //   result.push(datasss)
+          //  });
 
-          _this.dataSource = result
+          _this.dataSource = data.items
         })
         .catch(function(error) {
           console.log(error)
@@ -367,24 +378,10 @@ export default {
     },
 
     handleBtnClick(val) {
-      //   if (val == '查询') {
-      //   } else if (val == '派工') {
-      // if (this.selectedRowKeys.length === 1)
-      //     console.log(this.selectedRows[0])
-      //  this.visible = true
-      //  const dataTableArry = [...this.dataTableArry]
-      //  const dstarget = dataTableArry.find(item =>item.日期  === this.selectedRows[0].日期)
-      //   console.log(dstarget)
-      //     this._loadData(dstarget.fSrcID)
-      //   }
-
-      switch (val) {
-        case '派工': {
-          if (this.selectedRows.length === 1) {
-            var row = this.selectedRows[0]
-            this.$refs.DispatchWorkModalForm.show(row)
-          }
-        }
+      if (val == '查询') {
+      } else if (val == '派工') {
+        if (this.selectedRowKeys.length === 1) this.visible = true
+        this._loadData(this.selectedRows[0].fSrcID)
       }
     },
 
