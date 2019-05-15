@@ -155,7 +155,8 @@ export default {
       scroll:{
         x:3100,y:350
       },
-      taskschedulLoading:false
+      taskschedulLoading: false,
+      test:''
     }
   },
   mounted() {
