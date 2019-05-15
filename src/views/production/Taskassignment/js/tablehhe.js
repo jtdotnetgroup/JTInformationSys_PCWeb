@@ -15,7 +15,6 @@ const dataExample = {
 }
 
 export const editColumns = [
-
   '序号'
 ]
 
