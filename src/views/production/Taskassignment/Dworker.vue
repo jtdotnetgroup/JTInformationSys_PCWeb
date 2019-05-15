@@ -18,15 +18,14 @@
       :scroll="{ x: 3100, y: 500 }"
       :loading="taskschedulLoading"
       bordered
-      onRow={this.onClickRow}
+      
       :pagination="false"
       rowKey="计划单号"
+      :customRow="OnClickJH"
     >
       <!-- <template slot="serial" slot-scope="indexname">
      <span  >{{dataTable.indexOf(indexname)+1}}</span>
-      </template> -->
-
-    
+      </template>-->
     </a-table>
 
     <div id="button">
@@ -65,10 +64,7 @@
           </template>
 
           <template slot="派工数量" slot-scope="text, record">
-            <EditableCellInput
-              :text="text"
-              @change="onCellChange(record, '派工数量', $event)"
-            />
+            <EditableCellInput :text="text" @change="onCellChange(record, '派工数量', $event)"/>
           </template>
 
           <template slot="操作员" slot-scope="text, record">
@@ -76,7 +72,7 @@
           </template>
 
           <template slot="班组" slot-scope="text, record">
-            <EditableCellInput :text="text" @change="onCellChange(record.班组, '班组', $event)"/>
+            <EditableCellInput :text="text" @change="onCellChange(record, '班组', $event)"/>
           </template>
 
           <template slot="operation" slot-scope="text, record">
@@ -99,20 +95,17 @@
 <script>
 import buttons from './js/buttons'
 import tableheader from './js/tableheader'
-import {columns} from './js/tablehhe'
+import { columns } from './js/tablehhe'
 
 import { getRoleList, getServiceList } from '@/api/manage'
 import { GetDailyAll, GetDispBillAll, CreateAll } from '@/api/test/get'
 
 export default {
-
-
-
   components: {
     // @是根目录 。。是上一级 。是当前目录
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
     pagination: () => import('@/JtComponents/Pagination'),
-  
+
     EditableCell: () => import('./pubilcvue/EditableCellSelect'),
     EditableCellInput: () => import('./pubilcvue/EditableCellInput')
   },
@@ -147,20 +140,41 @@ export default {
       taskschedulLoadings: false,
       dataSource: [],
 
-      dataTableArry:[],
-      dataTableArrget:[]
-
-
-
+      dataTableArry: [],
+      dataTableArrget: []
     }
   },
 
   //一开始就执行的方法
   created() {
-    getRoleList({ t: new Date() }), this.pageData()
+    this.pageData()
   },
 
+  // onClickRow = (record) => {
+  //   return {
+  //     onClick: () => {
+  //       alert("单击反复")
+  //     },
+  //   };
+  // },
+
   methods: {
+
+
+    OnClickJH(){(record)=>{
+      return {
+
+        on: { 
+        click: () => {
+          alert("单击")
+        },       // 点击行
+        
+      },
+
+      }
+
+    }
+    },
     //查询分页的方法
     pageData() {
       this.taskschedulLoading = true
@@ -180,34 +194,31 @@ export default {
           this.taskschedulLoading = false
           _this.pagination.total = data.totalCount
           console.log(data)
-         
-         //服务端数据库
-         _this.dataTableArry=data.items;
-        var result = []
-        var index = 0
-         data.items.forEach(item => {
-          index = index + 1
-          var datasss = {
-          key:index,
-          indexname:index,
-          日期: item.日期,
-          机台: item.机台,
-          班组: item.班组,
-          操作员: item.操作员,
-          派工数量: item.派工数量,
-          完成数量: item.完成数量,
-          合格数量: item.合格数量,
-          计划数量: item.计划数量,
-          任务单号: item.fmoBillNo
-        }          
-          result.push(datasss)
-         });
- 
-        // // console.log(dataTableArry)      
 
-        //  console.log(result)      
-          _this.dataTable=result;
-
+          //服务端数据库
+          //  _this.dataTableArry=data.items;
+          // var result = []
+          // var index = 0
+          //  data.items.forEach(item => {
+          //   index = index + 1
+          //   var datasss = {
+          //   key:index,
+          //   indexname:index,
+          //   日期: item.日期,
+          //   机台: item.机台,
+          //   班组: item.班组,
+          //   操作员: item.操作员,
+          //   派工数量: item.派工数量,
+          //   完成数量: item.完成数量,
+          //   合格数量: item.合格数量,
+          //   计划数量: item.计划数量,
+          //   任务单号: item.fmoBillNo
+          // }
+          //   result.push(datasss)
+          //  });
+          // // console.log(dataTableArry)
+          //  console.log(result)
+          _this.dataTable = data.items
         })
         .catch(function(error) {
           this.taskschedulLoading = false
@@ -234,50 +245,53 @@ export default {
 
     handleBtnClickModal(val) {
       if (val == '新增') {
-        const { count, dataSource } = this
-
-
-        if(dataSource.length==0){
+        const { count, dataSource, selectedRows } = this
         const newData = {
-          日期: '',
-          FShift: 0,
-          FMachineID: 0,
-          FWorker: '',
-          FCommitAuxQty: 0,
-          FSrcID: '',
-          FMOBillNo: '',
-          FMOInterID: ''
-           }
-           this.dataSource = [...dataSource, newData]
-
-        }else{
-        const newData = {
-          日期: this.dataSource[dataSource.length - 1].日期,
-          FShift: 0,
-          FMachineID: 0,
-          FWorker: '',
-          FCommitAuxQty: 0,
-          FSrcID: this.dataSource[dataSource.length - 1].fSrcID,
-          FMOBillNo: this.dataSource[dataSource.length - 1].fmoBillNo,
-          FMOInterID: this.dataSource[dataSource.length - 1].fmoInterID
-           }
-             this.dataSource = [...dataSource, newData]
+          // 日期: selectedRows[0].日期,
+          // FShift: 0,
+          // FMachineID: 1,
+          // FWorker: '',
+          // FCommitAuxQty: 0,
+          // FSrcID: '',
+          // FMOBillNo: selectedRows[0].fmoBillNo,
+          // FMOInterID: selectedRows[0].fmoInterID
+          日期: selectedRows[0].日期,
+          机台: 0,
+          班组: 0,
+          操作员: '',
+          派工数量: 0,
+          完成数量: 0,
+          合格数量: 0,
+          计划数量: 0,
+          任务单号: selectedRows[0].fmoBillNo
         }
-
-
-       
-      
+        this.dataSource = [...dataSource, newData]
         this.count = count + 1
       } else if (val == '保存') {
         alert('保存')
 
-       console.log(this.dataSource)
-         var params = {
-          details:this.dataSource
-         }
-        CreateAll(params)
+        var data = {
+          // fmoInterID: 123,
+          // fmoBillNo: 'dddd',
+          dailies: []
+        }
+        //添加明细
+        this.dataSource.forEach(row => {
+          data.dailies.push({
+            fSrcID: row.fSrcID,
+            fShift:  row.fShift,
+            fMachineID: row.fmoInterID,
+            fWorkCenterID: row.fWorkCenterID,
+            fCommitAuxQty: row.派工数量,
+            fWorker: row.fWorker,
+            fmoBillNo: row.fmoBillNo,
+            fmoInterID: row.fmoInterID
+          })
+        })
+
+        CreateAll(data)
           .then(res => {
-              console.log(res)
+            console.log(res)
           })
           .catch(function(error) {
             console.log(error)
@@ -292,32 +306,31 @@ export default {
     },
 
     onCellChange(key, dataIndex, value) {
-
-
-    
-      const dataTableArrget = [...this.dataTableArrget]
       const dataSource = [...this.dataSource]
-      console.log(dataTableArrget);
-      const dstarget = dataTableArrget.find(item =>item.dataIndex  === dataIndex)
 
-      const target = dataSource.find(item => item.key === dataIndex)
-
+      const target = dataSource.find(item => item.key === key.key)
 
       if (target) {
         target[dataIndex] = value
         this.dataSource = dataSource
       }
 
+      console.log(this.dataSource)
 
-      
+      // const dataTableArrget = [...this.dataTableArrget]
+      // const dataSource = [...this.dataSource]
+      // console.log(dataTableArrget)
+      // const dstarget = dataTableArrget.find(item => item.dataIndex === dataIndex)
 
+      // const target = dataSource.find(item => item.key === dataIndex)
 
-
-
+      // if (target) {
+      //   target[dataIndex] = value
+      //   this.dataSource = dataSource
+      // }
     },
 
     _loadData(fSrcID) {
-
       this.taskschedulLoadings = true
       var params = {
         SkipCount: this.pagination.current - 1,
@@ -328,37 +341,35 @@ export default {
       var _this = this
       GetDispBillAll(params)
         .then(res => {
-           this.taskschedulLoadings = false   
+          this.taskschedulLoadings = false
           _this.dataSource = []
           var data = res.result
           if (data.items.length == 0) {
             return
-          }    
-          _this.dataTableArrget.push(data.items)
+          }
 
-           var result = []
-          var index = 0
-          data.items.forEach(item => {
-          index = index + 1
-          var datasss = {
-          key:index,
-          indexname:index,
-          日期: item.日期,
-          机台: item.机台,
-          班组: item.班组,
-          操作员: item.操作员,
-          派工数量: item.派工数量,
-          完成数量: item.完成数量,
-          合格数量: item.合格数量,
-          计划数量: item.计划数量,
-          任务单号: item.fmoBillNo
-        }          
-          result.push(datasss)
-         });
+          //   _this.dataTableArrget.push(data.items)
+          //    var result = []
+          //   var index = 0
+          //   data.items.forEach(item => {
+          //   index = index + 1
+          //   var datasss = {
+          //   key:index,
+          //   indexname:index,
+          //   日期: item.日期,
+          //   机台: item.机台,
+          //   班组: item.班组,
+          //   操作员: item.操作员,
+          //   派工数量: item.派工数量,
+          //   完成数量: item.完成数量,
+          //   合格数量: item.合格数量,
+          //   计划数量: item.计划数量,
+          //   任务单号: item.fmoBillNo
+          // }
+          //   result.push(datasss)
+          //  });
 
-
-          _this.dataSource =result
-         
+          _this.dataSource = data.items
         })
         .catch(function(error) {
           console.log(error)
@@ -369,16 +380,8 @@ export default {
     handleBtnClick(val) {
       if (val == '查询') {
       } else if (val == '派工') {
-    if (this.selectedRowKeys.length === 1) 
-
-        console.log(this.selectedRows[0])
-
-     this.visible = true
-     const dataTableArry = [...this.dataTableArry]
-     const dstarget = dataTableArry.find(item =>item.日期  === this.selectedRows[0].日期)
-       
-      console.log(dstarget)
-        this._loadData(dstarget.fSrcID)
+        if (this.selectedRowKeys.length === 1) this.visible = true
+        this._loadData(this.selectedRows[0].fSrcID)
       }
     },
 
