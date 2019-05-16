@@ -1,7 +1,7 @@
 <template>
     <div>
-
-        <a-tree :treeData="organizations" defaultExpandAll>
+     
+          <a-tree   :treeData="organizations" defaultExpandAll @click="onButtonClick()">
          </a-tree>
 
     </div>
@@ -18,7 +18,15 @@
                 ]
             }
         },
+        methods: {
+            onButtonClick(){
+                this.$emit('btnClick');
+            }
+        },
         
+
+
+
     }
 </script>
 
