@@ -29,13 +29,14 @@
     <a-table id="card" bordered :dataSource="dataSourceMX" :columns="columnsMX" :pagination="false"></a-table>
 
     <dispatch ref="taskDispatch"/>
+    <ImportExcel ref="importExcel" />
   </a-card>
 </template>
 
 <script>
 import buttons from './buttons'
 import tableheader from './tableheader'
-import { GetTaskSchedulData,GetAllDailyByFMOInterID } from '@/api/TaskScheduling'
+import { GetTaskSchedulData, GetAllDailyByFMOInterID } from '@/api/TaskScheduling'
 import columns from './columns'
 
 export default {
@@ -43,7 +44,8 @@ export default {
     // @是根目录 。。是上一级 。是当前目录
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
     pagination: () => import('@/JtComponents/Pagination'),
-    dispatch: () => import('./Dispatch')
+    dispatch: () => import('./Dispatch'),
+    ImportExcel:()=>import('./ImportExcelModal')
   },
   data() {
     return {
@@ -61,18 +63,44 @@ export default {
       columnsMT: tableheader.columnsMT,
       columnsMX: tableheader.columnsMX,
       dataSourceMX: tableheader.dataSourceMX,
+      dailyDataList:[],
       scroll: {
         x: 3100,
         y: 350
       },
       taskschedulLoading: false,
-      test:''
+      detailLoading:false,
+      test: ''
     }
   },
   mounted() {
     this._loadData()
   },
-  computed: {},
+  computed: {
+    detailData(){
+      //排产明细表数据
+            const groupData = []
+            let macid = -999
+            //生成行数据
+            var row = {}
+            this.dailyDataList.forEach(e => {
+              console.log(e)
+              if (macid !== e.FMachineID) {
+                macid = e.FMachineID
+                row = {
+                  macid: macid,
+                  sum: {
+                    plan: 0,
+                    commit: 0
+                  }
+                }
+              }
+              //汇总计划和派工数
+              row.sum.plan += e.FPlanAuxQty
+              row.sum.commit += e.FCommitAuxQty
+            })
+    }
+  },
   methods: {
     _loadData() {
       var params = {
@@ -104,11 +132,19 @@ export default {
     },
 
     handleBtnClick(val) {
-      if (val == '查询') {
-        this.visible = true
-      } else if (val == '排产') {
-        if (this.selectedRowKeys.length === 1) this.$refs.taskDispatch.show(this.selectedRows[0])
+
+      switch(val){
+        case '排产':{
+           if (this.selectedRowKeys.length === 1) this.$refs.taskDispatch.show(this.selectedRows[0])
+          break;
+        }
+        case '导入排产数据':{
+          this.$refs.importExcel.show();
+          break;
+        }
       }
+
+      
     },
     onPaginationChange(page, size) {
       this.pagination.current = page
@@ -125,41 +161,29 @@ export default {
           //表格行点击事件
           click: () => {
             console.log(record)
-            const params={
-              FMOInterID:record.fmoInterID
-            }
-            GetAllDailyByFMOInterID(params).then(res=>{
-              const result=res.result
-              if(result&&result.length>0){
-                //排产明细表数据
-                const groupData=[]
-                let macid=-999;
-                //生成行数据
-                var row={}
-                result.forEach(e => {
-                  console.log(e)
-                  if(macid!==e.FMachineID){
-                    macid=e.FMachineID
-                    row={
-                      macid:macid,
-                      sum:{
-                        plan:0,
-                        commit:0
-                      }
-                    }
-                  }
-                  //汇总计划和派工数
-                    row.sum.plan+=e.FPlanAuxQty
-                    row.sum.commit+=e.FCommitAuxQty
-                });
-              }
-              
-            }).catch(error=>{
-              console.log(error)
-            })
+            this.GetAllDailyData(record.fmoInterID)
+            
           }
         }
       }
+    },
+    GetAllDailyData(fmoInterID) {
+      const params = {
+        FMOInterID: fmoInterID
+      }
+      this.detailLoading=true;
+      GetAllDailyByFMOInterID(params)
+        .then(res => {
+          this.detailLoading=false;
+          const result = res.result
+          if (result && result.length > 0) {
+            this.dailyDataList=result;
+          }
+        })
+        .catch(error => {
+          this.detailLoading=false
+          console.log(error)
+        })
     }
   }
 }

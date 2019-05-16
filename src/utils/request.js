@@ -9,11 +9,9 @@ import {
   ACCESS_TOKEN
 } from '@/store/mutation-types'
 
-import message from 'ant-design-vue/es/message'
-
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: 'http://localhost:21021',
+  baseURL: 'http://localhost:8088',
   timeout: 40000 // 请求超时时间
 })
 
@@ -57,13 +55,12 @@ service.interceptors.request.use(config => {
 
 // response interceptor
 service.interceptors.response.use((response) => {
-  console.log('OK')
-  var resData = response.data
-  if (resData.success) {
-    message.success('操作成功', 3)
-  } else {
-    message.error('操作异常请联系网管或稍候再试', 3)
-  }
+  // var resData = response.data
+  // if (resData.success) {
+  //   message.success('操作成功', 3)
+  // } else {
+  //   message.error('操作异常请联系网管或稍候再试', 3)
+  // }
 
   return response.data
 }, err)

@@ -1,7 +1,7 @@
 <template>
     <div class="tableOperateButton">
         <template v-for="(item,index) in buttons" >
-            <a-button  :icon="item.icon" :type="item.type" :key="index" @click="onButtonClick(item.text)">{{item.text}}</a-button>
+            <a-button   :icon="item.icon" :type="item.type" :key="index" @click="onButtonClick(item.text)">{{item.text}}</a-button>
         </template>
         <template v-if="search">
             <div class="searchBtn">

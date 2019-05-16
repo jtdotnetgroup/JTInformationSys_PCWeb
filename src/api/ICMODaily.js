@@ -16,4 +16,10 @@ export function GetDailyListByFMOInterID (params) {
   })
 }
 
-console.log('')
+export function ImportExcel (data) {
+  return axios({
+    url: '/api/services/app/ICMODaily/ImportFromExcel',
+    method: 'post',
+    data
+  })
+}
