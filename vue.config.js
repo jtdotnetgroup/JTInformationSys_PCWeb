@@ -21,7 +21,7 @@ module.exports = {
     }
   },
   */
-  // baseUrl: '/',
+  publicPath: '/',
 
   configureWebpack: {
     plugins: [
