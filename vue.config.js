@@ -21,7 +21,7 @@ module.exports = {
     }
   },
   */
-  publicPath: './',
+  // publicPath: './',
   configureWebpack: {
     plugins: [
       // Ignore all locale files of moment.js
