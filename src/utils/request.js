@@ -9,9 +9,11 @@ import {
   ACCESS_TOKEN
 } from '@/store/mutation-types'
 
+console.log(process.env)
+
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: 'http://localhost:8088',
+  baseURL: 'http://localhost:21021',
   timeout: 40000 // 请求超时时间
 })
 
