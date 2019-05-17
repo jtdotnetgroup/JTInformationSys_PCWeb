@@ -7,9 +7,7 @@ const buttons = {
   { text: '排产', icon: '', type: 'default' },
   { text: '导出', icon: '', type: 'default' },
   { text: '挂起', icon: '', type: 'default' },
-  { text: '反挂起', icon: '', type: 'default' },
-  { text: '导入排产数据', icon: 'upload', type: 'default' }
-  ],
+  { text: '反挂起', icon: '', type: 'default' }, { text: '导入', icon: '', type: 'default' }],
 
   buttonps: [{
     text: '排产',

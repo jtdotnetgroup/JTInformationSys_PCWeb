@@ -6,7 +6,7 @@
     style="left:80px"
     :maskClosable="true"
     @ok="handleSubmit"
-    @cancel="onClose"
+    @cancel="visiable=false"
   >
     <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons" :search="false"/>
 
@@ -48,6 +48,7 @@
       size="small"
       rowKey="fSrcID"
       :dataSource="tableData"
+      :scroll="{x:1600,y:400}"
       :columns="columns"
       :pagination="false"
       :bordered="true"
@@ -62,8 +63,7 @@
 
 <script>
 import { columns, editColumns } from './DispatchColumns'
-import { GetAllDailyList, SaveDailyList } from '@/api/TaskScheduling'
-import { GetDailyListByFMOInterID } from '@/api/ICMODaily'
+import { GetAllDailyList,SaveDailyList } from '@/api/TaskScheduling'
 export default {
   components: {
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
@@ -100,16 +100,16 @@ export default {
       this.formData = formData
       this.dataLoading = true
       const params = {
+        fMOBillNo: formData.任务单号,
         fMOInterID: formData.fmoInterID
       }
 
-      GetDailyListByFMOInterID(params)
+      GetAllDailyList(params)
         .then(res => {
-          console.log('ok')
           var result = res.result
           this.dataLoading = false
           if (result) {
-            this.dataSource = result
+            this.dataSource = result.items
           }
         })
         .catch(err => {
@@ -123,24 +123,22 @@ export default {
         fmoBillNo: this.formData.任务单号,
         dailies: []
       }
-      //添加明细
+    //添加明细
       this.dataSource.forEach(row => {
-        data.dailies.push({
-          fDate: row.日期,
-          fPlanAuxQty: row.计划数量
-        })
-      })
+          data.dailies.push({
+              fDate:row.日期,
+              fPlanAuxQty:row.计划数量
+          })
+      });
 
-      SaveDailyList(data)
-        .then(res => {
-          var result = res.result
-          if (result) {
+      SaveDailyList(data).then(res=>{
+          var result=res.result
+          if(result){
             console.log(result)
           }
-        })
-        .catch(err => {
-          console.log(err)
-        })
+      }).catch(err=>{
+          console.log(err);
+      })
     },
     handleBtnClick(value) {
       switch (value) {
@@ -202,10 +200,6 @@ export default {
         }
         this.dataSource.push(data)
       }
-    },
-    onClose() {
-      this.dataSource = []
-      this.visiable = false
     }
   },
   computed: {
@@ -237,10 +231,7 @@ export default {
         })
 
         if (item.length > 0) {
-          data.计划数量 = item[0].计划数量
-          data.派工数量 = item[0].派工数量
-          data.完成数量 = item[0].完成数量
-          data.合格数量 = item[0].合格数量
+          data.计划数量=item[0].计划数量
         }
 
         result.push(data)
