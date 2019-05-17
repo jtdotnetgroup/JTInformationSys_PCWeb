@@ -156,17 +156,20 @@ export default {
 
           var str = ''
           var i = 0
+          
           for (var tmp in outdata) {
             var obj = outdata[tmp]
             for (var item in obj) {
               if (i == 0) {
                 _this.ListObj.header.push(item)
-                _this.ListObj.header.push('操作');
+                // _this.ListObj.header.push('操作');
               }
             }
+            // obj.操作='删除'
             _this.ListObj.body.push(obj)
             i++
           }
+          // _this.ListObj.header.push('操作');
           // console.log(JSON.stringify(_this.ListObj.header) + '_________' + JSON.stringify(_this.ListObj.body))
           _this.loadTable()
         }

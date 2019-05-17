@@ -26,8 +26,11 @@ export function ImportExcel (data) {
 // 导入
 export function ImportExcelList (data) {
   return axios({
-    url: '/api/services/app/ICMODaily/CreateList',
+    url: '/api/services/app/ICMODaily/ImportDaily',
     method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
     data
   })
 }
