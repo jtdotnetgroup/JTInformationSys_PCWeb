@@ -45,7 +45,7 @@ export default {
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
     pagination: () => import('@/JtComponents/Pagination'),
     dispatch: () => import('./Dispatch'),
-    ImportExcel:()=>import('./ImportExcelModal')
+    ImportExcel: () => import('./ImportExcel')
   },
   data() {
     return {
@@ -63,14 +63,11 @@ export default {
       columnsMT: tableheader.columnsMT,
       columnsMX: tableheader.columnsMX,
       dataSourceMX: tableheader.dataSourceMX,
-      dailyDataList:[],
       scroll: {
         x: 3100,
         y: 350
       },
-      taskschedulLoading: false,
-      detailLoading:false,
-      test: ''
+      taskschedulLoading: false
     }
   },
   mounted() {
@@ -132,16 +129,13 @@ export default {
     },
 
     handleBtnClick(val) {
-
-      switch(val){
-        case '排产':{
-           if (this.selectedRowKeys.length === 1) this.$refs.taskDispatch.show(this.selectedRows[0])
-          break;
-        }
-        case '导入排产数据':{
-          this.$refs.importExcel.show();
-          break;
-        }
+      if (val == '查询') {
+        this.visible = true
+      } else if (val == '排产') {
+        if (this.selectedRowKeys.length === 1) this.$refs.taskDispatch.show(this.selectedRows[0])
+      } else if (val == '导入') {
+        console.log(val);
+        this.$refs.ImportExcel.show();
       }
 
       
@@ -189,7 +183,7 @@ export default {
 }
 </script>
 
-<style   scoped>
+<style scoped>
 #card {
   margin-top: 10px;
 }
