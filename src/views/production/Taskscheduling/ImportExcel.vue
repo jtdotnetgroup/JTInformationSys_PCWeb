@@ -161,7 +161,7 @@ export default {
             for (var item in obj) {
               if (i == 0) {
                 _this.ListObj.header.push(item)
-                _this.ListObj.header.push('操作');
+                // _this.ListObj.header.push('操作');
               }
             }
             _this.ListObj.body.push(obj)
@@ -215,7 +215,7 @@ export default {
       })
 
       // console.log(result)
-      //导入成功  执行  this.empty()  清除导入表格
+      // 导入成功  执行  this.empty()  清除导入表格
       ImportExcelList(result)
         .then(res => {
           _this.HideLoad()
@@ -228,6 +228,7 @@ export default {
             //
             _this.empty() // 清除导入表格
           } else {
+            const key = `open${Date.now()}`;
             _this.$notification['error']({
               message: '系统提示',
               description: '系统忙，导入失败请稍后重试！',
@@ -261,13 +262,13 @@ export default {
     // 判断是否是有效日期
     IsValidDate(DateStr) {
       var arr = []
-      if (DateStr.indexOf('-') != -1) {
+      if (DateStr.indexOf('-') !== -1) {
         arr = DateStr.split('-')
       }
-      if (DateStr.indexOf('/') != -1) {
+      if (DateStr.indexOf('/') !== -1) {
         arr = DateStr.split('/')
       }
-      if (arr.length == 3) {
+      if (arr.length === 3) {
         var intYear = parseInt(arr[0], 10)
         var intMonth = parseInt(arr[1], 10)
         var intDay = parseInt(arr[2], 10)
@@ -278,10 +279,10 @@ export default {
         if (intYear > 2100 || intYear < 1900 || intMonth > 12 || intMonth < 0 || intDay > 31 || intDay < 0) {
           return false
         }
-        if ((intMonth == 4 || intMonth == 6 || intMonth == 9 || intMonth == 11) && intDay > 30) {
+        if ((intMonth === 4 || intMonth === 6 || intMonth === 9 || intMonth === 11) && intDay > 30) {
           return false
         }
-        if ((intYear % 100 == 0 && intYear % 400) || (intYear % 100 && intYear % 4 == 0)) {
+        if ((intYear % 100 === 0 && intYear % 400) || (intYear % 100 && intYear % 4 === 0)) {
           if (intDay > 29) return false
         } else {
           if (intDay > 28) return false

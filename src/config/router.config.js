@@ -99,22 +99,6 @@ export const asyncRouterMap = [
           }
         ]
       }
-      // {
-      //   path: '/production',
-      //   name: 'production',
-      //   component: RouteView,
-      //   hideChildrenInMenu: false,
-      //   meta: { title: '生产计划', keepAlive: true, permission: ['dashboard'] },
-      //   children: [
-      //     {
-      //       path: '/production/scheduling',
-      //       name: 'scheduling',
-      //       meta: { title: '任务排产', keepAlive: true, permission: ['dashboard'] },
-      //       component: () => import('@/views/jtproduction/production')
-      //     }
-      //   ]
-      // }
-
     ]
   },
   {

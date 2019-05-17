@@ -14,7 +14,7 @@ var baseURL = ''
 if (url.indexOf('http://222.72.134.71') >= 0) {
   baseURL = 'http://222.72.134.71:8093'
 } else if (url.indexOf('localhost') >= 0) {
-  // 开发环境
+// 开发环境
   baseURL = 'http://localhost:21021/'
 } else {
   baseURL = 'http://222.72.134.71:8093'
@@ -22,7 +22,6 @@ if (url.indexOf('http://222.72.134.71') >= 0) {
 
 // 创建 axios 实例
 const service = axios.create({
-  // baseURL: 'http://localhost:8088',
   baseURL: baseURL,
   timeout: 40000 // 请求超时时间
 })

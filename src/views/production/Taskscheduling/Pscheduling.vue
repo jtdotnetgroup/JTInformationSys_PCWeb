@@ -29,7 +29,7 @@
     <a-table id="card" bordered :dataSource="dataSourceMX" :columns="columnsMX" :pagination="false"></a-table>
 
     <dispatch ref="taskDispatch"/>
-    <ImportExcel ref="importExcel" />
+    <ImportExcel ref="ImportExcel"/>
   </a-card>
 </template>
 
