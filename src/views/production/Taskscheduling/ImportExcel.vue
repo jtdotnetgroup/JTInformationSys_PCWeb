@@ -161,7 +161,7 @@ export default {
             for (var item in obj) {
               if (i == 0) {
                 _this.ListObj.header.push(item)
-                _this.ListObj.header.push('操作');
+                // _this.ListObj.header.push('操作');
               }
             }
             _this.ListObj.body.push(obj)
