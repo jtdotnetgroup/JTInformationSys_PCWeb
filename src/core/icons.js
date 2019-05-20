@@ -11,3 +11,4 @@ import bxAnaalyse from '@/assets/icons/bx-analyse.svg?inline' // path to your '*
 import basics from '@/assets/icons/basics.svg?inline' // path to your '*.svg?inline' file.
 
 export { bxAnaalyse, basics }
+// import Basics from '@/assets/icons/Basics.svg'

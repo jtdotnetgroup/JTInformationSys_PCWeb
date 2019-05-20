@@ -17,7 +17,7 @@ export const asyncRouterMap = [
         redirect: '/dashboard/workplace',
         component: RouteView,
         hideChildrenInMenu: true,
-        meta: { title: '工作台', keepAlive: true, icon: bxAnaalyse },
+        meta: { title: '工作台', keepAlive: true, icon: 'home' },
         children: [
           {
             path: '/dashboard/workplace',
@@ -89,7 +89,7 @@ export const asyncRouterMap = [
         name: 'basicdata',
         component: RouteView,
         hideChildrenInMenu: false,
-        meta: { title: '基础资料', keepAlive: true, icon: basics },
+        meta: { title: '基础资料', keepAlive: true, icon: 'codepen' },
         children: [
           {
             path: '/basicdata/organization',
@@ -108,6 +108,28 @@ export const asyncRouterMap = [
             component: () => import('@/views/basicdata/taskdispatch/Task')
           }
 
+        ]
+      },
+      // 报表管理
+      {
+        path: '/Report',
+        name: 'Report',
+        component: RouteView,
+        hideChildrenInMenu: false,
+        meta: { title: '报表管理', keepAlive: true, icon: 'bar-chart' },
+        children: [
+          {
+            path: '/Report/DataSource',
+            name: 'DataSource',
+            meta: { title: '数据源管理', keepAlive: true },
+            component: () => import('@/views/Report/DataSource/index')
+          },
+          {
+            path: '/Report/Setting',
+            name: 'Setting',
+            meta: { title: '报表设置', keepAlive: true },
+            component: () => import('@/views/Report/Setting/index')
+          }
         ]
       }
     ]
