@@ -22,11 +22,7 @@
             onButtonClick(){
                 this.$emit('btnClick');
             }
-        },
-        
-
-
-
+        }
     }
 </script>
 
