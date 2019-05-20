@@ -8,7 +8,7 @@
       @pageChange="onPaginationChange"
     />
 
-      <a-table
+    <a-table
       rowKey="任务单号"
       :dataSource="dataSource"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
@@ -18,7 +18,6 @@
       :loading="taskschedulLoading"
       :scroll="scroll"
     ></a-table>
-    
 
     <div id="button">
       <a-button style="background-color: #E6F7FF;border-color:#E6F7FF">
@@ -26,9 +25,7 @@
       </a-button>
     </div>
 
-    <a-table id="card" bordered :dataSource="dataSourceMX" :columns="columnsMX" :pagination="false">
-     
-    </a-table>
+    <a-table id="card" bordered :dataSource="dataSourceMX" :columns="columnsMX" :pagination="false"></a-table>
 
     <!-- <div id="divmodal">
       <a-modal
@@ -116,41 +113,26 @@
         >
          </a-table>
       </a-modal> 
-<<<<<<< HEAD
     </div>-->
  
     <dispatch ref="taskDispatch"/>
     <ImportExcel ref="ImportExcel"/>
-=======
-    </div> -->
-
-    <dispatch ref="taskDispatch" />
->>>>>>> parent of 7a1bcfd... 提交设备档案代码
   </a-card>
 </template>
 
 <script>
 import buttons from './buttons'
 import tableheader from './tableheader'
-<<<<<<< HEAD
 import { GetTaskSchedulData, GetAllDailyByFMOInterID } from '@/api/TaskScheduling'
-=======
-import { GetTaskSchedulData } from '@/api/TaskScheduling'
->>>>>>> parent of 7a1bcfd... 提交设备档案代码
 import columns from './columns'
-
 
 export default {
   components: {
     // @是根目录 。。是上一级 。是当前目录
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
     pagination: () => import('@/JtComponents/Pagination'),
-<<<<<<< HEAD
     dispatch: () => import('./Dispatch'),
     ImportExcel: () => import('./ImportExcel')
-=======
-    dispatch:()=>import('./Dispatch')
->>>>>>> parent of 7a1bcfd... 提交设备档案代码
   },
   data() {
     return {
@@ -161,14 +143,13 @@ export default {
       },
       buttonp: buttons.buttonp,
       selectedRowKeys: [],
-      selectedRows:[],
+      selectedRows: [],
       buttonps: buttons.buttonps,
       dataSource: [],
       columns: columns,
       columnsMT: tableheader.columnsMT,
       columnsMX: tableheader.columnsMX,
       dataSourceMX: tableheader.dataSourceMX,
-<<<<<<< HEAD
       dailyDataList:[],
       scroll: {
         x: 3100,
@@ -177,19 +158,12 @@ export default {
       taskschedulLoading: false,
       detailLoading:false,
       test: ''
-=======
-      scroll:{
-        x:3100,y:350
-      },
-      taskschedulLoading:false
->>>>>>> parent of 7a1bcfd... 提交设备档案代码
     }
   },
   mounted() {
     this._loadData()
   },
   computed: {
-<<<<<<< HEAD
     detailData(){
       //排产明细表数据
             const groupData = []
@@ -213,9 +187,6 @@ export default {
               row.sum.commit += e.FCommitAuxQty
             })
     }
-=======
-    
->>>>>>> parent of 7a1bcfd... 提交设备档案代码
   },
   methods: {
     _loadData() {
@@ -223,18 +194,20 @@ export default {
         SkipCount: this.pagination.current - 1,
         MaxResultCount: this.pagination.pageSize
       }
-      this.taskschedulLoading=true
-      GetTaskSchedulData(params).then(res => {
-        const result = res.result
-        if (result) {
-          this.dataSource = result.items
-          this.pagination.total=result.totalCount;
-        }
-        this.taskschedulLoading=false
-      }).catch(err=>{
-        console.log(err);
-        this.taskschedulLoading=false
-      })
+      this.taskschedulLoading = true
+      GetTaskSchedulData(params)
+        .then(res => {
+          const result = res.result
+          if (result) {
+            this.dataSource = result.items
+            this.pagination.total = result.totalCount
+          }
+          this.taskschedulLoading = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.taskschedulLoading = false
+        })
     },
     resetSearchForm() {
       this.queryParam = {
@@ -248,18 +221,11 @@ export default {
     handleBtnClick(val) {
       if (val == '查询') {
         this.visible = true
-<<<<<<< HEAD
       } else if (val == '排产') {
         if (this.selectedRowKeys.length === 1) this.$refs.taskDispatch.show(this.selectedRows[0])
       } else if (val == '导入') {
         console.log(val);
         this.$refs.ImportExcel.show();
-=======
-      }
-      else if(val=="排产"){
-        if(this.selectedRowKeys.length===1)
-          this.$refs.taskDispatch.show(this.selectedRows[0]);
->>>>>>> parent of 7a1bcfd... 提交设备档案代码
       }
 
       
@@ -267,13 +233,12 @@ export default {
     onPaginationChange(page, size) {
       this.pagination.current = page
       this.pagination.pageSize = size
-      this._loadData();
+      this._loadData()
     },
-    onSelectChange (selectedRowKeys, selectedRows) {
+    onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
-<<<<<<< HEAD
     setRow(record) {
       return {
         on: {
@@ -304,8 +269,6 @@ export default {
           console.log(error)
         })
     }
-=======
->>>>>>> parent of 7a1bcfd... 提交设备档案代码
   }
 }
 </script>
@@ -322,15 +285,16 @@ export default {
 #divmodal {
   width: 900px;
 }
-.ant-table td { white-space: nowrap; }
+.ant-table td {
+  white-space: nowrap;
+}
 
-#taskTable{
+#taskTable {
   height: 300px;
   overflow-y: auto;
 }
 
-.ant-table-body::-webkit-scrollbar{
+.ant-table-body::-webkit-scrollbar {
   display: none !important;
 }
-
 </style>

@@ -123,11 +123,7 @@ export default {
         fmoBillNo: this.formData.任务单号,
         dailies: []
       }
-<<<<<<< HEAD
     //添加明细2019-05-18
-=======
-    //添加明细
->>>>>>> parent of 7a1bcfd... 提交设备档案代码
       this.dataSource.forEach(row => {
           data.dailies.push({
               fDate:row.日期,

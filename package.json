@@ -33,13 +33,9 @@
     "vue-ls": "^3.2.0",
     "vue-router": "^3.0.1",
     "vue-svg-component-runtime": "^1.0.1",
-<<<<<<< HEAD
     "vue-xlsx-table": "^1.2.8",
     "vuex": "^3.1.0",
     "xlsx": "^0.14.3"
-=======
-    "vuex": "^3.1.0"
->>>>>>> parent of 7a1bcfd... 提交设备档案代码
   },
   "devDependencies": {
     "@babel/polyfill": "^7.2.5",
