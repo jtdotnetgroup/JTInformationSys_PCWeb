@@ -123,7 +123,7 @@ export default {
         fmoBillNo: this.formData.任务单号,
         dailies: []
       }
-    //添加明细
+    //添加明细2019-05-18
       this.dataSource.forEach(row => {
           data.dailies.push({
               fDate:row.日期,
@@ -255,6 +255,8 @@ export default {
 .editable-cell-input-wrapper,
 .editable-cell-text-wrapper {
   padding-right: 24px;
+
+  
 }
 
 .editable-cell-text-wrapper {

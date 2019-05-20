@@ -9,11 +9,20 @@ import {
   ACCESS_TOKEN
 } from '@/store/mutation-types'
 
-import message from 'ant-design-vue/es/message'
+var url = window.location.host
+var baseURL = ''
+if (url.indexOf('http://222.72.134.71') >= 0) {
+  baseURL = 'http://222.72.134.71:8093'
+} else if (url.indexOf('localhost') >= 0) {
+// 开发环境
+  baseURL = 'http://localhost:21021/'
+} else {
+  baseURL = 'http://222.72.134.71:8093'
+}
 
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: 'http://localhost:21021',
+  baseURL: baseURL,
   timeout: 40000 // 请求超时时间
 })
 
@@ -57,13 +66,12 @@ service.interceptors.request.use(config => {
 
 // response interceptor
 service.interceptors.response.use((response) => {
-  console.log('OK')
-  var resData = response.data
-  if (resData.success) {
-    message.success('操作成功', 3)
-  } else {
-    message.error('操作异常请联系网管或稍候再试', 3)
-  }
+  // var resData = response.data
+  // if (resData.success) {
+  //   message.success('操作成功', 3)
+  // } else {
+  //   message.error('操作异常请联系网管或稍候再试', 3)
+  // }
 
   return response.data
 }, err)
