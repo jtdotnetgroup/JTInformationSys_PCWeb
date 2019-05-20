@@ -28,6 +28,9 @@ export function ImportExcelList (data) {
   return axios({
     url: '/api/services/app/ICMODaily/ImportDaily',
     method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
     data
   })
 }
