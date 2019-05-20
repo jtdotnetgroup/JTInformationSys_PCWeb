@@ -123,7 +123,7 @@
 <script>
 import buttons from './buttons'
 import tableheader from './tableheader'
-import { GetTaskSchedulData } from '@/api/TaskScheduling'
+import { GetTaskSchedulData, GetAllDailyByFMOInterID } from '@/api/TaskScheduling'
 import columns from './columns'
 
 export default {
@@ -150,17 +150,44 @@ export default {
       columnsMT: tableheader.columnsMT,
       columnsMX: tableheader.columnsMX,
       dataSourceMX: tableheader.dataSourceMX,
+      dailyDataList:[],
       scroll: {
         x: 3100,
         y: 350
       },
-      taskschedulLoading: false
+      taskschedulLoading: false,
+      detailLoading:false,
+      test: ''
     }
   },
   mounted() {
     this._loadData()
   },
-  computed: {},
+  computed: {
+    detailData(){
+      //排产明细表数据
+            const groupData = []
+            let macid = -999
+            //生成行数据
+            var row = {}
+            this.dailyDataList.forEach(e => {
+              console.log(e)
+              if (macid !== e.FMachineID) {
+                macid = e.FMachineID
+                row = {
+                  macid: macid,
+                  sum: {
+                    plan: 0,
+                    commit: 0
+                  }
+                }
+              }
+              //汇总计划和派工数
+              row.sum.plan += e.FPlanAuxQty
+              row.sum.commit += e.FCommitAuxQty
+            })
+    }
+  },
   methods: {
     _loadData() {
       var params = {
@@ -200,6 +227,8 @@ export default {
         console.log(val);
         this.$refs.ImportExcel.show();
       }
+
+      
     },
     onPaginationChange(page, size) {
       this.pagination.current = page
@@ -209,6 +238,36 @@ export default {
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
+    },
+    setRow(record) {
+      return {
+        on: {
+          //表格行点击事件
+          click: () => {
+            console.log(record)
+            this.GetAllDailyData(record.fmoInterID)
+            
+          }
+        }
+      }
+    },
+    GetAllDailyData(fmoInterID) {
+      const params = {
+        FMOInterID: fmoInterID
+      }
+      this.detailLoading=true;
+      GetAllDailyByFMOInterID(params)
+        .then(res => {
+          this.detailLoading=false;
+          const result = res.result
+          if (result && result.length > 0) {
+            this.dailyDataList=result;
+          }
+        })
+        .catch(error => {
+          this.detailLoading=false
+          console.log(error)
+        })
     }
   }
 }

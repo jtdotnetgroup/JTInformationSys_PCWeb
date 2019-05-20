@@ -19,6 +19,7 @@
     "element-ui": "^2.8.2",
     "enquire.js": "^2.1.6",
     "js-cookie": "^2.2.0",
+    "js-xlsx": "^0.8.22",
     "lodash.get": "^4.4.2",
     "lodash.pick": "^4.4.0",
     "md5": "^2.2.1",
