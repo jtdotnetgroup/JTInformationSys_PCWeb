@@ -15,6 +15,7 @@ export function GetDailyListByFMOInterID (params) {
     params: params
   })
 }
+<<<<<<< HEAD
 
 export function ImportExcel (data) {
   return axios({
@@ -34,3 +35,5 @@ export function ImportExcelList (data) {
     data
   })
 }
+=======
+>>>>>>> parent of bfd126e... Revert "OK"

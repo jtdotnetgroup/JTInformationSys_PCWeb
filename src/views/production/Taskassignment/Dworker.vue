@@ -12,18 +12,21 @@
 
     <!-- 表格 -->
     <a-table
-      :rowSelection="rowSelection"
+      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
       :dataSource="dataTable"
       :columns="columnsjs"
-      :scroll="{ x: 1300, y: 500 }"
+      :loading="taskschedulLoading"
       bordered
+      onRow="{this.onClickRow}"
       :pagination="false"
+      rowKey="计划单号"
     >
+      <template slot="serial" slot-scope="text">
+        <span>{{dataTable.indexOf(text)+1}}</span>
+      </template>
       <!-- <template slot="serial" slot-scope="indexname">
-      <span>{{dataTable.indexOf(indexname)+1}}</span>-->
-      <!-- <span>{{dataTable.forEach((item)=>{item.indexname=indexname+1})}}</span>  -->
-      <!-- <span>{{dataTable.forEach((item)=>{item.indexname = (this.pagination.current-1)*this.pagination.pageSize+indexname+1})}}</span> -->
-      <!-- </template> -->
+     <span  >{{dataTable.indexOf(indexname)+1}}</span>
+      </template>-->
     </a-table>
 
     <div id="button">
@@ -34,7 +37,8 @@
 
     <a-table id="cardd" bordered :columns="columnsMX" :pagination="false"></a-table>
 
-    <div id="divmodal">
+    <DispatchWorkModalForm ref="DispatchWorkModalForm"/>
+    <!-- <div>
       <a-modal
         title="新增/维护"
         v-model="visible"
@@ -47,53 +51,72 @@
       >
         <tableOperatorBtn @btnClick="handleBtnClickModal" :buttons="buttonps"/>
 
-        <!-- :columns="columnsMT" -->
         <a-table
           id="cards"
           bordered
           :dataSource="dataSource"
-          :columns="columns"
+          :columns="columnsMT"
           :pagination="false"
+          :scroll="{ x: 2000, y: 500 }"
+          :loading="taskschedulLoadings"
+          rowKey="fSrcID"
         >
-          <template slot="operation" slot-scope="text, record">
-            <a-popconfirm v-if="dataSource.length" @click="() => edit(record.key)">
-              <a>Edit</a>
-            </a-popconfirm>
+          <template slot="机台" slot-scope="text, record">
+            <EditableCell :text="text" @change="onCellChange(record.机台, '机台', $event)"/>
+          </template>
 
+          <template slot="派工数量" slot-scope="text, record">
+            <EditableCellInput
+              :text="text"
+              @change="onCellChange(record, '派工数量', $event)"
+            />
+          </template>
+
+          <template slot="操作员" slot-scope="text, record">
+            <EditableCell :text="text" @change="onCellChange(record.操作员, '操作员', $event)"/>
+          </template>
+
+          <template slot="班组" slot-scope="text, record">
+            <EditableCellInput :text="text" @change="onCellChange(record.班组, '班组', $event)"/>
+          </template>
+
+          <template slot="operation" slot-scope="text, record">
             <a-popconfirm
               v-if="dataSource.length"
               title="Sure to delete?"
-              @confirm="() => onDelete(record.key)"
+              @confirm="() => onDelete(record.fSrcID)"
             >
               <a href="javascript:;" style="margin-left: 20px">Delete</a>
             </a-popconfirm>
           </template>
-
-          <!-- <template slot="operation" slot-scope="text, record">
-         <a-popconfirm 
-          v-if="dataSource.length"
-          @click="() => onEdit(record.key)">
-            
-        </a-popconfirm>
-       
-          </template>-->
         </a-table>
       </a-modal>
-    </div>
+    </div>-->
+
+    <!-- <modalt ref="taskDispatch"/> -->
   </a-card>
 </template>
 
 <script>
-import buttons from './buttons'
-import tableheader from './tableheader'
+import buttons from './js/buttons'
+import tableheader from './js/tableheader'
+import { columns as mainColumns } from './js/tableheader'
+import { columns } from './js/tablehhe'
+
 import { getRoleList, getServiceList } from '@/api/manage'
-import { GetDaily, GetDailyAll } from '@/api/test/get'
+import { GetDailyAll, GetDispBillAll, CreateAll, GetDaily } from '@/api/test/get'
+import{ICMODailyGetAll} from '@/api/ICMODaily'
+import { constants } from 'crypto'
 
 export default {
   components: {
     // @是根目录 。。是上一级 。是当前目录
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
-    pagination: () => import('@/JtComponents/Pagination')
+    pagination: () => import('@/JtComponents/Pagination'),
+
+    EditableCell: () => import('./pubilcvue/EditableCellSelect'),
+    EditableCellInput: () => import('./pubilcvue/EditableCellInput'),
+    DispatchWorkModalForm: () => import('./DispatchWorkModalForm')
   },
   data() {
     return {
@@ -103,13 +126,14 @@ export default {
         pageSize: 100,
         pageSizeOptions: ['100', '200', '300'],
         defaultPageSize: 100
-        // pageSizeOptions:['10']
       },
       buttonp: buttons.buttonp,
-
       buttonps: buttons.buttonps,
+      columnsMT: tableheader.columnsMT,
       // 高级搜索 展开/关闭
       advanced: false,
+      selectedRowKeys: [],
+      selectedRows: [],
 
       queryParam: {},
       maskClosable: false,
@@ -118,75 +142,94 @@ export default {
 
       dataTable: [],
 
-      columnsjs: tableheader.columns,
-
-      columnsMT: tableheader.columnsMT,
+      columnsjs: mainColumns,
 
       columnsMX: tableheader.columnsMX,
+      taskschedulLoading: false,
+      taskschedulLoadings: false,
+      dataSource: [],
 
-      dataSource: [
-        {
-          key: '0',
-          age: '32',
-          address: 'London, Park Lane no. 0'
-        },
-        {
-          key: '1',
-          age: '32',
-          address: 'London, Park Lane no. 1'
-        }
-      ],
-      count: 2,
-      columns: [
-        {
-          title: 'age',
-          dataIndex: 'age'
-        },
-        {
-          title: 'address',
-          dataIndex: 'address'
-        },
-        {
-          title: 'operation',
-          dataIndex: 'operation',
-          scopedSlots: { customRender: 'operation' }
-        }
-      ]
+      dataTableArry: [],
+      dataTableArrget: []
     }
+  },
+  mounted() {
+    this._LoadMainData()
   },
 
   //一开始就执行的方法
-  created() {
-    getRoleList({ t: new Date() }), this.pageData()
-  },
-  computed: {
-    rowSelection() {
-      const { selectedRowKeys } = this
-      return {
-        onChange: (selectedRowKeys, selectedRows) => {
-          console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
-        }
-      }
-    }
-  },
-
   methods: {
-    //查询分页的方法
-    pageData() {
-      var _this = this
-      GetDailyAll('任务单号', this.pagination.current, this.pagination.pageSize)
+    // //查询分页的方法
+    // pageData() {
+    //   this.taskschedulLoading = true
+    //   var params = {
+    //     SkipCount: this.pagination.current - 1,
+    //     MaxResultCount: this.pagination.pageSize
+    //   }
+
+    //   var _this = this
+    //   GetDailyAll(params)
+    //     .then(res => {
+    //       _this.dataTable = []
+    //       var data = res.result
+    //       if (data.items.length == 0) {
+    //         return
+    //       }
+    //       this.taskschedulLoading = false
+    //       _this.pagination.total = data.totalCount
+    //       console.log(data)
+
+    //      //服务端数据库
+    //      _this.dataTableArry=data.items;
+    //     var result = []
+    //     var index = 0
+    //      data.items.forEach(item => {
+    //       index = index + 1
+    //       var datasss = {
+    //       key:index,
+    //       indexname:index,
+    //       日期: item.日期,
+    //       机台: item.机台,
+    //       班组: item.班组,
+    //       操作员: item.操作员,
+    //       派工数量: item.派工数量,
+    //       完成数量: item.完成数量,
+    //       合格数量: item.合格数量,
+    //       计划数量: item.计划数量,
+    //       任务单号: item.fmoBillNo
+    //     }
+    //       result.push(datasss)
+    //      });
+
+    //     // // console.log(dataTableArry)
+
+    //     //  console.log(result)
+    //       _this.dataTable=data.items;
+
+    //     })
+    //     .catch(function(error) {
+    //       this.taskschedulLoading = false
+    //       console.log(error)
+    //     })
+    // },
+
+    _LoadMainData() {
+      const params = {
+        SkipCount: this.pagination.current - 1,
+        MaxResultCount: this.pagination.pageSize
+      }
+      //后端获取数据
+      ICMODailyGetAll(params)
         .then(res => {
-          // _this.dataTable= []
-          // var data = res.result
-          // if (data.items.length == 0) {
-          //   return
-          // }
-          _this.pagination.total = data.totalCount
-          //console.log(data)
-          _this.dataTable = res.result.items
+          const result = res.result
+
+          if (result && result.items.length > 0) {
+            //绑定到表格上
+            this.dataTable = result.items
+          }
         })
-        .catch(function(error) {
-          console.log(error)
+        .catch(err => {
+          console.log(err)
         })
     },
 
@@ -195,23 +238,6 @@ export default {
       this.pageData()
     },
 
-    onDelete(key) {
-      const dataSource = [...this.dataSource]
-      this.dataSource = dataSource.filter(item => item.key !== key)
-    },
-
-    onCellChange(key, dataIndex, value) {
-      const dataSource = [...this.dataSource]
-      const target = dataSource.find(item => item.key === key)
-      if (target) {
-        target[dataIndex] = value
-        this.dataSource = dataSource
-      }
-    },
-
-    showModal() {
-      this.visible = true
-    },
     hideModal() {
       this.visible = false
     },
@@ -227,22 +253,147 @@ export default {
     handleBtnClickModal(val) {
       if (val == '新增') {
         const { count, dataSource } = this
-        const newData = {
-          key: count,
-          name: `Edward King ${count}`,
-          age: `32. ${count}`,
-          address: `London, Park Lane no. ${count}`
+
+        if (dataSource.length == 0) {
+          const newData = {
+            日期: '',
+            FShift: 0,
+            FMachineID: 0,
+            FWorker: '',
+            FCommitAuxQty: 0,
+            FSrcID: '',
+            FMOBillNo: '',
+            FMOInterID: ''
+          }
+          this.dataSource = [...dataSource, newData]
+        } else {
+          const newData = {
+            日期: this.dataSource[dataSource.length - 1].日期,
+            FShift: 0,
+            FMachineID: 0,
+            FWorker: '',
+            FCommitAuxQty: 0,
+            FSrcID: this.dataSource[dataSource.length - 1].fSrcID,
+            FMOBillNo: this.dataSource[dataSource.length - 1].fmoBillNo,
+            FMOInterID: this.dataSource[dataSource.length - 1].fmoInterID
+          }
+          this.dataSource = [...dataSource, newData]
         }
-        this.dataSource = [...dataSource, newData]
+
         this.count = count + 1
+      } else if (val == '保存') {
+        alert('保存')
+
+        console.log(this.dataSource)
+        var params = {
+          details: this.dataSource
+        }
+        CreateAll(params)
+          .then(res => {
+            console.log(res)
+          })
+          .catch(function(error) {
+            console.log(error)
+          })
       }
     },
 
-    handleBtnClick(val) {
-      if (val == '查询') {
-      } else if (val == '派工') {
-        this.visible = true
+    onDelete(key) {
+      alert(key)
+      const dataSource = [...this.dataSource]
+      this.dataSource = dataSource.filter(item => item.key !== key)
+    },
+
+    onCellChange(key, dataIndex, value) {
+      //后端返回的数据集
+      const dataTableArrget = [...this.dataTableArrget]
+      //动态生成的数据
+      const dataSource = [...this.dataSource]
+      console.log(dataTableArrget)
+      //判断是否已存在数据
+      const dstarget = dataTableArrget.find(item => item.dataIndex === dataIndex)
+      //
+      const target = dataSource.find(item => item.key === dataIndex)
+
+      if (target) {
+        target[dataIndex] = value
+        this.dataSource = dataSource
       }
+    },
+
+    _loadData(fSrcID) {
+      this.taskschedulLoadings = true
+      var params = {
+        SkipCount: this.pagination.current - 1,
+        MaxResultCount: this.pagination.pageSize,
+        FSrcID: fSrcID
+      }
+
+      var _this = this
+      GetDispBillAll(params)
+        .then(res => {
+          this.taskschedulLoadings = false
+          _this.dataSource = []
+          var data = res.result
+          if (data.items.length == 0) {
+            return
+          }
+          _this.dataTableArrget.push(data.items)
+
+          var result = []
+          var index = 0
+          data.items.forEach(item => {
+            index = index + 1
+            var datasss = {
+              key: index,
+              indexname: index,
+              日期: this.$moment(item.日期).format('YYYY-MM-DD'),
+              机台: item.机台,
+              班组: item.班组,
+              操作员: item.操作员,
+              派工数量: item.派工数量,
+              完成数量: item.完成数量,
+              合格数量: item.合格数量,
+              计划数量: item.计划数量,
+              任务单号: item.fmoBillNo
+            }
+            result.push(datasss)
+          })
+
+          _this.dataSource = result
+        })
+        .catch(function(error) {
+          console.log(error)
+          this.taskschedulLoadings = false
+        })
+    },
+
+    handleBtnClick(val) {
+      //   if (val == '查询') {
+      //   } else if (val == '派工') {
+      // if (this.selectedRowKeys.length === 1)
+      //     console.log(this.selectedRows[0])
+      //  this.visible = true
+      //  const dataTableArry = [...this.dataTableArry]
+      //  const dstarget = dataTableArry.find(item =>item.日期  === this.selectedRows[0].日期)
+      //   console.log(dstarget)
+      //     this._loadData(dstarget.fSrcID)
+      //   }
+
+      switch (val) {
+        case '派工': {
+          if (this.selectedRows.length === 1) {
+            var row = this.selectedRows[0]
+            this.$refs.DispatchWorkModalForm.show(row)
+          }
+        }
+      }
+    },
+
+    onSelectChange(selectedRowKeys, selectedRows) {
+      this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
+      console.log(selectedRows)
     }
   }
 }
@@ -255,9 +406,5 @@ export default {
 #button {
   margin-top: 10px;
   background-color: #e6f7ff;
-}
-
-#divmodal {
-  width: 900px;
 }
 </style>

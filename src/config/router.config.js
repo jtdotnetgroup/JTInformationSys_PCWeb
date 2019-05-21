@@ -96,6 +96,12 @@ export const asyncRouterMap = [
             name: 'organization',
             meta: { title: '组织架构', keepAlive: true },
             component: () => import('@/views/basicdata/organization/Organization')
+          },
+          {
+            path: '/basicdata/equipmentarchives',
+            name: 'equipmentarchives',
+            meta: { title: '设备档案', keepAlive: true },
+            component: () => import('@/views/basicdata/equipmentarchives/EquipmentArchives')
           }
         ]
       }

@@ -7,5 +7,8 @@ export function SaveDispBillList (data) {
     data: data
   })
 }
+<<<<<<< HEAD
 
 console.log('')
+=======
+>>>>>>> parent of bfd126e... Revert "OK"

@@ -17,6 +17,7 @@
       :bordered="true"
       :loading="taskschedulLoading"
       :scroll="scroll"
+      :customRow="setRow"
     ></a-table>
 
     <div id="button">
@@ -27,6 +28,7 @@
 
     <a-table id="card" bordered :dataSource="dataSourceMX" :columns="columnsMX" :pagination="false"></a-table>
 
+<<<<<<< HEAD
     <!-- <div id="divmodal">
       <a-modal
         title="新增/维护"
@@ -117,13 +119,20 @@
  
     <dispatch ref="taskDispatch"/>
     <ImportExcel ref="ImportExcel"/>
+=======
+    <dispatch ref="taskDispatch"/>
+>>>>>>> parent of bfd126e... Revert "OK"
   </a-card>
 </template>
 
 <script>
 import buttons from './buttons'
 import tableheader from './tableheader'
+<<<<<<< HEAD
 import { GetTaskSchedulData, GetAllDailyByFMOInterID } from '@/api/TaskScheduling'
+=======
+import { GetTaskSchedulData,GetAllDailyByFMOInterID } from '@/api/TaskScheduling'
+>>>>>>> parent of bfd126e... Revert "OK"
 import columns from './columns'
 
 export default {
@@ -131,8 +140,12 @@ export default {
     // @是根目录 。。是上一级 。是当前目录
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
     pagination: () => import('@/JtComponents/Pagination'),
+<<<<<<< HEAD
     dispatch: () => import('./Dispatch'),
     ImportExcel: () => import('./ImportExcel')
+=======
+    dispatch: () => import('./Dispatch')
+>>>>>>> parent of bfd126e... Revert "OK"
   },
   data() {
     return {
@@ -150,19 +163,27 @@ export default {
       columnsMT: tableheader.columnsMT,
       columnsMX: tableheader.columnsMX,
       dataSourceMX: tableheader.dataSourceMX,
+<<<<<<< HEAD
       dailyDataList:[],
+=======
+>>>>>>> parent of bfd126e... Revert "OK"
       scroll: {
         x: 3100,
         y: 350
       },
+<<<<<<< HEAD
       taskschedulLoading: false,
       detailLoading:false,
       test: ''
+=======
+      taskschedulLoading: false
+>>>>>>> parent of bfd126e... Revert "OK"
     }
   },
   mounted() {
     this._loadData()
   },
+<<<<<<< HEAD
   computed: {
     detailData(){
       //排产明细表数据
@@ -188,6 +209,9 @@ export default {
             })
     }
   },
+=======
+  computed: {},
+>>>>>>> parent of bfd126e... Revert "OK"
   methods: {
     _loadData() {
       var params = {
@@ -223,12 +247,16 @@ export default {
         this.visible = true
       } else if (val == '排产') {
         if (this.selectedRowKeys.length === 1) this.$refs.taskDispatch.show(this.selectedRows[0])
+<<<<<<< HEAD
       } else if (val == '导入') {
         console.log(val);
         this.$refs.ImportExcel.show();
       }
 
       
+=======
+      }
+>>>>>>> parent of bfd126e... Revert "OK"
     },
     onPaginationChange(page, size) {
       this.pagination.current = page
@@ -245,6 +273,7 @@ export default {
           //表格行点击事件
           click: () => {
             console.log(record)
+<<<<<<< HEAD
             this.GetAllDailyData(record.fmoInterID)
             
           }
@@ -268,6 +297,43 @@ export default {
           this.detailLoading=false
           console.log(error)
         })
+=======
+            const params={
+              FMOInterID:record.fmoInterID
+            }
+            GetAllDailyByFMOInterID(params).then(res=>{
+              const result=res.result
+              if(result&&result.length>0){
+                //排产明细表数据
+                const groupData=[]
+                let macid=-999;
+                //生成行数据
+                var row={}
+                result.forEach(e => {
+                  console.log(e)
+                  if(macid!==e.FMachineID){
+                    macid=e.FMachineID
+                    row={
+                      macid:macid,
+                      sum:{
+                        plan:0,
+                        commit:0
+                      }
+                    }
+                  }
+                  //汇总计划和派工数
+                    row.sum.plan+=e.FPlanAuxQty
+                    row.sum.commit+=e.FCommitAuxQty
+                });
+              }
+              
+            }).catch(error=>{
+              console.log(error)
+            })
+          }
+        }
+      }
+>>>>>>> parent of bfd126e... Revert "OK"
     }
   }
 }
