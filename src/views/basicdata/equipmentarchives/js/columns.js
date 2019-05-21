@@ -7,9 +7,9 @@ const columns = [
   { title: '状态', dataIndex: 'depart' },
   { title: '日标准工作时长', dataIndex: 'isSysUser', scopedSlots: { customRender: 'isSysUser' } },
   { title: '日最大工作时长', dataIndex: 'roles', scopedSlots: { customRender: 'roles' } },
-  { title: '使用寿命', dataIndex: 'note' },
-  { title: '剩余寿命', dataIndex: 'note' },
-  { title: '备注', dataIndex: 'note' }
+  { title: '使用寿命', dataIndex: 'notess' },
+  { title: '剩余寿命', dataIndex: 'noteee' },
+  { title: '备注', dataIndex: 'noted11' }
 ]
 
 export default columns

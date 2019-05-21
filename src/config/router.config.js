@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/layouts'
-import { bxAnaalyse } from '@/core/icons'
+import { bxAnaalyse, Basics } from '@/core/icons'
 
 export const asyncRouterMap = [
   {
@@ -17,7 +17,7 @@ export const asyncRouterMap = [
         redirect: '/dashboard/workplace',
         component: RouteView,
         hideChildrenInMenu: true,
-        meta: { title: '工作台', keepAlive: true, icon: bxAnaalyse },
+        meta: { title: '工作台', keepAlive: true, icon: 'home' },
         children: [
           {
             path: '/dashboard/workplace',
@@ -65,7 +65,7 @@ export const asyncRouterMap = [
         name: 'systemmanage',
         component: RouteView,
         hideChildrenInMenu: false,
-        meta: { title: '系统管理', keepAlive: true, icon: bxAnaalyse },
+        meta: { title: '系统管理', keepAlive: true, icon: 'setting' },
         children: [
           {
             path: '/systemmanage/usermanage',
@@ -89,7 +89,7 @@ export const asyncRouterMap = [
         name: 'basicdata',
         component: RouteView,
         hideChildrenInMenu: false,
-        meta: { title: '基础资料', keepAlive: true, icon: bxAnaalyse },
+        meta: { title: '基础资料', keepAlive: true, icon: 'codepen' },
         children: [
           {
             path: '/basicdata/organization',
@@ -102,6 +102,28 @@ export const asyncRouterMap = [
             name: 'equipmentarchives',
             meta: { title: '设备档案', keepAlive: true },
             component: () => import('@/views/basicdata/equipmentarchives/EquipmentArchives')
+          }
+        ]
+      },
+      // 报表管理
+      {
+        path: '/Report',
+        name: 'Report',
+        component: RouteView,
+        hideChildrenInMenu: false,
+        meta: { title: '报表管理', keepAlive: true, icon: 'bar-chart' },
+        children: [
+          {
+            path: '/Report/DataSource',
+            name: 'DataSource',
+            meta: { title: '数据源管理', keepAlive: true },
+            component: () => import('@/views/Report/DataSource/index')
+          },
+          {
+            path: '/Report/Setting',
+            name: 'Setting',
+            meta: { title: '报表设置', keepAlive: true },
+            component: () => import('@/views/Report/Setting/index')
           }
         ]
       }
