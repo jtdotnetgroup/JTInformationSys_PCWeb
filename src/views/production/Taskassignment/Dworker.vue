@@ -124,7 +124,7 @@ export default {
         current: 1,
         total: 50,
         pageSize: 100,
-        pageSizeOptions: ['100', '200', '300'],
+        pageSizeOptions: ['10', '50', '100'],
         defaultPageSize: 100
       },
       buttonp: buttons.buttonp,
@@ -159,60 +159,7 @@ export default {
 
   //一开始就执行的方法
   methods: {
-    // //查询分页的方法
-    // pageData() {
-    //   this.taskschedulLoading = true
-    //   var params = {
-    //     SkipCount: this.pagination.current - 1,
-    //     MaxResultCount: this.pagination.pageSize
-    //   }
-
-    //   var _this = this
-    //   GetDailyAll(params)
-    //     .then(res => {
-    //       _this.dataTable = []
-    //       var data = res.result
-    //       if (data.items.length == 0) {
-    //         return
-    //       }
-    //       this.taskschedulLoading = false
-    //       _this.pagination.total = data.totalCount
-    //       console.log(data)
-
-    //      //服务端数据库
-    //      _this.dataTableArry=data.items;
-    //     var result = []
-    //     var index = 0
-    //      data.items.forEach(item => {
-    //       index = index + 1
-    //       var datasss = {
-    //       key:index,
-    //       indexname:index,
-    //       日期: item.日期,
-    //       机台: item.机台,
-    //       班组: item.班组,
-    //       操作员: item.操作员,
-    //       派工数量: item.派工数量,
-    //       完成数量: item.完成数量,
-    //       合格数量: item.合格数量,
-    //       计划数量: item.计划数量,
-    //       任务单号: item.fmoBillNo
-    //     }
-    //       result.push(datasss)
-    //      });
-
-    //     // // console.log(dataTableArry)
-
-    //     //  console.log(result)
-    //       _this.dataTable=data.items;
-
-    //     })
-    //     .catch(function(error) {
-    //       this.taskschedulLoading = false
-    //       console.log(error)
-    //     })
-    // },
-
+    
     _LoadMainData() {
       const params = {
         SkipCount: this.pagination.current - 1,
@@ -222,11 +169,12 @@ export default {
       ICMODailyGetAll(params)
         .then(res => {
           const result = res.result
-
+          this.dataTable=[]
           if (result && result.items.length > 0) {
             //绑定到表格上
             this.dataTable = result.items
           }
+
         })
         .catch(err => {
           console.log(err)
@@ -235,7 +183,7 @@ export default {
 
     pageChangeClick(page, pageSize) {
       ;(this.pagination.current = page), (this.pagination.pageSize = pageSize)
-      this.pageData()
+      this._loadData();
     },
 
     hideModal() {
