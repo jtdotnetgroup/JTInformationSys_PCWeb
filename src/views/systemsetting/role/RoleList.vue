@@ -1,5 +1,5 @@
 <template>
-  <a-card :bordered="false" :style="{ height: '100%' }">
+  <a-card :bordered="false" style="min-height: 100%;">
     <a-row :gutter="24">
       <a-col :md="4">
         <a-list itemLayout="vertical" :dataSource="roles">
