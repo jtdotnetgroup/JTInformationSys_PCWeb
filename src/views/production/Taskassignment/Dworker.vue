@@ -19,7 +19,8 @@
       bordered
       onRow="{this.onClickRow}"
       :pagination="false"
-      rowKey="计划单号"
+      rowKey="任务单号" 
+      :scroll="scroll"
     >
       <template slot="serial" slot-scope="text">
         <span>{{dataTable.indexOf(text)+1}}</span>
@@ -38,62 +39,6 @@
     <a-table id="cardd" bordered :columns="columnsMX" :pagination="false"></a-table>
 
     <DispatchWorkModalForm ref="DispatchWorkModalForm"/>
-    <!-- <div>
-      <a-modal
-        title="新增/维护"
-        v-model="visible"
-        @ok="hideModal"
-        okText="确认"
-        cancelText="取消"
-        width="1000px"
-        style="left:80px"
-        :maskClosable="maskClosable"
-      >
-        <tableOperatorBtn @btnClick="handleBtnClickModal" :buttons="buttonps"/>
-
-        <a-table
-          id="cards"
-          bordered
-          :dataSource="dataSource"
-          :columns="columnsMT"
-          :pagination="false"
-          :scroll="{ x: 2000, y: 500 }"
-          :loading="taskschedulLoadings"
-          rowKey="fSrcID"
-        >
-          <template slot="机台" slot-scope="text, record">
-            <EditableCell :text="text" @change="onCellChange(record.机台, '机台', $event)"/>
-          </template>
-
-          <template slot="派工数量" slot-scope="text, record">
-            <EditableCellInput
-              :text="text"
-              @change="onCellChange(record, '派工数量', $event)"
-            />
-          </template>
-
-          <template slot="操作员" slot-scope="text, record">
-            <EditableCell :text="text" @change="onCellChange(record.操作员, '操作员', $event)"/>
-          </template>
-
-          <template slot="班组" slot-scope="text, record">
-            <EditableCellInput :text="text" @change="onCellChange(record.班组, '班组', $event)"/>
-          </template>
-
-          <template slot="operation" slot-scope="text, record">
-            <a-popconfirm
-              v-if="dataSource.length"
-              title="Sure to delete?"
-              @confirm="() => onDelete(record.fSrcID)"
-            >
-              <a href="javascript:;" style="margin-left: 20px">Delete</a>
-            </a-popconfirm>
-          </template>
-        </a-table>
-      </a-modal>
-    </div>-->
-
-    <!-- <modalt ref="taskDispatch"/> -->
   </a-card>
 </template>
 
@@ -134,7 +79,10 @@ export default {
       advanced: false,
       selectedRowKeys: [],
       selectedRows: [],
-
+      scroll: {
+        x: 3100,
+        y: 350
+      },
       queryParam: {},
       maskClosable: false,
 
@@ -330,10 +278,12 @@ export default {
 
       switch (val) {
         case '派工': {
-          if (this.selectedRows.length === 1) {
-            var row = this.selectedRows[0]
-            this.$refs.DispatchWorkModalForm.show(row)
-          }
+          // if (this.selectedRows.length === 1) {
+          //   var row = this.selectedRows[0]
+          //   this.$refs.DispatchWorkModalForm.show(row)
+          // }
+          var row = this.selectedRows[0]
+          this.$refs.DispatchWorkModalForm.show(row)
         }
       }
     },

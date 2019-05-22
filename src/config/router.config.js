@@ -17,7 +17,7 @@ export const asyncRouterMap = [
         redirect: '/dashboard/workplace',
         component: RouteView,
         hideChildrenInMenu: true,
-        meta: { title: '工作台', keepAlive: true, icon: 'home' },
+        meta: { title: '工作台', keepAlive: true, icon: 'home', permission: ['qweqw'] },
         children: [
           {
             path: '/dashboard/workplace',

@@ -26,7 +26,10 @@ router.beforeEach((to, from, next) => {
           .dispatch('GetInfo')
           .then(res => {
             const permissions = res.result.auth.grantedPermissions
-
+            const allPermissions = res.result.auth.allPermissions
+            const localization = res.result.localization.values
+            store.dispatch('UpdateAllPermissions', { allPermissions })
+            store.dispatch('UpdateLocalization', localization)
             store.dispatch('GenerateRoutes', { permissions }).then(() => {
               router.addRoutes(store.getters.addRouters)
               const redirect = decodeURIComponent(from.query.redirect || to.path)

@@ -53,12 +53,16 @@ function filterAsyncRouter (routerMap, permissions) {
 const permission = {
   state: {
     routers: constantRouterMap,
-    addRouters: []
+    addRouters: [],
+    allPermissions: {}
   },
   mutations: {
     SET_ROUTERS: (state, routers) => {
       state.addRouters = routers
       state.routers = constantRouterMap.concat(routers)
+    },
+    SET_ALLPERMISSIONS: (state, payload) => {
+      state.allPermissions = payload
     }
   },
   actions: {
@@ -68,6 +72,13 @@ const permission = {
         console.log(permissions)
         const accessedRouters = filterAsyncRouter(asyncRouterMap, permissions)
         commit('SET_ROUTERS', accessedRouters)
+        resolve()
+      })
+    },
+    UpdateAllPermissions ({ commit }, data) {
+      return new Promise(resolve => {
+        const { allPermissions } = data
+        commit('SET_ALLPERMISSIONS', allPermissions)
         resolve()
       })
     }
