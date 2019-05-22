@@ -7,5 +7,3 @@ export function SaveDispBillList (data) {
     data: data
   })
 }
-
-console.log('')

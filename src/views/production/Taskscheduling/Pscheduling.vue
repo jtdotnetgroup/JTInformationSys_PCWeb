@@ -133,6 +133,7 @@ export default {
         this.visible = true
       } else if (val == '排产') {
         if (this.selectedRowKeys.length === 1) this.$refs.taskDispatch.show(this.selectedRows[0])
+        
       } else if (val == '导入') {
         console.log(val);
         this.$refs.ImportExcel.show();
