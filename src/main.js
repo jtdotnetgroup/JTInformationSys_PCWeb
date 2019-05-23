@@ -6,6 +6,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store/'
 import { VueAxios } from './utils/request'
+import message from 'ant-design-vue/es/message'
 
 // mock
 import './mock'
@@ -19,7 +20,7 @@ import moment from 'moment'
 
 Vue.config.productionTip = false
 Vue.prototype.$moment = moment
-
+Vue.prototype.$message = message
 // mount axios Vue.$http and this.$http
 Vue.use(VueAxios)
 

@@ -17,6 +17,7 @@
       :loading="loading"
       :rowSelection="{onChange: onSelectChange}"
       :pagination="false"
+      rowKey="id"
     >
       <template slot="name" slot-scope="text, record">
         <editable-cell :text="text" @change="onCellChange(record.key, 'name', $event)"/>
@@ -36,6 +37,8 @@
 </template>
 <!--JS脚本-->
 <script>
+// 获取数据
+import { GetAll, DataDel } from '@/api/User'
 // 列名
 const columns = [
   {
@@ -80,9 +83,7 @@ const columns = [
     dataIndex: 'lastLoginTime'
   }
 ]
-// 获取数据
-import { GetAll, DataDel } from '@/api/User'
-//
+// 基础数据
 export default {
   // 组件
   components: {
@@ -92,7 +93,7 @@ export default {
     AddOrEdit: () => import('./AddOrEdit')
   },
   // 所有数据
-  data() {
+  data () {
     return {
       pagination: {
         current: 1,
@@ -113,27 +114,27 @@ export default {
     }
   },
   // 页面渲染完加载
-  created() {
+  created () {
     this.loadTable()
   },
   // 所有方法
   methods: {
     // 切换分页
-    onPaginationChange(page, size) {
+    onPaginationChange (page, size) {
       this.pagination.current = page
       this.pagination.pageSize = size
       this.loadTable()
     },
     // 显示表格加载框
-    ShowLoad() {
+    ShowLoad () {
       this.loading = true
     },
     // 隐藏表格加载框
-    HideLoad() {
+    HideLoad () {
       this.loading = false
     },
     // 功能按钮点击事件
-    handleBtnClick(val) {
+    handleBtnClick (val) {
       var _this = this
       switch (val) {
         case '刷新': {
@@ -168,7 +169,7 @@ export default {
           _this.$confirm({
             title: '系统提示！',
             content: '确定要删除选中的吗?',
-            onOk() {
+            onOk () {
               _this.ShowLoad()
               DataDel(_this.selectedRows[0])
                 .then(res => {
@@ -180,21 +181,17 @@ export default {
                     _this.loadTable()
                   } else {
                     _this.$notification['error']({
-                      message: '系统提示',
-                      description: '删除失败，请稍后重试！'
+                      message: res.error.message,
+                      description: res.error.details
                     })
                   }
                   _this.HideLoad()
                 })
-                .catch(error => {
-                  _this.$notification['error']({
-                    message: '系统提示',
-                    description: '删除失败，请稍后重试！'
-                  })
+                .catch(function () {
                   _this.HideLoad()
                 })
             },
-            onCancel() {
+            onCancel () {
               _this.$notification['warning']({
                 message: '系统提示',
                 description: '数据要谨慎删除！'
@@ -213,37 +210,33 @@ export default {
       }
     },
     // 选项卡切换时
-    onSelectChange(selectedRowKeys, selectedRows) {
+    onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
     // 表格加载
-    loadTable() {
+    loadTable () {
       var _this = this
       _this.dataSource = []
       var obj = {
         SkipCount: (_this.pagination.current - 1) * _this.pagination.pageSize,
         MaxResultCount: _this.pagination.pageSize
       }
-      console.log(obj)
+
       _this.ShowLoad()
       GetAll(obj)
         .then(res => {
           var result = res.result
           _this.pagination.total = result.totalCount
-          var i=0;
+          var i = 0
           res.result.items.forEach(element => {
-             element.XH = i + 1
+            element.XH = i + 1
             _this.dataSource.push(element)
             i++
           })
           _this.HideLoad()
         })
-        .catch(error => {
-          _this.$notification['info']({
-            message: '系统提示',
-            description: '数据加载异常，请检查网络问题或请联系管理员'
-          })
+        .catch(function () {
           _this.HideLoad()
         })
     }
