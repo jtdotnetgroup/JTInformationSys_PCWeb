@@ -22,6 +22,7 @@
 
     import buttons from './js/buttons'
     import columns from './js/columns'
+    import tableData from './js/tableData'
 
     export default {
         components:{
@@ -33,7 +34,7 @@
                  columns: columns,
                  selectedRowKeys: [],
                  buttons: buttons.buttons,
-                 tableData: [],
+                 tableData: tableData,
                 
             }
         },

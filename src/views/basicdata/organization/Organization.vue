@@ -1,73 +1,94 @@
 <template>
-    <a-card>
-        <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons"/>
-    
-        
+  <a-card>
+    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons"/>
 
-        <div>
-            <a-row :gutter="10">
-            <a-col :span="4">
-                <a-tree :treeData="organizations" defaultExpandAll>
-                </a-tree>
-            </a-col>
-              <a-col :span="20">
-                  <pagination :current="pagination.current" :total="pagination.total"/>
-                  <a-table :dataSource="tableData" :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" 
-                  :columns="columns" :pagination="false">
-
-                    <template slot="roles" slot-scope="roles">
-                        
+    <div>
+      <a-row :gutter="10">
+        <a-col :span="4">
+          <treeData @btnClick="btnTree"/>
+        </a-col>
+        <a-col :span="20">
+          <pagination :current="pagination.current" :total="pagination.total" @pageChange="onPaginationChange"/>
+          <a-table
+            :dataSource="tableData"
+            :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+            :columns="columns"
+            :pagination="false"
+          >
+            <!-- <template slot="roles" slot-scope="roles">                      
                         <span v-for="(role,index) in roles.split(',')" :key="index">{{role}},</span>
-
-                    </template>
-
-                  </a-table>
-              </a-col>
-            </a-row>
-        </div>
-        
-    </a-card>
+            </template>-->
+          </a-table>
+        </a-col>
+      </a-row>
+    </div>
+  </a-card>
 </template>
 
 <script>
-    import buttons from './buttons';
-    import columns from './columns';
-    import tableData from './tableData'
-    export default {
-        components: {
-            tableOperatorBtn:()=>import('@/JtComponents/TableOperatorButton'),
-            pagination:()=>import('@/JtComponents/Pagination'),
-
-        },
-        data() {
-            return {
-                pagination: {
-                    current:1,
-                    total:50
-                },
-                tableData:tableData,
-                columns:columns,
-                selectedRowKeys:[],
-                buttons:buttons,
-                organizations:[
-                    {title:'xxx集团',key:'0-0',children:[
-                        {title:'xxxx有限公司',key:'0-1',children:[
-                            {title:'人事部',key:'0-1-1'},
-                            {title:'开发部',key:'0-1-2'},
-                            {title:'财务部',key:'0-1-3'}
-                        ]}
-                    ]}
-                ]
-            }
-        },
-        methods: {
-             onSelectChange (selectedRowKeys, selectedRows) {
-                this.selectedRowKeys = selectedRowKeys
-                this.selectedRows = selectedRows
-            },
-            handleBtnClick(val){
-
-            }
-        },
+import { GetAll } from '@/api/Organization'
+import buttons from './buttons'
+import columns from './columns'
+import tableData from './tableData'
+import { close } from 'fs'
+export default {
+  components: {
+    tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
+    pagination: () => import('@/JtComponents/Pagination'),
+    treeData: () => import('./ptreedata')
+  },
+  data() {
+    return {
+      pagination: {
+        current: 1,
+        total: 50
+      },
+      tableData: [],
+      columns: columns,
+      selectedRowKeys: [],
+      buttons: buttons
     }
+  },
+
+  mounted() {
+    this._LoadData()
+  },
+  methods: {
+    _LoadData() {
+      var params = {
+        SkipCount: this.pagination.current - 1,
+        MaxResultCount: this.pagination.pageSize
+      }
+
+      GetAll(params)
+        .then(res => {
+          const result = res.result
+          console.log(result)
+
+        //   if (result) {
+        //     this.tableData = result.items
+        //     this.pagination.total = result.totalCount
+        //   }
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+
+    onSelectChange(selectedRowKeys, selectedRows) {
+      this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
+    },
+     onPaginationChange(page, size) {
+      this.pagination.current = page
+      this.pagination.pageSize = size
+      //this._loadData()
+    },
+    handleBtnClick(val) {},
+
+    btnTree(obj) {
+      console.log(obj)
+    }
+  }
+}
 </script>

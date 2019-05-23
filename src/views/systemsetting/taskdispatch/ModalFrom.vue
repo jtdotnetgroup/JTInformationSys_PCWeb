@@ -2,7 +2,7 @@
   <a-modal
     title="新增/维护"
     :visible="visiable"
-    width="800px"
+    width="880px"
     style="left:100px"
     :maskClosable="false"
     @ok="handleSubmit"
