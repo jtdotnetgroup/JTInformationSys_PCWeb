@@ -2,32 +2,31 @@
   <a-card>
     <tableOperatorBtn @btnClick="handleBtnClick"/>
 
-    <pagination :current="pagination.current" :total="pagination.total"/>
+    <pagination :current="pagination.current" :total="pagination.total" @pageChange="onPaginationChange"/>
 
-    <a-table
+    <a-table :loading="loading"
       :dataSource="tableData"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
       :columns="columns"
-      :pagination="false"
+      :pagination="false" rowKey="name"
     ></a-table>
-
-    <createOrEditForm ref="createOrEditForm" :visiable="createForm" title="新建角色" :fields="fields" @submit="handleCreateSubmit"/>
+    <roleEditModal ref="roleModal"/>
   </a-card>
 </template>
 
 <script>
 import tableOperatorBtn from '@/JtComponents/TableOperatorButton'
 import pagination from '@/JtComponents/Pagination'
-import createOrEditForm from '@/JtComponents/CreateOrEditFormModal'
 import Fields from './roleField.js'
+import{GetAll,Create,Update,Delete} from '@/api/Role'
 
 export default {
   components: {
     tableOperatorBtn,
     pagination,
-    createOrEditForm
+    roleEditModal: () => import('./RoleList')
   },
-  data () {
+  data() {
     return {
       queryParam: {
         rolename: ''
@@ -38,39 +37,70 @@ export default {
         { title: '显示名称', dataIndex: 'displayName' },
         { title: '描述', dataIndex: 'description' }
       ],
-      tableData: [
-        { name: 'administrators', displayName: '系统管理员组', description: '系统管理员组' },
-        { name: 'administrators', displayName: '系统管理员组', description: '系统管理员组' },
-        { name: 'administrators', displayName: '系统管理员组', description: '系统管理员组' },
-        { name: 'administrators', displayName: '系统管理员组', description: '系统管理员组' }
-      ],
+      tableData: [],
       selectedRowKeys: [],
+      selectedRows:[],
       pagination: {
         current: 1,
-        total: 50
+        total: 50,
+        size:10
       },
       advanced: false,
-      createForm: false
+      createForm: false,
+      loading:false,
+      queryParams:{
+        SkipCount:0,
+        MaxResultCount:10,
+        Keyword:''
+      }
     }
   },
+  mounted () {
+    this._loadData();
+  },
   methods: {
-    onSelectChange (selectedRowKeys, selectedRows) {
+    _loadData(){
+      this.queryParams.SkipCount=this.pagination.current-1;
+      this.queryParams.MaxResultCount=this.pagination.size;
+      this.loading=true;
+      GetAll(this.queryParams).then(res=>{
+        var result=res.result;
+
+        if(result.items.length>0){
+          this.tableData=result.items;
+        }
+        this.loading=false;
+      }).catch(error=>{
+        this.loading=false;
+      })
+    },
+    onPaginationChange(page,size){
+      this.pagination.current=page;
+      this.pagination.size=size;
+      this._loadData();
+    },
+    onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
-    handleBtnClick (val) {
+    handleBtnClick(val) {
       switch (val) {
         case '新建': {
-          this.$refs.createOrEditForm.add()
+          this.$refs.roleModal.show()
+          break;
+        }
+        case '编辑':{
+          this.$refs.roleModal.show(this.selectedRows[0])
+          break;
         }
       }
     },
-    handleCreateSubmit (values) {
+    handleCreateSubmit(values) {
       console.log(values)
     }
   },
   computed: {
-    showEditBtn () {
+    showEditBtn() {
       var result = this.selectedRowKeys.length === 1
 
       return result
