@@ -1,0 +1,189 @@
+<template>
+  <a-modal
+    title="新增/维护"
+    :visible="visiable"
+    width="650px"
+    style="left:80px"
+    :maskClosable="false"
+    @ok="handleSubmit"
+    @cancel="onClose"
+  >
+    <a-form layout="inline" :form="form" @change="handleFormChange">
+      <a-form-item label="组织编码">
+        <a-input v-decorator="['Code',{rules: [{ required: true, message: '请输入组织编码' }]} ]" disabled></a-input>
+      </a-form-item>
+      <a-form-item label="组织名称">
+        <a-input v-decorator="['DisplayName',{rules: [{ required: true, message: '请输入组织名称' }]}]"></a-input>
+      </a-form-item>
+      <a-form-item label="上级组织">
+        <a-tree-select
+          disabled
+          style="width: 300px"
+          :value="value"
+          :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
+          placeholder="Please select"
+          allowClear
+          treeDefaultExpandAll
+          @change="onChange"
+          :treeData="organizations"
+        ></a-tree-select>
+      </a-form-item>
+      <a-form-item label="组织类型">
+        <a-select class="selectclass">
+          <a-select-option
+            v-for="(item,index) in Soptions"
+            :value="item.id"
+            :key="index"
+            @click="SelectClick(item.id)"
+          >{{item.name}}</a-select-option>
+        </a-select>
+      </a-form-item>
+
+      <a-form-item label="数据连接">
+        <a-input v-decorator="['DataBaseConnection',{rules: []}]"></a-input>
+      </a-form-item>
+      <a-form-item label="组织负责人">
+        <a-input v-decorator="['ERPOrganizationLeader',{rules: []}]"></a-input>
+      </a-form-item>
+      <a-form-item label="ERP组织">
+        <a-input v-decorator="['ERPOrganization',{rules: []}]"></a-input>
+      </a-form-item>
+
+      <a-form-item label="备注说明">
+        <a-textarea
+          style="width:550px"
+          v-decorator="['Remark',{rules: []}]"
+          placeholder="备注说明"
+          :autosize="{ minRows: 2, maxRows: 6 }"
+        />
+      </a-form-item>
+    </a-form>
+  </a-modal>
+</template>
+
+<script>
+import { GetSelectOptio, CreateOu } from '@/api/Organization'
+import { close, exists } from 'fs'
+import pick from 'lodash.pick'
+export default {
+  data() {
+    return {
+      visiable: false,
+      formData: {},
+      form: this.$form.createForm(this),
+      treeExpandedKeys: [],
+      value: '',
+      Soptions: [],
+      SelectClickValue: '',
+      mdl: {}
+
+      //organizations:[]
+    }
+  },
+  mounted() {
+    this._LoadData()
+  },
+
+  methods: {
+    //查询下组织类型的操作
+
+    _LoadData() {
+      GetSelectOptio()
+        .then(res => {
+          const result = res.result
+          this.Soptions = result
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+
+    showModal(formData) {
+      this.visiable = true
+      this.formData = formData
+      var key = ''
+      if (!!formData.selectedNodes) {
+        key = formData.selectedNodes[0].key
+        if (
+          !!formData.selectedNodes[0].componentOptions.children &&
+          formData.selectedNodes[0].componentOptions.children.length > 0
+        ) {
+          key += '.0000' + (formData.selectedNodes[0].componentOptions.children.length + 1)
+          var ids = formData.selectedNodes[0].componentOptions.propsData.dataRef.id
+          this.value = '' + ids + ''
+          //console.log(formData.selectedNodes[0].componentOptions.propsData.dataRef.id)
+        } else {
+          key += '.0000' + 1
+          var ids = formData.selectedNodes[0].componentOptions.propsData.dataRef.id
+          this.value = '' + ids + ''
+        }
+      } else {
+        key = formData.Code
+      }
+
+      this.mdl.Code = key
+
+      this.$nextTick(() => {
+        this.form.setFieldsValue(pick(this.mdl, 'Code'))
+      })
+    },
+
+    handleSubmit() {
+      var _this = this
+      this.form.validateFields((err, values) => {
+        var params = {
+          parentId: this.value == '' ? '0' : this.value,
+          code: values.Code,
+          displayName: values.DisplayName,
+          organizationType: this.SelectClickValue,
+          dataBaseConnection: values.DataBaseConnection,
+          erpOrganizationLeader: values.ERPOrganizationLeader,
+          erpOrganization: values.ERPOrganization,
+          remark: values.Remark
+        }
+
+        if (!err) {
+          CreateOu(params)
+            .then(res => {
+              if (res.result != 0) {
+                _this.$message.info('成功')
+                var params = {
+                  ParentID: 0
+                }
+                this.$store.dispatch('GetOrganizations', params)
+                // this.
+              } else {
+                _this.$message.info('失败')
+              }
+            })
+            .catch(err => {
+              console.log(err)
+            })
+        }
+      })
+    },
+    onClose() {
+      this.visiable = false
+    },
+    handleFormChange() {},
+    onChange(value) {
+      console.log(value)
+      this.value = value
+    },
+    SelectClick(obj) {
+      this.SelectClickValue = obj
+    }
+  },
+  computed: {
+    organizations() {
+      return this.$store.getters.organizations
+    }
+  }
+}
+</script>
+
+<style  scoped>
+.selectclass {
+  width: 212px;
+}
+</style>

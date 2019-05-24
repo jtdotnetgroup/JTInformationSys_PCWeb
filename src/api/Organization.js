@@ -19,3 +19,31 @@ export function GetAll (params) {
 
   })
 }
+
+// 通过 枚举返回list集合
+export function GetSelectOptio () {
+  return axios({
+    url: '/api/services/app/Organization/GetSelectOptio', // /api/services/app/VW_MOBillList/GetDaTask
+    method: 'get'
+  })
+}
+
+// 新增组织Create
+export function CreateOu (parameter) {
+  return axios({
+    url: '/api/services/app/Organization/Create', // /api/services/app/VW_MOBillList/GetDaTask
+    method: 'post',
+    data: parameter
+
+  })
+}
+
+// 删除组织
+export function DeleteOu (parameter) {
+  return axios({
+    url: '/api/services/app/Organization/Delete', // /api/services/app/VW_MOBillList/GetDaTask
+    method: 'DELETE',
+    params: parameter
+
+  })
+}

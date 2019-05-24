@@ -1,11 +1,8 @@
 <template>
   <div>
 
-
-    <!-- <template v-for="item in organizations" >   -->
-    <a-tree  :treeData="organizations"  defaultExpandAll @click="onButtonClick(this)"></a-tree> 
-    <!-- <template /> -->
-
+    <a-tree  :treeData="organizations"  defaultExpandAll @select="onButtonClick"></a-tree> 
+ 
 
   </div>
 </template>
@@ -15,11 +12,15 @@ import { GetTreeList } from '@/api/Organization'
 import { Item } from 'ant-design-vue/es/vc-menu';
 import { constants } from 'crypto';
 import { close } from 'fs';
+import store from '@/store'
+
+
 
 export default {
   data() {
     return {
-      organizations:[]
+      // organizations:store.getters.organizations
+      //organizations:[]
     }
   },
   mounted() {
@@ -29,22 +30,33 @@ export default {
   methods: {
       
     _LoadData() {
-      var params = {
+       var params={
         ParentID:0
       }
-      
-       GetTreeList(params).then(res => {
-           const results = res.result
-           this.organizations=results;
-       }).catch(err=>{
-            console.log(err)
-       })
+      this.$store.dispatch('GetOrganizations',params)
+
+      // var params={
+      //   ParentID:0
+      // }
+      //  GetTreeList(params).then(res => {          
+      //      const results = res.result
+      //      this.organizations=results;
+          
+      //     // consloe.log(results)
+      //  }).catch(err=>{
+      //       console.log(err)
+      //  })
 
 
     },
 
-    onButtonClick() {
-      this.$emit('btnClick',this)
+    onButtonClick(keys,e) {
+      this.$emit('btnClick',e)
+    }
+  },
+  computed: {
+    organizations(){
+      return store.getters.organizations
     }
   }
 }
