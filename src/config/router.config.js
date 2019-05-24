@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/layouts'
-import { bxAnaalyse, Basics } from '@/core/icons'
+// import { bxAnaalyse, basics } from '@/core/icons'
 
 export const asyncRouterMap = [
   {
@@ -78,6 +78,11 @@ export const asyncRouterMap = [
             name: 'rolemanage',
             component: () => import('@/views/systemsetting/role/RoleTable'),
             meta: { title: '角色管理', keepAlive: true }
+          }, {
+            path: '/systemmanage/taskdispatch',
+            name: 'taskdispatch',
+            meta: { title: '任务调度', keepAlive: true },
+            component: () => import('@/views/systemsetting/taskdispatch/Task')
           }
         ]
       },
@@ -96,13 +101,13 @@ export const asyncRouterMap = [
             name: 'organization',
             meta: { title: '组织架构', keepAlive: true },
             component: () => import('@/views/basicdata/organization/Organization')
-          },
-          {
+          }, {
             path: '/basicdata/equipmentarchives',
             name: 'equipmentarchives',
             meta: { title: '设备档案', keepAlive: true },
             component: () => import('@/views/basicdata/equipmentarchives/EquipmentArchives')
           }
+
         ]
       },
       // 报表管理
