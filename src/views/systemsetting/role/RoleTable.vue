@@ -11,6 +11,7 @@
       :pagination="false" rowKey="name"
     ></a-table>
     <roleEditModal ref="roleModal"/>
+    <a-modal/>
   </a-card>
 </template>
 
@@ -90,7 +91,16 @@ export default {
           break;
         }
         case '编辑':{
+          if(this.selectedRows.length===0){
+            return;
+          }
           this.$refs.roleModal.show(this.selectedRows[0])
+          break;
+        }
+        case '删除':{
+          if(this.selectedRows.length===0){
+            return;
+          }
           break;
         }
       }

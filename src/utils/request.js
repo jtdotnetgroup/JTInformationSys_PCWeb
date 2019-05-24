@@ -46,7 +46,7 @@ const err = (error) => {
       }
     }
     if (error.response.status === 500) {
-      message.error('抱歉，服务器处理请求异常', 3)
+      message.error(error.response.data.error.message, 3)
     }
   }
   return Promise.reject(error)
@@ -87,8 +87,3 @@ export {
   installer as VueAxios,
   service as axios
 }
-
-var s = document.createElement('script')
-s.src = baseURL + 'AbpScripts/GetScripts'
-s.type = 'text/javascript'
-document.body.appendChild(s)
