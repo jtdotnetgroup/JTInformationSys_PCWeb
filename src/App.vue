@@ -28,7 +28,7 @@ export default {
     height: 100%;
   }
   .ant-layout-content{
-    margin-left: 5px;
+    margin-left: 5px !important;
   }
   div .ant-card-body{
     padding: 10px 10px !important;

@@ -12,7 +12,6 @@
 
      <a-form layout="inline" :form="form" @change="handleFormChange">
       <a-form-item label="资源属性">
-        <!-- <a-input v-decorator="['资源属性',{ initialValue: this.formData.任务单号}]" disabled></a-input> -->
             <a-select  class="selectclass" >
             <a-select-option value="0">资源一</a-select-option>
             <a-select-option value="1">资源二</a-select-option>
@@ -20,10 +19,6 @@
           </a-select>
       </a-form-item>
       <a-form-item label="工作中心">
-        <!-- <a-date-picker
-          disabled
-          v-decorator="['工作中心',{ initialValue: this.$moment(this.formData.计划开工日期)}]"
-        ></a-date-picker> -->
         <a-input  v-decorator="['工作中心',{ initialValue: this.formData.产品编码}]"></a-input>
       </a-form-item>
       <a-form-item label="资源类型">
@@ -68,7 +63,6 @@
 
     <a-table
       id="table"
-  
       rowKey="fSrcID"
       :dataSource="tableData"
       :columns="columns"
@@ -76,9 +70,7 @@
       :bordered="true"
       :loading="dataLoading"
     >
-      <!-- <template v-for="(col,index) in editColumns" :slot="col" slot-scope="text, record, index">
-        <editCell :key="index" :text="text" @change="onCellChange(record.日期, col, $event)"/>
-      </template> -->
+      
     </a-table>
   </a-modal>
 </template>
