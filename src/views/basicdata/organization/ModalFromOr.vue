@@ -18,7 +18,7 @@
       <a-form-item label="上级组织">
         <a-tree-select
           disabled
-          style="width: 300px"
+          style="width: 174px"
           :value="value"
           :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
           placeholder="Please select"
@@ -102,8 +102,7 @@ export default {
       this.visiable = true
       this.formData = formData
       var key = ''
-      if (!!formData.selectedNodes) {
-        key = formData.selectedNodes[0].key
+      if (!!formData.selectedNodes) {key = formData.selectedNodes[0].key
         if (
           !!formData.selectedNodes[0].componentOptions.children &&
           formData.selectedNodes[0].componentOptions.children.length > 0
@@ -123,9 +122,14 @@ export default {
 
       this.mdl.Code = key
 
+
+
       this.$nextTick(() => {
         this.form.setFieldsValue(pick(this.mdl, 'Code'))
       })
+
+
+
     },
 
     handleSubmit() {
@@ -146,15 +150,15 @@ export default {
           CreateOu(params)
             .then(res => {
               if (res.result != 0) {
-                _this.$message.info('成功')
+                _this.$message.success('成功')
                 var params = {
                   ParentID: 0
                 }
                 this.$store.dispatch('GetOrganizations', params)
-                // this.
-              } else {
-                _this.$message.info('失败')
+              }else{
+                  _this.$message.error('失败')
               }
+              
             })
             .catch(err => {
               console.log(err)
