@@ -39,11 +39,11 @@ export function CreateOu (parameter) {
 }
 
 // 删除组织
-export function DeleteOu (parameter) {
+export function DeleteOu (params) {
   return axios({
     url: '/api/services/app/Organization/Delete', // /api/services/app/VW_MOBillList/GetDaTask
     method: 'DELETE',
-    params: parameter
+    params: params
 
   })
 }

@@ -18,7 +18,7 @@
       <a-form-item label="上级组织">
         <a-tree-select
           disabled
-          style="width: 300px"
+          style="width: 174px"
           :value="value"
           :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
           placeholder="Please select"
@@ -127,9 +127,14 @@ export default {
 
       this.mdl.Code = key
 
+
+
       this.$nextTick(() => {
         this.form.setFieldsValue(pick(this.mdl, 'Code'))
       })
+
+
+
     },
 
     handleSubmit() {
@@ -161,6 +166,7 @@ export default {
               } else {
                 this.$message.error('失败')
               }
+              
             })
             .catch(err => {
               console.log(err)

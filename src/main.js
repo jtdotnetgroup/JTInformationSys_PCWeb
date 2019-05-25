@@ -15,12 +15,14 @@ import './core/use'
 import './permission' // permission control
 import './utils/filter' // global filter
 import { Localization } from './utils/helper/localization'
+// import { message } from 'ant-design-vue/es/message'
 
 import moment from 'moment'
 
 Vue.config.productionTip = false
 Vue.prototype.$moment = moment
 Vue.prototype.$Localiztion = Localization
+// Vue.prototype.$message = message
 
 // mount axios Vue.$http and this.$http
 Vue.use(VueAxios)
