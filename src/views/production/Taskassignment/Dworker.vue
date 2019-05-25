@@ -19,7 +19,7 @@
       bordered
       onRow="{this.onClickRow}"
       :pagination="false"
-      rowKey="任务单号" 
+      rowKey="Id" 
       :scroll="scroll"
     >
       <template slot="serial" slot-scope="text">
@@ -50,7 +50,7 @@ import { columns } from './js/tablehhe'
 
 import { getRoleList, getServiceList } from '@/api/manage'
 import { GetDailyAll, GetDispBillAll, CreateAll, GetDaily } from '@/api/test/get'
-import{ICMODailyGetAll} from '@/api/ICMODaily'
+import{ICMODailyGetAll,GetGroupDailyList} from '@/api/ICMODaily'
 import { constants } from 'crypto'
 
 export default {
@@ -80,7 +80,7 @@ export default {
       selectedRowKeys: [],
       selectedRows: [],
       scroll: {
-        x: 3100,
+        x: 1250,
         y: 350
       },
       queryParam: {},
@@ -114,7 +114,7 @@ export default {
         MaxResultCount: this.pagination.pageSize
       }
       //后端获取数据
-      ICMODailyGetAll(params)
+      GetGroupDailyList(params)
         .then(res => {
           const result = res.result
           this.dataTable=[]
@@ -131,7 +131,7 @@ export default {
 
     pageChangeClick(page, pageSize) {
       ;(this.pagination.current = page), (this.pagination.pageSize = pageSize)
-      this._loadData();
+      this._LoadMainData();
     },
 
     hideModal() {
@@ -217,52 +217,52 @@ export default {
       }
     },
 
-    _loadData(fSrcID) {
-      this.taskschedulLoadings = true
-      var params = {
-        SkipCount: this.pagination.current - 1,
-        MaxResultCount: this.pagination.pageSize,
-        FSrcID: fSrcID
-      }
+    // _loadData(fSrcID) {
+    //   this.taskschedulLoadings = true
+    //   var params = {
+    //     SkipCount: this.pagination.current - 1,
+    //     MaxResultCount: this.pagination.pageSize,
+    //     FSrcID: fSrcID
+    //   }
 
-      var _this = this
-      GetDispBillAll(params)
-        .then(res => {
-          this.taskschedulLoadings = false
-          _this.dataSource = []
-          var data = res.result
-          if (data.items.length == 0) {
-            return
-          }
-          _this.dataTableArrget.push(data.items)
+    //   var _this = this
+    //   GetDispBillAll(params)
+    //     .then(res => {
+    //       this.taskschedulLoadings = false
+    //       _this.dataSource = []
+    //       var data = res.result
+    //       if (data.items.length == 0) {
+    //         return
+    //       }
+    //       _this.dataTableArrget.push(data.items)
 
-          var result = []
-          var index = 0
-          data.items.forEach(item => {
-            index = index + 1
-            var datasss = {
-              key: index,
-              indexname: index,
-              日期: this.$moment(item.日期).format('YYYY-MM-DD'),
-              机台: item.机台,
-              班组: item.班组,
-              操作员: item.操作员,
-              派工数量: item.派工数量,
-              完成数量: item.完成数量,
-              合格数量: item.合格数量,
-              计划数量: item.计划数量,
-              任务单号: item.fmoBillNo
-            }
-            result.push(datasss)
-          })
+    //       var result = []
+    //       var index = 0
+    //       data.items.forEach(item => {
+    //         index = index + 1
+    //         var datasss = {
+    //           key: index,
+    //           indexname: index,
+    //           日期: this.$moment(item.日期).format('YYYY-MM-DD'),
+    //           机台: item.机台,
+    //           班组: item.班组,
+    //           操作员: item.操作员,
+    //           派工数量: item.派工数量,
+    //           完成数量: item.完成数量,
+    //           合格数量: item.合格数量,
+    //           计划数量: item.计划数量,
+    //           任务单号: item.fmoBillNo
+    //         }
+    //         result.push(datasss)
+    //       })
 
-          _this.dataSource = result
-        })
-        .catch(function(error) {
-          console.log(error)
-          this.taskschedulLoadings = false
-        })
-    },
+    //       _this.dataSource = result
+    //     })
+    //     .catch(function(error) {
+    //       console.log(error)
+    //       this.taskschedulLoadings = false
+    //     })
+    // },
 
     handleBtnClick(val) {
       //   if (val == '查询') {
@@ -278,12 +278,11 @@ export default {
 
       switch (val) {
         case '派工': {
-          // if (this.selectedRows.length === 1) {
-          //   var row = this.selectedRows[0]
-          //   this.$refs.DispatchWorkModalForm.show(row)
-          // }
-          var row = this.selectedRows[0]
-          this.$refs.DispatchWorkModalForm.show(row)
+          if (this.selectedRows.length === 1) {
+            var row = this.selectedRows[0]
+            this.$refs.DispatchWorkModalForm.show(row)
+          }
+          
         }
       }
     },

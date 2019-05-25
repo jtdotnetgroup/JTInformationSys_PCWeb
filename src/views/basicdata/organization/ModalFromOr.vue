@@ -65,6 +65,9 @@
 import { GetSelectOptio, CreateOu } from '@/api/Organization'
 import { close, exists } from 'fs'
 import pick from 'lodash.pick'
+
+
+
 export default {
   data() {
     return {
@@ -104,16 +107,17 @@ export default {
       var key = ''
       if (!!formData.selectedNodes) {
         key = formData.selectedNodes[0].key
+        var childrenCount=formData.selectedNodes[0].componentOptions.children.length;
         if (
           !!formData.selectedNodes[0].componentOptions.children &&
-          formData.selectedNodes[0].componentOptions.children.length > 0
+          childrenCount > 0
         ) {
-          key += '.0000' + (formData.selectedNodes[0].componentOptions.children.length + 1)
+          key += '.0' + (childrenCount + 1)
           var ids = formData.selectedNodes[0].componentOptions.propsData.dataRef.id
           this.value = '' + ids + ''
           //console.log(formData.selectedNodes[0].componentOptions.propsData.dataRef.id)
         } else {
-          key += '.0000' + 1
+          key += '.0' + 1
           var ids = formData.selectedNodes[0].componentOptions.propsData.dataRef.id
           this.value = '' + ids + ''
         }
@@ -146,14 +150,16 @@ export default {
           CreateOu(params)
             .then(res => {
               if (res.result != 0) {
-                _this.$message.info('成功')
+                this.$message.success('成功')
                 var params = {
                   ParentID: 0
                 }
                 this.$store.dispatch('GetOrganizations', params)
+                this.onClose();
                 // this.
+                this.$nextTick();
               } else {
-                _this.$message.info('失败')
+                this.$message.error('失败')
               }
             })
             .catch(err => {

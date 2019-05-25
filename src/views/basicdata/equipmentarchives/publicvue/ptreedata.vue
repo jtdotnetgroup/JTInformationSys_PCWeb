@@ -1,40 +1,35 @@
 <template>
     <div>
         
-        <a-tree   :treeData="organizations" defaultExpandAll @click="onButtonClick()">
+        <a-tree :treeData="organizations" defaultExpandAll @click="onButtonClick()">
          </a-tree>
 
     </div>
 </template>
 
 <script>
-
-import { GetTreeList } from '@/api/Organization'
-
     export default {
         data() {
             return {
-                 organizations:[]
+                 
             }
         },
-        mounted:{
-
+        mounted(){
+          this._LoadData();
         },
-
         methods: {
-
             _LoadData(){
-
-
-
-
+                this.$store.dispatch('GetWorkCenters')
             },
-
-
             onButtonClick(){
                 this.$emit('btnClick');
             }
-        }
+        },
+        computed: {
+           organizations(){
+               return this.$store.getters.workcenters
+           } 
+        },
     }
 </script>
 

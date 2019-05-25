@@ -1,6 +1,6 @@
 <template>
   <a-card>
-    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons"/>
+    
 
     <div>
       <a-row :gutter="10">
@@ -8,13 +8,10 @@
           <treedata @btnClick="btnTree"/>
         </a-col>
         <a-col :span="20">
-          <pagination :current="pagination.current"
-          :pageSizeOptions="pagination.pageSizeOptions"
-          :defaultPageSize="pagination.defaultPageSize"
-          :total="pagination.total"
-           @pageChange="pageChangeClick"/>
+          <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons"/>
+          <pagination :current="pagination.current" :total="pagination.total" @pageChange="onPaginationChange"/>
 
-          <a-table
+          <a-table :loading="loading"
             :dataSource="tableData"
             :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
             :columns="columns"
@@ -40,7 +37,7 @@
 <script>
 import buttons from './js/buttons'
 import columns from './js/columns'
-import tableData from './js/tableData'
+import {GetAll} from '@/api/Equipment'
 
 export default {
   components: {
@@ -50,40 +47,41 @@ export default {
     pTableVue: () => import('./publicvue/pTable'),
     ModelFrom:()=>import('./publicvue/ModelFrom'),
     ImportExcelModal:()=>('./publicvue/ImportExcelModal')
-
-   
   },
   data() {
     return {
        pagination: {
         current: 1,
-        total: 50,
-        pageSize: 100,
-        pageSizeOptions: ['100', '200', '300'],
-        defaultPageSize: 100
+        total: 0,
+        size:10
       },
-      tableData: tableData,
+      tableData: [],
       columns: columns,
       selectedRowKeys: [],
-      buttons: buttons.buttons
+      selectedRows:[],
+      buttons: buttons.buttons,
+      loading:false
     }
   },
   methods: {
-    onSelectChange(selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
+    onPaginationChange(page,size){
+      this.pagination.current=page;
+      this.pagination.size=size;
+      this._loadData();
     },
     handleBtnClick(val) {
         switch (val) {
             case '新增':
-                 
-                 const obj={};
-
-                this.$refs.ModelFrom.showModal(obj)
+                this.$refs.ModelFrom.showModal()
                
                 break;
                 case'维护':
-              
+                if(this.selectedRows.length!==1){
+                  return;
+                }
+
+                this.$refs.ModelFrom.showModal(this.selectedRows[0])
+
                 break;
         
             default:
@@ -94,16 +92,35 @@ export default {
     pageChangeClick(){
 
     },
+    onSelectChange(keys,rows){
+      this.selectedRowKeys=keys;
+      this.selectedRows=rows;
+    },
     setRow(render){
       return {
         on:{
           click:()=>{
-
             this.$refs.pTableVue._loadData()
           }
         }
 
       }
+    },
+
+    _loadData(){
+      var params={
+        SkipCount:this.pagination.current-1,
+        MaxResultCount:this.pagination.size
+      }
+      this.loading=true;
+      GetAll(params)
+      .then(res=>{
+        this.loading=false;
+        this.tableData=res.result.items;
+        this.pagination.total=res.result.totalCount
+      }).catch(err=>{
+        this.loading=false;
+      })
     },
    
 
@@ -114,12 +131,9 @@ export default {
 
   //计算属性用于响应式的改变函数
   computed: {
-
-    test(){
-
-      alert("方法执行")
-    }
-    
+  },
+  mounted () {
+    this._loadData();
   },
 }
 </script>

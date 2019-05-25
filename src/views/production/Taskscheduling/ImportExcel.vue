@@ -207,7 +207,8 @@ export default {
           if (_this.IsValidDate(key)) {
             row.Dailies.push({
               FPlanAuxQty: item[key],
-              FMachineID: item.机台号,
+              // FMachineID: item.机台号,
+              FMachineName:item.机台号,
               FShift: item.班次,
               FOperID: item.工序名,
               FDate: key

@@ -4,7 +4,6 @@ import store from '@/store'
 import {
   VueAxios
 } from './axios'
-import notification from 'ant-design-vue/es/notification'
 import message from 'ant-design-vue/es/message'
 
 import {

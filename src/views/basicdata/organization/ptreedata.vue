@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <a-tree  :treeData="organizations"  defaultExpandAll @select="onButtonClick"></a-tree> 
+    <a-directory-tree  :treeData="organizations" defaultExpandedKeys="['00001']"  defaultExpandAll @select="onButtonClick"></a-directory-tree> 
  
 
   </div>
@@ -33,7 +33,10 @@ export default {
        var params={
         ParentID:0
       }
-      this.$store.dispatch('GetOrganizations',params)
+      if(this.$store.getters.organizations.length===0){
+        this.$store.dispatch('GetOrganizations',params)
+      }
+      
 
       // var params={
       //   ParentID:0

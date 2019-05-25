@@ -22,6 +22,11 @@
       <template v-for="(col,index) in editColumns" :slot="col" slot-scope="text, record">
         <EditableCellInput :key="index" :text="text" @change="onCellChange(record, col, $event)"/>
       </template>
+      <template>
+        <a-select>
+          <a-select-option key="" value=""></a-select-option>
+        </a-select>
+      </template>
 
       <template slot="operation" slot-scope="text, record">
         <a-popconfirm
@@ -38,9 +43,10 @@
 
 <script>
 import buttons from './js/buttons'
-import tableHeader from './js/tableheader'
+import {columnsMT} from './js/tableheader'
 import { GetDispBillAll } from '@/api/test/get'
-import {SaveDispBillList} from '@/api/DispBill'
+import {SaveDispBillList,GetDailyDispBillList} from '@/api/DispBill'
+
 export default {
   components: {
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
@@ -71,12 +77,12 @@ export default {
             data.push({
               fid:row.fid,
               fSrcID:this.DailyData.fid,
-              fShift:row.班次,
-              fMachineID:row.设备,
+              fShift:row.fShift,
+              fMachineID:row.fMachineID,
               fWorkCenterID:0,
-              fCommitAuxQty:row.派工数量,
-              fWorker:row.操作员,
-              fmoBillNo:this.DailyData.任务单号,
+              fCommitAuxQty:row.fCommitAuxQty,
+              fWorker:row.fWorker,
+              fmoBillNo:this.DailyData.fmoBillNo,
               fmoInterID:this.DailyData.fmoInterID
             })
           });
@@ -103,20 +109,20 @@ export default {
       this._LoadData();
     },
     _LoadData() {
-      var params={FSrcID:this.DailyData.fid}
-      GetDispBillAll(params).then(res=>{
+      var params={fmoBillNos:this.DailyData.fmoBillNo,DatelList:this.DailyData.fDate}
+      GetDailyDispBillList(params).then(res=>{
         console.log(res)
         this.loading=false
         var result=res.result;
-        if(result&&result.length>0){
+        if(result&&result.items.length>0){
           let index=0
-          result.forEach(e => {
+          result.items.forEach(e => {
             e.key=index;
             index++;
-            e.日期=this.$moment(e.日期).format('YYYY-MM-D')
+            e.fDate=this.$moment(e.fDate).format('YYYY-MM-D')
           });
 
-          this.dataSource=result
+          this.dataSource=result.items
         }
       }).catch(error=>{
         this.loading=false
@@ -146,8 +152,8 @@ export default {
       visible: false,
       DailyData:{},
       loading:false,
-      columnsMT:tableHeader.columnsMT,
-      editColumns:['机台','操作员','班次','派工数量'],
+      columnsMT:columnsMT,
+      editColumns:['机台','worker','fShift','fCommitAuxQty'],
       selectColumns:[]
     }
   },

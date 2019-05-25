@@ -1,46 +1,84 @@
 
 const example = {
-  '日期': '2015-12-01T00:00:00',
-  // '计划单号': 'DA20190514091846-001',
-  '任务单号': 'WORK000245',
-  '车间': 'RI车间',
-  '产品编码': '03.02.0259',
-  '产品名称': '17880-0V230-00',
-  '规格型号': '进气管',
-  '计划数量': 369,
-  '计划开工日期': '2015-12-01T00:00:00',
-  '计划完工日期': '2015-12-23T00:00:00',
-  '完成数量': 0,
-  'FID': null
+  'Id': 'Id',
+  'fDate': '日期',
+  'fmoBillNo': '任务单号',
+  'DisplayName': '车间',
+  'fItemID': '产品编码',
+  'fItemName': '产品名称',
+  'fItemModel': '产品规格',
+  'totalPlanAuxQty': '计划数量'
 }
 
-export const columns = []
+const exampleMT = {
+  'id': 'id',
+  'fDate': '日期',
+  'fid': 'fid',
+  'fmoBillNo': '任务单号',
+  'fmoInterID': '',
+  'fBillNo': '派工单号',
+  'fBillTime': '派工日期',
+  'machine': '设备',
+  'worker': '员工',
+  'fShift': '班次',
+  'fCommitAuxQty': '派工数量',
+  'fBiller': '计划员'
+}
+
+export const columns = GenericColumns(example)
+export const columnsMT = GenericColumns(exampleMT)
 columns.push(
   {
     title: '序号',
     key: 'index',
     scopedSlots: { customRender: 'serial' },
-    width: 40
+    width: 30
   }
 )
-const keys = Object.keys(example)
 
-keys.forEach(key => {
-  if (key.match(/[\u4e00-\u9fa5]*/)[0].length !== 0) {
-    var col = {
-      title: key,
-      dataIndex: key,
-      key: key,
-      align: 'center'
+// const keys = Object.keys(example)
+// console.log(example)
+// keys.forEach(key => {
+//   if (example[key].match(/[\u4e00-\u9fa5]*/)[0].length !== 0) {
+//     var col = {
+//       title: example[key],
+//       dataIndex: key,
+//       key: key,
+//       align: 'center',
+//       width: 130
+//     }
+
+//     // if (editColumns.includes(key)) {
+//     //   col.scopedSlots = { customRender: key }
+//     // }
+
+//     columns.push(col)
+//   }
+// })
+
+function GenericColumns (data) {
+  const result = []
+  const keys = Object.keys(data)
+  keys.forEach(key => {
+    if (data[key].match(/[\u4e00-\u9fa5]*/)[0].length !== 0) {
+      var col = {
+        title: data[key],
+        dataIndex: key,
+        key: key,
+        align: 'center',
+        width: 130,
+        scopedSlots: { customRender: key }
+      }
+
+      // if (editColumns.includes(key)) {
+      //   col.scopedSlots = { customRender: key }
+      // }
+
+      result.push(col)
     }
-
-    // if (editColumns.includes(key)) {
-    //   col.scopedSlots = { customRender: key }
-    // }
-
-    columns.push(col)
-  }
-})
+  })
+  return result
+}
 
 const result = {
 

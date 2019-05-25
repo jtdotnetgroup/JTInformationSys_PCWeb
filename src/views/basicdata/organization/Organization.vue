@@ -18,7 +18,7 @@
             :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
             :columns="columns"
             :pagination="false"
-             rowKey="Id" 
+            rowKey="Id"
           >
             <!-- <template slot="roles" slot-scope="roles">                      
                         <span v-for="(role,index) in roles.split(',')" :key="index">{{role}},</span>
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { GetAll,DeleteOu } from '@/api/Organization'
+import { GetAll, DeleteOu } from '@/api/Organization'
 import buttons from './buttons'
 import columns from './columns'
 import tableData from './tableData'
@@ -62,8 +62,7 @@ export default {
       selectedRowKeys: [],
       buttons: buttons,
       treevaule: '',
-      treeId:''//用于记录树形的ID
-
+      treeId: '' //用于记录树形的ID
     }
   },
 
@@ -71,18 +70,17 @@ export default {
     //this._LoadData()
   },
   methods: {
-
     //查询员工信息表
     _LoadData() {
       var params = {
-        Id:this.treeId,
+        Id: this.treeId,
         SkipCount: this.pagination.current - 1,
         MaxResultCount: this.pagination.pageSize
       }
 
       GetAll(params)
         .then(res => {
-          this.tableData=[]
+          this.tableData = []
           const result = res.result
           if (result) {
             this.tableData = result.items
@@ -100,7 +98,7 @@ export default {
     },
     onPaginationChange(page, size) {
       this.pagination.current = page
-      this.pagination.pageSize = size     
+      this.pagination.pageSize = size
       this._loadData()
     },
     handleBtnClick(val) {
@@ -108,35 +106,27 @@ export default {
         case '新建组织':
           var formData = {}
 
-          if (!!!this.treevaule) {
-            formData.Code = '0000' + (store.getters.organizations.length + 1)
+          if (!(!!this.treevaule)) {
+            formData.Code = '0' + (store.getters.organizations.length + 1)
           } else {
             formData = this.treevaule
           }
           this.$refs.ModalFromOr.showModal(formData)
+
           break
         case '新建员工':
+          var formData = {}
 
-          var formData={}
-
-           //if(this.tableData.length)
-
-          
+          //if(this.tableData.length)
 
           this.$refs.ModalFromEn.showModal(formData)
           break
-          case '删除组织':
-
-         
-      
-           DeleteOu(id).then(res=>{
-
-             
-
-           }).catch(err=>{
-             console.log(err)
-           })
-
+        case '删除组织':
+          DeleteOu(id)
+            .then(res => {})
+            .catch(err => {
+              console.log(err)
+            })
 
           break
 
@@ -145,15 +135,19 @@ export default {
       }
     },
 
-   
-
-
     //点击树形的办法
-    btnTree(obj) {
-      this.treevaule = obj
-      this.treeId=obj.selectedNodes[0].componentOptions.propsData.dataRef.id
-      this._LoadData()
+    btnTree(treeNode) {
+      console.log(treeNode)
 
+      if (treeNode.selectedNodes.length > 0) {
+        this.treevaule = treeNode
+        this.treeId = treeNode.selectedNodes[0].componentOptions.propsData.dataRef.id
+        this._LoadData()
+      }else{
+        this.treevaule={}
+      }
+
+      
     }
   }
 }
