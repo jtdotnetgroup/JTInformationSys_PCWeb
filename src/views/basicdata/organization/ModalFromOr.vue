@@ -16,8 +16,7 @@
         <a-input v-decorator="['DisplayName',{rules: [{ required: true, message: '请输入组织名称' }]}]"></a-input>
       </a-form-item>
       <a-form-item label="上级组织">
-        <a-tree-select
-          disabled
+        <a-tree-select     
           style="width: 174px"
           :value="value"
           :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
@@ -29,7 +28,7 @@
         ></a-tree-select>
       </a-form-item>
       <a-form-item label="组织类型">
-        <a-select class="selectclass">
+        <a-select class="selectclass" v-decorator="['OrganizationType',{rules: [{ required: true, message: '请选择组织类型' }]} ]">
           <a-select-option
             v-for="(item,index) in Soptions"
             :value="item.id"
@@ -107,12 +106,12 @@ export default {
           !!formData.selectedNodes[0].componentOptions.children &&
           formData.selectedNodes[0].componentOptions.children.length > 0
         ) {
-          key += '.0000' + (formData.selectedNodes[0].componentOptions.children.length + 1)
+          key += '.00' + (formData.selectedNodes[0].componentOptions.children.length + 1)
           var ids = formData.selectedNodes[0].componentOptions.propsData.dataRef.id
           this.value = '' + ids + ''
           //console.log(formData.selectedNodes[0].componentOptions.propsData.dataRef.id)
         } else {
-          key += '.0000' + 1
+          key += '.00' + 1
           var ids = formData.selectedNodes[0].componentOptions.propsData.dataRef.id
           this.value = '' + ids + ''
         }
@@ -135,16 +134,37 @@ export default {
     handleSubmit() {
       var _this = this
       this.form.validateFields((err, values) => {
+    
         var params = {
           parentId: this.value == '' ? '0' : this.value,
           code: values.Code,
           displayName: values.DisplayName,
           organizationType: this.SelectClickValue,
           dataBaseConnection: values.DataBaseConnection,
-          erpOrganizationLeader: values.ERPOrganizationLeader,
-          erpOrganization: values.ERPOrganization,
+          erpOrganizationLeader:values.ERPOrganizationLeader==''?0:values.ERPOrganizationLeader,
+          erpOrganization:values.ERPOrganization==''?0:values.ERPOrganization ,
           remark: values.Remark
         }
+
+
+ if(!(values.ERPOrganizationLeader==undefined ||values.ERPOrganizationLeader==""  ) || !(values.ERPOrganization==undefined ||values.ERPOrganization==""))
+  {
+              // this.$message.error("请输入账户和密码")
+              // return;
+
+               var reg=/^[0-9]*$/
+        if(!reg.test(values.ERPOrganizationLeader))
+          {
+            this.$message.error('ERP组织负责人为数字')
+            return;
+          }
+          else if(!reg.test(values.ERPOrganization)){
+
+            this.$message.error('ERP组织为数字')
+            return;
+          }
+   }
+        
 
         if (!err) {
           CreateOu(params)
@@ -155,19 +175,23 @@ export default {
                   ParentID: 0
                 }
                 this.$store.dispatch('GetOrganizations', params)
+                this.onClose()
               }else{
                   _this.$message.error('失败')
+                   this.onClose()
               }
               
             })
             .catch(err => {
               console.log(err)
+                _this.$message.error(''+err+'')
             })
         }
       })
     },
     onClose() {
-      this.visiable = false
+      this.visiable = false,
+       this.form.resetFields()
     },
     handleFormChange() {},
     onChange(value) {
@@ -188,6 +212,6 @@ export default {
 
 <style  scoped>
 .selectclass {
-  width: 212px;
+  width: 174px;
 }
 </style>

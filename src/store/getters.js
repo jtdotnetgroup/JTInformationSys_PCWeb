@@ -12,7 +12,8 @@ const getters = {
   multiTab: state => state.app.multiTab,
   permissions: state => state.user.permissions,
   allPermissions: state => state.permission.allPermissions,
-  organizations: state => state.organizations.organizations
+  organizations: state => state.organizations.organizations,
+  employees: state => state.organizations.tableData
 }
 
 export default getters

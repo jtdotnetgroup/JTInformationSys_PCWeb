@@ -37,3 +37,13 @@ export function Delete (params) {
 
   })
 }
+
+// 员工删除
+export function GetTreeListEn (params) {
+  return axios({
+    url: 'api/services/app/Employee/GetTreeList', // /api/services/app/VW_MOBillList/GetDaTask
+    method: 'get',
+    params: params
+
+  })
+}

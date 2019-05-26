@@ -32,7 +32,17 @@
             </template>
 
             <template slot="fSystemUser" slot-scope="fSystemUser">
-              <span>{{fSystemUser==1?"是":"否"}}</span>
+              <!-- <span>{{fSystemUser==1?"是":"否"}}</span> -->
+
+
+            <div v-if="fSystemUser==1">
+                <a-checkbox :checked="true" ></a-checkbox>
+
+             </div>
+              <div v-else>
+                  <a-checkbox :checked="false" ></a-checkbox>
+             </div>
+     
             </template>
           </a-table>
         </a-col>
@@ -48,13 +58,12 @@
 </template>
 
 <script>
-import { GetAll, DeleteOu, GetFMpno } from '@/api/Organization'
-
+import { GetAll, DeleteOu,  } from '@/api/Organization'
+import { GetFMpno } from '@/api/Employee'
 import { Delete } from '@/api/Employee'
 
 import buttons from './buttons'
 import columns from './columns'
-import tableData from './tableData'
 import store from '@/store'
 
 export default {
@@ -71,40 +80,48 @@ export default {
         current: 1,
         total: 50
       },
-      tableData: [],
+      //tableData: this.$store.getters.employees,
       columns: columns,
       selectedRowKeys: [],
       buttons: buttons,
       treevaule:'',
       treeId: '', //用于记录树形的ID
-      isEdit: false
+      isEdit: false,
+      FMpnos:'',
     }
   },
 
   mounted() {
-    //this._LoadData()
+  //this.LoadGetFMpno()
+  },
+   computed: {
+    tableData(){
+      return store.getters.employees
+    },
   },
   methods: {
     //查询员工信息表
     _LoadData() {
       var params = {
-        Id: this.treeId,
+        Id: this.treeId==''?0:this.treeId,
         SkipCount: this.pagination.current - 1,
         MaxResultCount: this.pagination.pageSize
       }
 
-      GetAll(params)
-        .then(res => {
-          this.tableData = []
-          const result = res.result
-          if (result) {
-            this.tableData = result.items
-            this.pagination.total = result.totalCount
-          }
-        })
-        .catch(err => {
-          console.log(err)
-        })
+       this.$store.dispatch('GetEmployees',params)
+
+      // GetAll(params)
+      //   .then(res => {
+      //     this.tableData = []
+      //     const result = res.result  
+      //     if (result) {
+      //       this.tableData = result.items
+      //       this.pagination.total = result.totalCount
+      //     }
+      //   })
+      //   .catch(err => {
+      //     console.log(err)
+      //   })
     },
 
     onSelectChange(selectedRowKeys, selectedRows) {
@@ -122,7 +139,7 @@ export default {
         case '新建组织': {
           var formData = {}
           if (!(!!this.treevaule)) {
-            formData.Code = '0000' + (store.getters.organizations.length + 1)
+            formData.Code = '00' + (store.getters.organizations.length + 1)
           } else {
             formData = this.treevaule
           }
@@ -130,6 +147,7 @@ export default {
           break
         }
         case '新建员工': {
+          //this.LoadGetFMpno()
           this.isEdit = false
           var formData = {}
           formData = this.treevaule
@@ -211,6 +229,15 @@ export default {
                 .then(res => {
                   if (res.result > 0) {
                     _this.$message.success('成功')
+
+                  var params = {
+                     Id: _this.treeId==''?0: _this.treeId,
+                     SkipCount: 0,
+                     MaxResultCount: 100
+                   }
+
+                _this.$store.dispatch('GetEmployees',params)
+
                   } else {
                     _this.$message.error('失败')
                   }
@@ -230,6 +257,19 @@ export default {
         default:
           break
       }
+    },
+
+    LoadGetFMpno(){
+
+     GetFMpno()
+      .then(res => {
+        const results = res.result
+        this.FMpnos = results
+        console.log(results)
+      })
+      .catch(err => {
+        console.log(err)
+      })
     },
 
     //点击树形的办法

@@ -13,7 +13,7 @@ export function GetTreeList (params) {
 // 通过 ID去查询员工的信息
 export function GetAll (params) {
   return axios({
-    url: '/api/services/app/Employee/GetAll', // /api/services/app/VW_MOBillList/GetDaTask
+    url: '/api/services/app/Employee/GetAllVW', // /api/services/app/VW_MOBillList/GetDaTask
     method: 'get',
     params: params
 
