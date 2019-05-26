@@ -3,7 +3,8 @@ import { GetTreeList, GetAll } from '@/api/Organization'
 const store = {
   state: {
     organizations: [],
-    workcenters: []
+    workcenters: [],
+    workers: []
   },
   mutations: {
     SET_ORGANIZATIONS: (state, payload) => {
@@ -11,6 +12,9 @@ const store = {
     },
     SET_WORKCENTERS: (state, payload) => {
       state.workcenters = payload
+    },
+    SET_WORKERS: (state, payload) => {
+      state.workers = payload
     }
   },
   actions: {
@@ -35,6 +39,9 @@ const store = {
         }).catch(err => {
           console.log(err)
         })
+    },
+    GetWorkers ({ commit }, params) {
+
     }
   }
 }

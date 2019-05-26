@@ -11,7 +11,9 @@ const buttons = {
   { text: '报废', icon: '', type: 'default' },
   { text: '维修', icon: '', type: 'default' },
   { text: '资源导入', icon: '', type: 'default' },
-  { text: '产能导入', icon: '', type: 'default' }],
+  { text: '产能导入', icon: '', type: 'default' },
+  { text: '班次信息维护', icnon: '', type: 'default' }
+  ],
 
   buttonsmodel: [{
     text: '新增',

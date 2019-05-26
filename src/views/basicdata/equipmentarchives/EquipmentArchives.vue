@@ -1,17 +1,20 @@
 <template>
   <a-card>
-    
-
     <div>
       <a-row :gutter="10">
-        <a-col :span="4" >
+        <a-col :span="4">
           <treedata @btnClick="btnTree"/>
         </a-col>
         <a-col :span="20">
           <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons"/>
-          <pagination :current="pagination.current" :total="pagination.total" @pageChange="onPaginationChange"/>
+          <pagination
+            :current="pagination.current"
+            :total="pagination.total"
+            @pageChange="onPaginationChange"
+          />
 
-          <a-table :loading="loading"
+          <a-table
+            :loading="loading"
             :dataSource="tableData"
             :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
             :columns="columns"
@@ -19,16 +22,14 @@
             :customRow="setRow"
           ></a-table>
 
-        <!-- 公共组件 明细table -->
+          <!-- 公共组件 明细table -->
           <pTableVue ref="pTableVue"/>
         </a-col>
 
         <!-- 公共组件 模态框 -->
-         <ModelFrom  ref="ModelFrom"/> 
+        <ModelFrom ref="ModelFrom"/>
 
-      
-
-
+        <ShiftForm ref="ShiftForm"/>
       </a-row>
     </div>
   </a-card>
@@ -36,8 +37,8 @@
 
 <script>
 import buttons from './js/buttons'
-import columns from './js/columns'
-import {GetAll} from '@/api/Equipment'
+import {columns} from './js/columns'
+import { GetAll } from '@/api/Equipment'
 
 export default {
   components: {
@@ -45,84 +46,88 @@ export default {
     pagination: () => import('@/JtComponents/Pagination'),
     treedata: () => import('./publicvue/ptreedata'),
     pTableVue: () => import('./publicvue/pTable'),
-    ModelFrom:()=>import('./publicvue/ModelFrom'),
-    ImportExcelModal:()=>('./publicvue/ImportExcelModal')
+    ModelFrom: () => import('./publicvue/ModelFrom'),
+    ImportExcelModal: () => './publicvue/ImportExcelModal',
+    ShiftForm: () => import('./publicvue/ShiftList')
   },
   data() {
     return {
-       pagination: {
+      pagination: {
         current: 1,
         total: 0,
-        size:10
+        size: 10
       },
       tableData: [],
       columns: columns,
       selectedRowKeys: [],
-      selectedRows:[],
+      selectedRows: [],
       buttons: buttons.buttons,
-      loading:false
+      loading: false
     }
   },
   methods: {
-    onPaginationChange(page,size){
-      this.pagination.current=page;
-      this.pagination.size=size;
-      this._loadData();
+    onPaginationChange(page, size) {
+      this.pagination.current = page
+      this.pagination.size = size
+      this._loadData()
     },
     handleBtnClick(val) {
-        switch (val) {
-            case '新增':
-                this.$refs.ModelFrom.showModal()
-               
-                break;
-                case'维护':
-                if(this.selectedRows.length!==1){
-                  return;
-                }
-
-                this.$refs.ModelFrom.showModal(this.selectedRows[0])
-
-                break;
-        
-            default:
-                break;
+      switch (val) {
+        case '新增': {
+          this.$refs.ModelFrom.showModal()
+          break
         }
 
-    },
-    pageChangeClick(){
+        case '维护': {
+          if (this.selectedRows.length !== 1) {
+            return
+          }
+          this.$refs.ModelFrom.showModal(this.selectedRows[0])
+          break
+        }
 
-    },
-    onSelectChange(keys,rows){
-      this.selectedRowKeys=keys;
-      this.selectedRows=rows;
-    },
-    setRow(render){
-      return {
-        on:{
-          click:()=>{
-            this.$refs.pTableVue._loadData()
+        case '班次信息维护': {
+          if(this.selectedRows.length===1){
+            this.$refs.ShiftForm.show(this.selectedRows[0]);
           }
         }
 
+        default: {
+          break
+        }
+      }
+    },
+    pageChangeClick() {},
+    onSelectChange(keys, rows) {
+      this.selectedRowKeys = keys
+      this.selectedRows = rows
+    },
+    setRow(render) {
+      return {
+        on: {
+          click: () => {
+            this.$refs.pTableVue._loadData()
+          }
+        }
       }
     },
 
-    _loadData(){
-      var params={
-        SkipCount:this.pagination.current-1,
-        MaxResultCount:this.pagination.size
+    _loadData() {
+      var params = {
+        SkipCount: this.pagination.current - 1,
+        MaxResultCount: this.pagination.size
       }
-      this.loading=true;
+      this.loading = true
       GetAll(params)
-      .then(res=>{
-        this.loading=false;
-        this.tableData=res.result.items;
-        this.pagination.total=res.result.totalCount
-      }).catch(err=>{
-        this.loading=false;
-      })
+        .then(res => {
+          this.loading = false
+          this.tableData = res.result.items
+          this.pagination.total = res.result.totalCount
+        })
+        .catch(err => {
+          this.loading = false
+        })
     },
-   
 
     btnTree() {
       // alert('单击')
@@ -130,11 +135,10 @@ export default {
   },
 
   //计算属性用于响应式的改变函数
-  computed: {
-  },
-  mounted () {
-    this._loadData();
-  },
+  computed: {},
+  mounted() {
+    this._loadData()
+  }
 }
 </script>
 

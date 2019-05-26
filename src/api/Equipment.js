@@ -31,3 +31,19 @@ export function GetAll (params) {
     params
   })
 }
+
+export function CreateShift (data) {
+  return axios({
+    url: '',
+    method: 'post',
+    data
+  })
+}
+
+export function GetShiftList (params) {
+  return axios({
+    url: '',
+    method: 'get',
+    params
+  })
+}

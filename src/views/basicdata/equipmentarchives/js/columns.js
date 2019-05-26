@@ -1,4 +1,6 @@
-const columns = [
+import { GenericColumns } from '@/utils/helper/ColumnsHelper'
+
+export const columns = [
   { title: '序号', dataIndex: 'findex', scopedSlots: { customRender: 'findex' } },
   { title: '工作中心  ', dataIndex: 'workCenter' },
   { title: '资源编号', dataIndex: 'fNumber' },
@@ -12,4 +14,11 @@ const columns = [
   { title: '备注', dataIndex: 'note' }
 ]
 
-export default columns
+const shiftExample = {
+  'equipmentID': 'equipmentID',
+  'employeeID': '员工',
+  'shiftName': '班次',
+  'id': 'id'
+}
+
+export const columnShift = GenericColumns(shiftExample)
