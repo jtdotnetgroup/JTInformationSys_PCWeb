@@ -52,7 +52,7 @@
       <ModalFromOr ref="ModalFromOr"/>
 
       <!-- 新增员工弹框 -->
-      <ModalFromEn ref="ModalFromEn"/>
+      <ModalFromEn ref="ModalFromEn"   @addSuccess="_LoadData"/>
     </div>
   </a-card>
 </template>
@@ -80,6 +80,7 @@ export default {
         current: 1,
         total: 50
       },
+      tableData:[],
       //tableData: this.$store.getters.employees,
       columns: columns,
       selectedRowKeys: [],
@@ -92,13 +93,13 @@ export default {
   },
 
   mounted() {
-  //this.LoadGetFMpno()
+  this._LoadData()
   },
-   computed: {
-    tableData(){
-      return store.getters.employees
-    },
-  },
+  //  computed: {
+  //   tableData(){
+  //     return store.getters.employees
+  //   },
+  // },
   methods: {
     //查询员工信息表
     _LoadData() {
@@ -108,20 +109,20 @@ export default {
         MaxResultCount: this.pagination.pageSize
       }
 
-       this.$store.dispatch('GetEmployees',params)
+      // this.$store.dispatch('GetEmployees',params)
 
-      // GetAll(params)
-      //   .then(res => {
-      //     this.tableData = []
-      //     const result = res.result  
-      //     if (result) {
-      //       this.tableData = result.items
-      //       this.pagination.total = result.totalCount
-      //     }
-      //   })
-      //   .catch(err => {
-      //     console.log(err)
-      //   })
+      GetAll(params)
+        .then(res => {
+          this.tableData = []
+          const result = res.result  
+          if (result) {
+            this.tableData = result.items
+            this.pagination.total = result.totalCount
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
 
     onSelectChange(selectedRowKeys, selectedRows) {
@@ -230,13 +231,13 @@ export default {
                   if (res.result > 0) {
                     _this.$message.success('成功')
 
-                  var params = {
-                     Id: _this.treeId==''?0: _this.treeId,
-                     SkipCount: 0,
-                     MaxResultCount: 100
-                   }
-
-                _this.$store.dispatch('GetEmployees',params)
+                //   var params = {
+                //      Id: _this.treeId==''?0: _this.treeId,
+                //      SkipCount: 0,
+                //      MaxResultCount: 100
+                //    }
+                // _this.$store.dispatch('GetEmployees',params)
+                this._LoadData()
 
                   } else {
                     _this.$message.error('失败')

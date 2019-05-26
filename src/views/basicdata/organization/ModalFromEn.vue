@@ -161,21 +161,16 @@ export default {
     },
     
   //  FMpnos(){
-
- 
   //     // GetFMpno()
-  //     // .then(res => {
-        
+  //     // .then(res => {   
   //     //  return  this.FMpnos = results
   //     // })
   //     // .catch(err => {
   //     //   console.log(err)
   //     // })
-
   //  }
 
 
-    
   },
   methods: {
     showModal(formData, isEdit) {
@@ -253,19 +248,7 @@ export default {
       if (this.IsEdit == false) {
         this.form.validateFields((err, values) => {
 
-          //  if(this.FSystemUser==true){
-          //   if((values.UserName==undefined ||values.UserName==""  ) || (values.Password==undefined ||values.Password==""))
-          //   {
-          //      this.$message.error("请输入账户和密码")
-          //      return;
-          //   }
-          // }else{
-          //   values.UserName="",
-          //   values.Password=""
-          // }
-
         
-
           var params = {
             fMpno: values.FMpno,
             fName: values.FName,
@@ -273,7 +256,7 @@ export default {
             fDepartment: this.value, //部门
             fWorkingState: this.FWorkingState ? 1 : 2, //1 在职 2不在职
             fSystemUser: this.FSystemUser ? 1 : 2, //1 是系统用户 2是系统用户
-            fParentId: this.valueTree,//上级主管
+            fParentId: this.valueTree==''?0:this.valueTree,//上级主管
             fPhone: values.FPhone,
             fHiredate: values.FHiredate,
             fEmailAddress: values.FEmailAddress,
@@ -304,14 +287,7 @@ export default {
                 if (res.result !== 0) {
                   _this.$message.success('成功')
 
-              var params = {
-                Id: _this.value,
-                SkipCount: 0,
-                MaxResultCount: 100
-              }
-
-               this.$store.dispatch('GetEmployees',params)
-
+               _this.$emit('addSuccess');
                   this.onClose()
 
                 } else {
@@ -343,12 +319,9 @@ export default {
               .then(res => {
                 if (res.result !== 0) {
                   _this.$message.success('成功')
-               var params = {
-                Id: _this.value,
-                SkipCount: 0,
-                MaxResultCount: 100
-              }
-               this.$store.dispatch('GetEmployees',params)
+            
+
+               _this.$emit('addSuccess');
 
                this.onClose()
                 } else {
