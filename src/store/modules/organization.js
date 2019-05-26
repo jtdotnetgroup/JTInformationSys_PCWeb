@@ -1,10 +1,14 @@
 import { GetTreeList, GetAll } from '@/api/Organization'
+import { GetAll as GetAllEmployee } from '@/api/Employee'
 
 const store = {
   state: {
     organizations: [],
     workcenters: [],
-    workers: []
+    workers: [],
+    tableData: [],
+    total: 50
+
   },
   mutations: {
     SET_ORGANIZATIONS: (state, payload) => {
@@ -15,6 +19,10 @@ const store = {
     },
     SET_WORKERS: (state, payload) => {
       state.workers = payload
+      SET_Employees: (state, payload, ptotal) => {
+        state.tableData = payload
+        state.total = ptotal
+      }
     }
   },
   actions: {
@@ -42,6 +50,22 @@ const store = {
     },
     GetWorkers ({ commit }, params) {
 
+    },
+
+    GetEmployees ({ commit }, params) {
+      GetAllEmployee(params).then(res => {
+        const result = res.result
+
+        if (result) {
+          var tableData = result.items
+
+          var total = result.totalCount
+
+          commit('SET_Employees', tableData, total)
+        }
+      }).catch(err => {
+        console.log(err)
+      })
     }
   }
 }
