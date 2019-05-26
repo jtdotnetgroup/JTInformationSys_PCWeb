@@ -78,6 +78,7 @@ export default {
     return {
       pagination: {
         current: 1,
+        pageSize: 10,
         total: 50
       },
       tableData:[],
@@ -108,9 +109,6 @@ export default {
         SkipCount: this.pagination.current - 1,
         MaxResultCount: this.pagination.pageSize
       }
-
-      // this.$store.dispatch('GetEmployees',params)
-
       GetAll(params)
         .then(res => {
           this.tableData = []
@@ -132,7 +130,7 @@ export default {
     onPaginationChange(page, size) {
       this.pagination.current = page
       this.pagination.pageSize = size
-      this._loadData()
+      this._LoadData()
     },
     handleBtnClick(val) {
       var _this = this

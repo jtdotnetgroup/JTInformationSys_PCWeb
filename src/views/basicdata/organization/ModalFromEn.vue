@@ -309,7 +309,12 @@ export default {
           values.id = this.formData.id
           values.fUserId = this.formData.fUserId
           values.fOrganizationUnitId=this.formData.fOrganizationUnitId
-          values.fDepartment=this.formData.fDepartment
+          if(this.value!=this.formData.fDepartment){ //判断如果改变部门
+              values.fDepartment=this.value
+          }else{
+             values.fDepartment=this.formData.fDepartment     
+          }
+         
           values.fUserId=this.formData.fUserId
           
 
