@@ -34,15 +34,12 @@
             <template slot="fSystemUser" slot-scope="fSystemUser">
               <!-- <span>{{fSystemUser==1?"是":"否"}}</span> -->
 
-
-            <div v-if="fSystemUser==1">
-                <a-checkbox :checked="true" ></a-checkbox>
-
-             </div>
+              <div v-if="fSystemUser==1">
+                <a-checkbox :checked="true"></a-checkbox>
+              </div>
               <div v-else>
-                  <a-checkbox :checked="false" ></a-checkbox>
-             </div>
-     
+                <a-checkbox :checked="false"></a-checkbox>
+              </div>
             </template>
           </a-table>
         </a-col>
@@ -58,7 +55,8 @@
 </template>
 
 <script>
-import { GetAll, DeleteOu,  } from '@/api/Organization'
+import { GetAll, DeleteOu } from '@/api/Organization'
+import{GetAll as GetAllEmployee}from '@/api/Employee'
 import { GetFMpno } from '@/api/Employee'
 import { Delete } from '@/api/Employee'
 
@@ -81,47 +79,52 @@ export default {
         total: 50
       },
       //tableData: this.$store.getters.employees,
+      tableData:[],
       columns: columns,
       selectedRowKeys: [],
       buttons: buttons,
-      treevaule:'',
+      treevaule: '',
       treeId: '', //用于记录树形的ID
       isEdit: false,
-      FMpnos:'',
+      FMpnos: ''
     }
   },
 
   mounted() {
-  //this.LoadGetFMpno()
+    //this.LoadGetFMpno()
   },
-   computed: {
-    tableData(){
+  computed: {
+    tableData1() {
       return store.getters.employees
-    },
+    }
   },
   methods: {
     //查询员工信息表
     _LoadData() {
+      // var params = {
+      //   Id: this.treeId==''?0:this.treeId,
+      //   SkipCount: this.pagination.current - 1,
+      //   MaxResultCount: this.pagination.pageSize
+      // }
+
+      //  this.$store.dispatch('GetEmployees',params)
       var params = {
-        Id: this.treeId==''?0:this.treeId,
+        Id: this.treeId == '' ? 0 : this.treeId,
         SkipCount: this.pagination.current - 1,
         MaxResultCount: this.pagination.pageSize
       }
-
-       this.$store.dispatch('GetEmployees',params)
-
-      // GetAll(params)
-      //   .then(res => {
-      //     this.tableData = []
-      //     const result = res.result  
-      //     if (result) {
-      //       this.tableData = result.items
-      //       this.pagination.total = result.totalCount
-      //     }
-      //   })
-      //   .catch(err => {
-      //     console.log(err)
-      //   })
+      GetAllEmployee(params)
+        .then(res => {
+          this.tableData = []
+          const result = res.result
+          if (result) {
+            this.tableData = result.items
+            this.pagination.total = result.totalCount
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
 
     onSelectChange(selectedRowKeys, selectedRows) {
@@ -139,7 +142,7 @@ export default {
         case '新建组织': {
           var formData = {}
 
-          if (!(!!this.treevaule)) {
+          if (!!!this.treevaule) {
             formData.Code = '0' + (store.getters.organizations.length + 1)
           } else {
             formData = this.treevaule
@@ -232,14 +235,13 @@ export default {
                   if (res.result > 0) {
                     _this.$message.success('成功')
 
-                  var params = {
-                     Id: _this.treeId==''?0: _this.treeId,
-                     SkipCount: 0,
-                     MaxResultCount: 100
-                   }
+                    var params = {
+                      Id: _this.treeId == '' ? 0 : _this.treeId,
+                      SkipCount: 0,
+                      MaxResultCount: 100
+                    }
 
-                _this.$store.dispatch('GetEmployees',params)
-
+                    _this.$store.dispatch('GetEmployees', params)
                   } else {
                     _this.$message.error('失败')
                   }
@@ -261,17 +263,16 @@ export default {
       }
     },
 
-    LoadGetFMpno(){
-
-     GetFMpno()
-      .then(res => {
-        const results = res.result
-        this.FMpnos = results
-        console.log(results)
-      })
-      .catch(err => {
-        console.log(err)
-      })
+    LoadGetFMpno() {
+      GetFMpno()
+        .then(res => {
+          const results = res.result
+          this.FMpnos = results
+          console.log(results)
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
 
     //点击树形的办法

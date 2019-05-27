@@ -14,7 +14,7 @@ const getters = {
   allPermissions: state => state.permission.allPermissions,
   organizations: state => state.organizations.organizations,
   workcenters: state => state.organizations.workcenters,
-  workers: state => state.organizations.workers
+  workers: state => state.organizations.workers,
   employees: state => state.organizations.tableData
 }
 

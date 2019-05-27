@@ -1,7 +1,13 @@
 <template>
     <a-modal :visible="visible" title="班次信息" @cancel="onClose">
-        <Buttons :search="false"/>
-        <a-table :dataSource="tableData" :columns="columns"></a-table>
+        <Buttons :search="false" @btnClick="handelBtnClick"/>
+        <a-table :dataSource="tableData" :columns="columns">
+            <template  slot="employeeID">
+                <a-select >
+                  <a-select-option v-for="(item) in workers" :key="item.EquipmentID" :value="item.EquipmentID">{{item.FName}}</a-select-option>
+                </a-select>
+            </template>
+        </a-table>
     </a-modal>
 </template>
 
@@ -16,7 +22,8 @@ import {columnShift} from '../js/columns'
                 visible: false,
                 columns:columnShift,
                 EquipmentID:0,
-                tableData:[]
+                tableData:[],
+                workers:this.$store.getters.workers
             }
         },
         methods: {
@@ -26,6 +33,9 @@ import {columnShift} from '../js/columns'
             },
             onClose(){
                 this.visible=false;
+            },
+            handelBtnClick(val){
+
             }
         },
     }
