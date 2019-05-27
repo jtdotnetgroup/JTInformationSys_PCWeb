@@ -10,28 +10,57 @@
       width="30%"
     >
       <a-form :form="form" @submit="handleSubmit" :layout="formLayout">
-        <a-form-item v-show="false" label="id">
-          <a-input v-model="form.id"/>
+        <a-form-item
+          v-show="fasle"
+          label="id"
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+        >
+          <a-input v-model="form.id" placeholder/>
         </a-form-item>
-        <a-form-item label="姓：">
-          <a-input v-model="form.surname"/>
+        <a-form-item
+          label="姓："
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+        >
+          <a-input v-model="form.surname" placeholder/>
         </a-form-item>
-        <a-form-item label="用户名：">
-          <a-input v-model="form.userName"/>
+        <a-form-item
+          label="用户名："
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+        >
+          <a-input v-model="form.userName" placeholder/>
         </a-form-item>
-        <a-form-item label="昵称：">
-          <a-input v-model="form.name"/>
+        <a-form-item
+          label="昵称："
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+        >
+          <a-input v-model="form.name" placeholder/>
         </a-form-item>
-        <a-form-item label="邮箱地址：">
-          <a-input v-model="form.emailAddress"/>
+        <a-form-item
+          label="邮箱地址："
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+        >
+          <a-input v-model="form.emailAddress" placeholder/>
         </a-form-item>
-        <a-form-item label="是否启用：">
+        <a-form-item
+          label="是否启用："
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+        >
           <a-radio-group name="radioGroup" v-model="form.isActive" :defaultValue="form.isActive">
             <a-radio :value="true">启用</a-radio>
             <a-radio :value="false">不启用</a-radio>
           </a-radio-group>
         </a-form-item>
-        <a-form-item label="角色：">
+        <a-form-item
+          label="角色："
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+        >
           <a-checkbox-group style="width: 100%;" v-model="form.roleNames">
             <a-row v-for="(item, index) in SelroleNames" :key="index">
               <a-col :span="8">
@@ -40,11 +69,21 @@
             </a-row>
           </a-checkbox-group>
         </a-form-item>
-        <a-form-item label="密码：" v-show="!IsEdit">
+        <a-form-item
+          label="密码："
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+          v-show="!IsEdit"
+        >
           <a-input type="password" v-model="form.password"/>
         </a-form-item>
-        <a-form-item label="注册时间：" v-show="IsEdit">
-          <a-input v-model="form.creationTime"/>
+        <a-form-item
+          label="注册时间："
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+          v-show="IsEdit"
+        >
+          <a-input v-model="form.creationTime" placeholder/>
         </a-form-item>
       </a-form>
     </a-modal>
@@ -53,7 +92,7 @@
 <!--脚本文件-->
 <script>
 // 获取数据
-import { GetMx, DataAdd, DataPUT,DataAddOrPUT , GetRoles } from '@/api/User'
+import { GetMx, DataAdd, DataPUT, DataAddOrPUT, GetRoles } from '@/api/User'
 
 //
 export default {
@@ -85,6 +124,25 @@ export default {
           id: 1
         }
       ]
+    }
+  },
+  computed: {
+    formItemLayout() {
+      const { formLayout } = this
+      return formLayout === 'horizontal'
+        ? {
+            labelCol: { span: 4 },
+            wrapperCol: { span: 20 }
+          }
+        : {}
+    },
+    buttonItemLayout() {
+      const { formLayout } = this
+      return formLayout === 'horizontal'
+        ? {
+            wrapperCol: { span: 20, offset: 4 }
+          }
+        : {}
     }
   },
   //
@@ -134,7 +192,7 @@ export default {
       this.form.password = ''
     },
     // 显示
-    show (obj) {
+    show(obj) {
       this.IsEdit = false
       this.beginGetRole()
       if (obj.id !== 0) {
@@ -144,20 +202,20 @@ export default {
       this.showModal()
     },
     // 隐藏
-    hide () {
+    hide() {
       this.visible = false
     },
     // 确定后执行关闭弹出层/窗口
-    handleOk () {
+    handleOk() {
       this.handleSubmit(this.form)
     },
     // 取消操作关闭弹出层/窗口
-    handleCancel () {
+    handleCancel() {
       this.empty()
       this.visible = false
     },
     // 提交
-    handleSubmit (obj) {
+    handleSubmit(obj) {
       var _this = this
       _this.ShowLoad()
       DataAddOrPUT(obj)
