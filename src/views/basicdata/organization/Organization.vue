@@ -18,7 +18,7 @@
             :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
             :columns="columns"
             :pagination="false"
-            rowKey="Id"
+            rowKey="id"
           >
             <!-- <template slot="roles" slot-scope="roles">                      
                         <span v-for="(role,index) in roles.split(',')" :key="index">{{role}},</span>
@@ -52,7 +52,7 @@
       <ModalFromOr ref="ModalFromOr"/>
 
       <!-- 新增员工弹框 -->
-      <ModalFromEn ref="ModalFromEn"   @addSuccess="_LoadData"/>
+      <ModalFromEn ref="ModalFromEn"   @addSuccess="handelAddSuccess"/>
     </div>
   </a-card>
 </template>
@@ -229,13 +229,8 @@ export default {
                   if (res.result > 0) {
                     _this.$message.success('成功')
 
-                //   var params = {
-                //      Id: _this.treeId==''?0: _this.treeId,
-                //      SkipCount: 0,
-                //      MaxResultCount: 100
-                //    }
-                // _this.$store.dispatch('GetEmployees',params)
-                this._LoadData()
+               
+                _this._LoadData()
 
                   } else {
                     _this.$message.error('失败')
@@ -258,19 +253,6 @@ export default {
       }
     },
 
-    LoadGetFMpno(){
-
-     GetFMpno()
-      .then(res => {
-        const results = res.result
-        this.FMpnos = results
-        console.log(results)
-      })
-      .catch(err => {
-        console.log(err)
-      })
-    },
-
     //点击树形的办法
     btnTree(obj) {
       if (obj.selectedNodes.length > 0) {
@@ -282,6 +264,11 @@ export default {
       } else {
         this.treevaule = ''
       }
+    },
+    handelAddSuccess(){
+      this.selectedRowKeys=[];
+      this._LoadData();
+      this.treevaule=''
     }
   }
 }

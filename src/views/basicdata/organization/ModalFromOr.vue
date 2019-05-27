@@ -131,6 +131,7 @@ export default {
 
     },
 
+//提交的方法
     handleSubmit() {
       var _this = this
       this.form.validateFields((err, values) => {

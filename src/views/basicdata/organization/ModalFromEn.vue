@@ -39,7 +39,7 @@
           style="width: 174px"
           :value="value"
           :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
-          placeholder="Please select"
+          placeholder="所属部门"
           allowClear
           treeDefaultExpandAll
           @change="onChange"
@@ -66,7 +66,7 @@
           style="width: 174px"
           :value="valueTree"
           :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
-          placeholder="Please select"
+          placeholder="上级主管"
           allowClear
           treeDefaultExpandAll
           @change="onChangeTree"
@@ -136,7 +136,6 @@ export default {
       value: undefined,
       valueTree:undefined,
       mdl: {},
-      FMpnos: '',
       Sex: true,
       FWorkingState: true,
       FSystemUser: false,
@@ -145,32 +144,15 @@ export default {
   },
   mounted() {
     
-     this.LoadGetFMpno()
      this.LoadTreeData()
   },
 
-  created() {
-    //执行绑定编号的api
-     //this.LoadGetFMpno()
-  },
 
 
   computed: {
     organizations() {
       return this.$store.getters.organizations
     },
-    
-  //  FMpnos(){
-  //     // GetFMpno()
-  //     // .then(res => {   
-  //     //  return  this.FMpnos = results
-  //     // })
-  //     // .catch(err => {
-  //     //   console.log(err)
-  //     // })
-  //  }
-
-
   },
   methods: {
     showModal(formData, isEdit) {
@@ -199,12 +181,9 @@ export default {
         }
       }
 
-      this.mdl.FMpno = this.FMpnos
-      this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.mdl, 'FMpno'))
-      })
+      
     },
-
+   //编辑是搬定值
     Edit(formData) {
       console.log(formData)
       this.formData = formData
@@ -216,7 +195,7 @@ export default {
       console.log(this.FWorkingState)
 
       this.value = '' + formData.fDepartment + ''
-      this.valueTree=''+formData.id+''
+      this.valueTree=''+formData.fParentId+''
 
       this.mdl.FMpno = formData.fMpno
       this.mdl.FName = formData.fName
@@ -277,6 +256,14 @@ export default {
             this.$message.error('默认新增是员工必须为在职状态')
             return;
           }
+
+         var regphone=/^(13[0-9]|14[5-9]|15[012356789]|166|17[0-8]|18[0-9]|19[8-9])[0-9]{8}$/
+          if(!regphone.test(values.FPhone))
+          {
+            this.$message.error('手机号码不正确')
+            return;
+          }
+
           // values.fSex=this.Sex?1:2  这样赋值
 
           console.log(params)
@@ -317,8 +304,23 @@ export default {
          
           values.fUserId=this.formData.fUserId
           
+          var regphone=/^(13[0-9]|14[5-9]|15[012356789]|166|17[0-8]|18[0-9]|19[8-9])[0-9]{8}$/
+          if(!regphone.test(values.FPhone))
+          {
+            this.$message.error('手机号码不正确')
+            return;
+          }
 
-        
+
+         var reg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+          if(!reg.test(values.FEmailAddress))
+          {
+            this.$message.error('邮箱格式不正确')
+            return;
+          }
+
+
+
           if (!err) {
             Update(values)
               .then(res => {
@@ -377,13 +379,17 @@ export default {
     },
 
 
+
+
 //获取编号
      LoadGetFMpno(){
-
         GetFMpno()
       .then(res => {
         const results = res.result
-        this.FMpnos = results
+        this.mdl.FMpno = results
+        this.$nextTick(() => {
+        this.form.setFieldsValue(pick(this.mdl, 'FMpno'))
+      })
       })
       .catch(err => {
         console.log(err)
@@ -412,11 +418,7 @@ export default {
         .catch(err => {
           console.log(err)
         })
-
-
     }
-
-
 
   }
 }
