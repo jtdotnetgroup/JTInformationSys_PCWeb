@@ -18,13 +18,13 @@
         >
           <a-input v-model="form.id" placeholder/>
         </a-form-item>
-        <a-form-item
+        <!-- <a-form-item
           label="姓："
           :label-col="formItemLayout.labelCol"
           :wrapper-col="formItemLayout.wrapperCol"
         >
           <a-input v-model="form.surname" placeholder/>
-        </a-form-item>
+        </a-form-item> -->
         <a-form-item
           label="用户名："
           :label-col="formItemLayout.labelCol"

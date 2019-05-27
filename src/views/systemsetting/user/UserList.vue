@@ -43,44 +43,42 @@ import { GetAll, DataDel } from '@/api/User'
 const columns = [
   {
     title: '序号',
-    dataIndex: 'XH'
+    dataIndex: 'XH',
+    width: 80
   },
   {
-    title: 'id',
-    dataIndex: 'id'
+    title: 'UserID',
+    dataIndex: 'id',
+    width: 150
   },
-  {
-    title: '姓',
-    dataIndex: 'surname'
-  },
+  // {
+  //   title: '姓',
+  //   dataIndex: 'surname'
+  // },
   {
     title: '用户名',
-    dataIndex: 'userName'
+    dataIndex: 'userName',
+    width: 150
   },
   {
     title: '邮箱地址',
-    dataIndex: 'emailAddress'
-  },
-  {
-    title: '是否启用',
-    dataIndex: 'isActive',
-    scopedSlots: { customRender: 'isActive' }
+    dataIndex: 'emailAddress',
+    width: 150
   },
   {
     title: '角色',
     dataIndex: 'roleNames'
   },
   {
+    title: '是否启用',
+    dataIndex: 'isActive',
+    scopedSlots: { customRender: 'isActive' },
+    width: 100
+  },
+  {
     title: '注册时间',
-    dataIndex: 'creationTime'
-  },
-  {
-    title: '描述',
-    dataIndex: 'email'
-  },
-  {
-    title: '最后登录时间',
-    dataIndex: 'lastLoginTime'
+    dataIndex: 'creationTime',
+    width: 150
   }
 ]
 // 基础数据
@@ -93,7 +91,7 @@ export default {
     AddOrEdit: () => import('./AddOrEdit')
   },
   // 所有数据
-  data () {
+  data() {
     return {
       pagination: {
         current: 1,
@@ -114,27 +112,27 @@ export default {
     }
   },
   // 页面渲染完加载
-  created () {
+  created() {
     this.loadTable()
   },
   // 所有方法
   methods: {
     // 切换分页
-    onPaginationChange (page, size) {
+    onPaginationChange(page, size) {
       this.pagination.current = page
       this.pagination.pageSize = size
       this.loadTable()
     },
     // 显示表格加载框
-    ShowLoad () {
+    ShowLoad() {
       this.loading = true
     },
     // 隐藏表格加载框
-    HideLoad () {
+    HideLoad() {
       this.loading = false
     },
     // 功能按钮点击事件
-    handleBtnClick (val) {
+    handleBtnClick(val) {
       var _this = this
       switch (val) {
         case '刷新': {
@@ -169,7 +167,7 @@ export default {
           _this.$confirm({
             title: '系统提示！',
             content: '确定要删除选中的吗?',
-            onOk () {
+            onOk() {
               _this.ShowLoad()
               DataDel(_this.selectedRows[0])
                 .then(res => {
@@ -187,11 +185,11 @@ export default {
                   }
                   _this.HideLoad()
                 })
-                .catch(function () {
+                .catch(function() {
                   _this.HideLoad()
                 })
             },
-            onCancel () {
+            onCancel() {
               _this.$notification['warning']({
                 message: '系统提示',
                 description: '数据要谨慎删除！'
@@ -210,12 +208,12 @@ export default {
       }
     },
     // 选项卡切换时
-    onSelectChange (selectedRowKeys, selectedRows) {
+    onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
     // 表格加载
-    loadTable () {
+    loadTable() {
       var _this = this
       _this.dataSource = []
       var obj = {
@@ -231,12 +229,13 @@ export default {
           var i = 0
           res.result.items.forEach(element => {
             element.XH = i + 1
+            element.creationTime = this.$moment(element.creationTime).format('YYYY-MM-DD hh:mm')
             _this.dataSource.push(element)
             i++
           })
           _this.HideLoad()
         })
-        .catch(function () {
+        .catch(function() {
           _this.HideLoad()
         })
     }
