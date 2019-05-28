@@ -8,7 +8,7 @@
       @pageChange="onPaginationChange"
     />
 
-    <a-table 
+    <a-table
       rowKey="任务单号"
       :dataSource="dataSource"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
@@ -26,7 +26,13 @@
       </a-button>
     </div>
 
-    <a-table id="card" bordered :dataSource="dataSourceMX" :columns="columnsMX" :pagination="false"></a-table>
+    <a-table
+      id="card"
+      bordered
+      :dataSource="detailData"
+      :columns="detailColumns"
+      :pagination="false"
+    ></a-table>
 
     <dispatch ref="taskDispatch"/>
     <ImportExcel ref="ImportExcel"/>
@@ -61,41 +67,64 @@ export default {
       dataSource: [],
       columns: columns,
       columnsMT: tableheader.columnsMT,
-      columnsMX: tableheader.columnsMX,
+      columnsMX: [],
       dataSourceMX: tableheader.dataSourceMX,
       scroll: {
         x: 3100,
         y: 350
       },
-      taskschedulLoading: false
+      taskschedulLoading: false,
+      dailyDataList: []
     }
   },
   mounted() {
     this._loadData()
   },
   computed: {
-    detailData(){
+    detailData() {
       //排产明细表数据
-            const groupData = []
-            let macid = -999
-            //生成行数据
-            var row = {}
-            this.dailyDataList.forEach(e => {
-              console.log(e)
-              if (macid !== e.FMachineID) {
-                macid = e.FMachineID
-                row = {
-                  macid: macid,
-                  sum: {
-                    plan: 0,
-                    commit: 0
-                  }
-                }
+      const result=[]
+      if(!!this.dailyDataList&&!!this.dailyDataList.details){
+        var row={
+          totalPlan:this.dailyDataList.totalPlan,
+          totalCommit:this.dailyDataList.totalCommit
+        };
+        this.dailyDataList.details.forEach(e => {
+          var plancol=e.fDate+'Plan'
+          var commitcol=e.fDate+'Commit'
+          row[plancol]=e.dayPlan
+          row[commitcol]=e.dayCommit
+        });
+        result.push(row)
+      }
+      return result;
+    },
+    detailColumns() {
+      const result = []
+
+      result.push({
+        title: '汇总',
+        children: [{ title: '计划', dataIndex: 'totalPlan' }, { title: '实际', dataIndex: 'totalCommit' }]
+      })
+      if (!!this.dailyDataList && !!this.dailyDataList.details) {
+        this.dailyDataList.details.forEach(r => {
+          var column = {
+            title: r.fDate,
+            children: [
+              {
+                title: '计划',
+                dataIndex: r.fDate + 'Plan'
+              },
+              {
+                title: '实际',
+                dataIndex: r.fDate + 'Commit'
               }
-              //汇总计划和派工数
-              row.sum.plan += e.FPlanAuxQty
-              row.sum.commit += e.FCommitAuxQty
-            })
+            ]
+          }
+          result.push(column)
+        })
+      }
+      return result
     }
   },
   methods: {
@@ -133,13 +162,10 @@ export default {
         this.visible = true
       } else if (val == '排产') {
         if (this.selectedRowKeys.length === 1) this.$refs.taskDispatch.show(this.selectedRows[0])
-        
       } else if (val == '导入') {
-        console.log(val);
-        this.$refs.ImportExcel.show();
+        console.log(val)
+        this.$refs.ImportExcel.show()
       }
-
-      
     },
     onPaginationChange(page, size) {
       this.pagination.current = page
@@ -157,7 +183,6 @@ export default {
           click: () => {
             console.log(record)
             this.GetAllDailyData(record.fmoInterID)
-            
           }
         }
       }
@@ -166,17 +191,16 @@ export default {
       const params = {
         FMOInterID: fmoInterID
       }
-      this.detailLoading=true;
+      this.detailLoading = true
       GetAllDailyByFMOInterID(params)
         .then(res => {
-          this.detailLoading=false;
+          this.detailLoading = false
           const result = res.result
-          if (result && result.length > 0) {
-            this.dailyDataList=result;
-          }
+          this.dailyDataList = result
+          this.detailColumns();
         })
         .catch(error => {
-          this.detailLoading=false
+          this.detailLoading = false
           console.log(error)
         })
     }
