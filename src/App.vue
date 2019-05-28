@@ -33,4 +33,8 @@ export default {
   div .ant-card-body{
     padding: 10px 10px !important;
   }
+  .ant-table-thead th{
+    font-weight: bold !important;
+    background-color: rgb(189, 184, 184) !important;
+  }
 </style>

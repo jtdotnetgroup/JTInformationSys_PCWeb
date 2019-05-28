@@ -19,6 +19,17 @@
           </a-select>
       </a-form-item>-->
 
+      <a-form-item label="设备代码">
+        <a-input
+          v-decorator="[ 'FNumber', {rules: [{ required: true, message: '请输入设备代码' }],initialValue:this.formData.FNumber} ]"
+        ></a-input>
+      </a-form-item>
+      <a-form-item label="设备名称">
+        <a-input
+          v-decorator="['FName',{rules:[{required:true,message: '请输入资源名称' }], initialValue: this.formData.FName}]"
+        ></a-input>
+      </a-form-item>
+
       <a-form-item label="工作中心">
         <a-select
           style="width: 120px"
@@ -45,16 +56,7 @@
           <a-select-option :value="999">其它</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item label="设备代码">
-        <a-input
-          v-decorator="[ 'FNumber', {rules: [{ required: true, message: '请输入设备代码' }],initialValue:this.formData.FNumber} ]"
-        ></a-input>
-      </a-form-item>
-      <a-form-item label="资源名称">
-        <a-input
-          v-decorator="['FName',{rules:[{required:true,message: '请输入资源名称' }], initialValue: this.formData.FName}]"
-        ></a-input>
-      </a-form-item>
+      
       <a-form-item label="产能系数">
         <a-input v-decorator="['fRunsRate',{ initialValue: this.formData.FRunsRate}]"></a-input>
       </a-form-item>
@@ -71,21 +73,17 @@
         </a-select>
       </a-form-item>
       <a-form-item label="日标准工作时长">
-        <a-input
-          style="width:170px"
-          v-decorator="['fDayWorkHours',{ initialValue: this.formData.fDayWorkHours}]"
-        ></a-input>
+        <a-input-number v-decorator="['fDayWorkHours',{ initialValue: this.formData.fDayWorkHours}]">
+          
+        ></a-input-number>
       </a-form-item>
       <a-form-item label="日最大工作时长">
-        <a-input
-          style="width:170px"
-          v-decorator="['fMaxWorkHours',{ initialValue: this.formData.fMaxWorkHours}]"
-        ></a-input>
+        <a-input-number v-decorator="['fMaxWorkHours',{ initialValue: this.formData.fMaxWorkHours}]">
+          
+        ></a-input-number>
       </a-form-item>
       <a-form-item label="切换时间">
-        <a-date-picker v-decorator="['fSwichTime',{ initialValue: this.formData.fSwichTime}]">
-
-        </a-date-picker>
+        <a-input-number v-decorator="['fSwichTime',{ initialValue: this.formData.fSwichTime}]"></a-input-number>
       </a-form-item>
       <a-form-item label="使用寿命">
         <a-input v-decorator="['fLift',{ initialValue: this.formData.fLift}]"></a-input>
@@ -108,7 +106,7 @@
 </template>
 
 <script>
-import buttons from '../js/buttons'
+import {buttons} from '../js/buttons'
 import columnsmodel from '../js/columnsmodel'
 import { Create, Update } from '@/api/Equipment'
 
@@ -143,10 +141,13 @@ export default {
       this.form.validateFields((err, values) => {
         if (!err) {
           var request=!this.isEdit?Create(values):Update(values)
-
           request.then(res=>{
+            this.$message.success('保存成功')
+            this.form.resetFields();
+            this.onClose();
             console.log(res)
           }).catch(err=>{
+            this.$message.error(err.message)
             console.log(err)
           })
         }

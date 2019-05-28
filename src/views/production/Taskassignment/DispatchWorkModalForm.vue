@@ -19,24 +19,17 @@
       :loading="loading"
       rowKey="key"
     >
-      <template v-for="(col,index) in editColumns" :slot="col" slot-scope="text, record">
-        <EditableCellInput :key="index" :text="text" @change="onCellChange(record, col, $event)"/>
+      <template  slot="fCommitAuxQty" slot-scope="text, record">
+        <a-input-number v-model="record.fCommitAuxQty"></a-input-number>
       </template>
-      <template>
-        <a-select>
-          <a-select-option key="" value=""></a-select-option>
+      <template slot="fWorkerID" slot-scope="text,record">
+        <a-select v-model="record.fWorkerID">
+          <a-select-option v-for="(item,index) in workers" :key="index" :value="item.id">{{item.fName}}</a-select-option>
         </a-select>
       </template>
+      
 
-      <template slot="operation" slot-scope="text, record">
-        <a-popconfirm
-          v-if="dataSource.length"
-          title="Sure to delete?"
-          @confirm="() => onDelete(record.fSrcID)"
-        >
-          <a href="javascript:;" style="margin-left: 20px">Delete</a>
-        </a-popconfirm>
-      </template>
+      
     </a-table>
   </a-modal>
 </template>
@@ -77,13 +70,13 @@ export default {
             data.push({
               fid:row.fid,
               fSrcID:this.DailyData.fid,
-              fShift:row.fShift,
+              fShift:row.fShiftID,
               fMachineID:row.fMachineID,
               fWorkCenterID:0,
               fCommitAuxQty:row.fCommitAuxQty,
-              fWorker:row.fWorker,
+              fWorker:row.fWorkerID,
               fmoBillNo:this.DailyData.fmoBillNo,
-              fmoInterID:this.DailyData.fmoInterID
+              fmoInterID:row.fmoInterID
             })
           });
 
@@ -153,7 +146,7 @@ export default {
       DailyData:{},
       loading:false,
       columnsMT:columnsMT,
-      editColumns:['机台','worker','fShift','fCommitAuxQty'],
+      editColumns:['fCommitAuxQty'],
       selectColumns:[]
     }
   },
@@ -172,6 +165,14 @@ export default {
       }
 
       return result;
+    },
+    workers(){
+
+      if(this.$store.getters.workers.length===0){
+        this.$store.dispatch('GetWorkers')
+      }
+
+      return this.$store.getters.workers
     }
   }
 }

@@ -14,12 +14,6 @@
         accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
       />
       <span>&nbsp;&nbsp;</span>
-      <a-radio-group name="radioType" :defaultValue="1">
-        <a-radio :value="1">覆盖内容</a-radio>
-        <!-- <a-radio :value="2">追加内容</a-radio> -->
-      </a-radio-group>
-      <a-button @click="AddRow">增加-行</a-button>
-      <a-button @click="AddCol">增加-列</a-button>
       <a-button @click="empty">清空内容</a-button>
       <a-button @click="SaveAs">另存为…</a-button>
       <a-button @click="Download">模板下载</a-button>
@@ -294,6 +288,9 @@ export default {
         return true
       }
       return false
+    },
+    Download(){
+
     }
   }
 }

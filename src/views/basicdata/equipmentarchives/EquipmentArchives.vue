@@ -13,7 +13,7 @@
             @pageChange="onPaginationChange"
           />
 
-          <a-table
+          <a-table 
             :loading="loading"
             :dataSource="tableData"
             :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import buttons from './js/buttons'
+import {buttons} from './js/buttons'
 import {columns} from './js/columns'
 import { GetAll } from '@/api/Equipment'
 
@@ -62,7 +62,8 @@ export default {
       selectedRowKeys: [],
       selectedRows: [],
       buttons: buttons.buttons,
-      loading: false
+      loading: false,
+      OrganizationID:0
     }
   },
   methods: {
@@ -88,7 +89,7 @@ export default {
 
         case '班次信息维护': {
           if(this.selectedRows.length===1){
-            this.$refs.ShiftForm.show(this.selectedRows[0]);
+            this.$refs.ShiftForm.show(this.selectedRows[0].fInterID);
           }
         }
 
@@ -115,7 +116,8 @@ export default {
     _loadData() {
       var params = {
         SkipCount: this.pagination.current - 1,
-        MaxResultCount: this.pagination.size
+        MaxResultCount: this.pagination.size,
+        OrganizationID:this.OrganizationID>0?this.OrganizationID:''
       }
       this.loading = true
       GetAll(params)
@@ -129,8 +131,22 @@ export default {
         })
     },
 
-    btnTree() {
-      // alert('单击')
+    btnTree(keys,e) {
+     
+      if(keys.length===0){
+        return;
+      }
+
+      var node= this.$store.getters.workcenters.filter((e)=>{
+        return e.key===keys[0]
+      })
+
+      const {id}=node[0];
+
+      this.OrganizationID=id;
+      
+      this._loadData();
+      
     }
   },
 

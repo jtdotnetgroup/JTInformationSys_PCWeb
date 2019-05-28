@@ -14,13 +14,14 @@
     <a-table
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
       :dataSource="dataTable"
-      :columns="columnsjs"
+      :columns="columnsMain"
       :loading="taskschedulLoading"
       bordered
       onRow="{this.onClickRow}"
       :pagination="false"
       rowKey="Id" 
       :scroll="scroll"
+      size="small"
     >
       <template slot="serial" slot-scope="text">
         <span>{{dataTable.indexOf(text)+1}}</span>
@@ -36,7 +37,7 @@
       </a-button>
     </div>
 
-    <a-table id="cardd" bordered :columns="columnsMX" :pagination="false"></a-table>
+    <a-table id="card" bordered :columns="columnsMX" :pagination="false"></a-table>
 
     <DispatchWorkModalForm ref="DispatchWorkModalForm"/>
   </a-card>
@@ -44,8 +45,7 @@
 
 <script>
 import buttons from './js/buttons'
-import tableheader from './js/tableheader'
-import { columns as mainColumns } from './js/tableheader'
+import {columnsMX,columnsMT,columns as mainColumns} from './js/tableheader'
 import { columns } from './js/tablehhe'
 
 import { getRoleList, getServiceList } from '@/api/manage'
@@ -74,13 +74,13 @@ export default {
       },
       buttonp: buttons.buttonp,
       buttonps: buttons.buttonps,
-      columnsMT: tableheader.columnsMT,
+      columnsMT: columnsMT,
       // 高级搜索 展开/关闭
       advanced: false,
       selectedRowKeys: [],
       selectedRows: [],
       scroll: {
-        x: 1250,
+        x: 1500,
         y: 350
       },
       queryParam: {},
@@ -90,9 +90,9 @@ export default {
 
       dataTable: [],
 
-      columnsjs: mainColumns,
+      columnsMain: mainColumns,
 
-      columnsMX: tableheader.columnsMX,
+      columnsMX: columnsMX,
       taskschedulLoading: false,
       taskschedulLoadings: false,
       dataSource: [],

@@ -201,6 +201,7 @@ export default {
           request.then(res=>{
             this.loading=false;
             _this.$message.success('保存成功',3)
+            this.$emit('Save');
             this.handleCancel();
           }).catch(err=>{
             this.loading=false;

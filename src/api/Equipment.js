@@ -32,9 +32,9 @@ export function GetAll (params) {
   })
 }
 
-export function CreateShift (data) {
+export function CreateOrUpdateShift (data) {
   return axios({
-    url: '',
+    url: '/api/services/app/Equipment/CreateOrUpdateShift',
     method: 'post',
     data
   })
@@ -42,8 +42,16 @@ export function CreateShift (data) {
 
 export function GetShiftList (params) {
   return axios({
-    url: '',
+    url: '/api/services/app/Equipment/GetShiftByEquipmentID',
     method: 'get',
+    params
+  })
+}
+
+export function DeleteShift (params) {
+  return axios({
+    url: '/api/services/app/Equipment/DeleteShift',
+    method: 'delete',
     params
   })
 }

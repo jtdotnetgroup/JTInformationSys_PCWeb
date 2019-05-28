@@ -1,4 +1,4 @@
-const buttons = {
+export const buttons = {
 
   buttons: [{
     text: '新增',
@@ -27,4 +27,9 @@ const buttons = {
 
 }
 
-export default buttons
+export const buttonShift = [{
+  text: '新增',
+  icon: 'plus',
+  type: 'default'
+}
+]

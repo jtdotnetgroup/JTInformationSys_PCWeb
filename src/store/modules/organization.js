@@ -1,5 +1,5 @@
 import { GetTreeList, GetAll } from '@/api/Organization'
-import { GetAll as GetAllEmployee } from '@/api/Employee'
+import { GetAll as GetAllEmployee, GetAllWorkers } from '@/api/Employee'
 
 const store = {
   state: {
@@ -19,10 +19,10 @@ const store = {
     },
     SET_WORKERS: (state, payload) => {
       state.workers = payload
-      SET_Employees: (state, payload, ptotal) => {
-        state.tableData = payload
-        state.total = ptotal
-      }
+    },
+    SET_Employees: (state, payload, ptotal) => {
+      state.tableData = payload
+      state.total = ptotal
     }
   },
   actions: {
@@ -49,7 +49,13 @@ const store = {
         })
     },
     GetWorkers ({ commit }, params) {
-
+      GetAllWorkers()
+        .then(res => {
+          var result = res.result
+          commit('SET_WORKERS', result.items)
+        }).catch(err => {
+          console.log(err)
+        })
     },
 
     GetEmployees ({ commit }, params) {

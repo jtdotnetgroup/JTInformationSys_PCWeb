@@ -113,6 +113,7 @@ export default {
         SkipCount: this.pagination.current - 1,
         MaxResultCount: this.pagination.pageSize
       }
+
       GetAllEmployee(params)
         .then(res => {
           this.tableData = []

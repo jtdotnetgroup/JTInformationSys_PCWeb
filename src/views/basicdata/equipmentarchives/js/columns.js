@@ -15,10 +15,11 @@ export const columns = [
 ]
 
 const shiftExample = {
-  'equipmentID': 'equipmentID',
-  'employeeID': '员工',
-  'shiftName': '班次',
-  'id': 'id'
+  'fEqiupmentID': 'equipmentID',
+  'fEmployeeID': '员工',
+  'fShift': '班次',
+  'id': 'id',
+  'action': '操作'
 }
 
 export const columnShift = GenericColumns(shiftExample)

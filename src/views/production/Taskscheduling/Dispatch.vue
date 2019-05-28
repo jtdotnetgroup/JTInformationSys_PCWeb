@@ -126,8 +126,11 @@ export default {
       //添加明细
       this.dataSource.forEach(row => {
         data.dailies.push({
+          fid:row.fid,
+          FMachineName:row.机台,
           fDate: row.日期,
-          fPlanAuxQty: row.计划数量
+          FShift:row.班次,
+          fPlanAuxQty: row.计划数量,
         })
       })
 
@@ -218,32 +221,44 @@ export default {
       var index = 0
 
       while (startDate.isBefore(endDate)) {
-        var data = {
-          key: index,
-          日期: startDate.format('YYYY-MM-D'),
-          机台: '',
-          班组: '',
-          操作员: '',
-          派工数量: 0,
-          完成数量: 0,
-          合格数量: 0,
-          fmoBillNo: this.formData.任务单号,
-          fmoInterID: this.formData.fmoInterID,
-          计划数量: 0
-        }
-
         var item = this.dataSource.filter(e => {
           return startDate.isSame(e.日期, 'day')
         })
 
-        if (item.length > 0) {
-          data.计划数量 = item[0].计划数量
-          data.派工数量 = item[0].派工数量
-          data.完成数量 = item[0].完成数量
-          data.合格数量 = item[0].合格数量
-        }
+        item.forEach(row => {
+          var data = {
+            key: index,
+            日期: startDate.format('YYYY-MM-D'),
+            机台: '',
+            班次: '',
+            操作员: '',
+            派工数量: 0,
+            完成数量: 0,
+            合格数量: 0,
+            fmoBillNo: this.formData.任务单号,
+            fmoInterID: this.formData.fmoInterID,
+            计划数量: 0
+          }
 
-        result.push(data)
+          data.计划数量 = row.计划数量
+          data.派工数量 = row.派工数量
+          data.完成数量 = row.完成数量
+          data.合格数量 = row.合格数量
+          data.机台 = row.机台
+          data.班次 = row.班次
+          data.操作员 = row.操作员
+
+          result.push(data)
+        })
+
+        // if (item.length > 0) {
+        //   data.计划数量 = item[0].计划数量
+        //   data.派工数量 = item[0].派工数量
+        //   data.完成数量 = item[0].完成数量
+        //   data.合格数量 = item[0].合格数量
+        // }
+
+        // result.push(data)
         startDate = startDate.add(1, 'days')
         index = index + 1
       }
@@ -264,8 +279,6 @@ export default {
 .editable-cell-input-wrapper,
 .editable-cell-text-wrapper {
   padding-right: 24px;
-
-  
 }
 
 .editable-cell-text-wrapper {
