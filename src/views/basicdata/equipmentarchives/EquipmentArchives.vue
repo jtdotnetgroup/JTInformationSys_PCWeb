@@ -1,6 +1,6 @@
 <template>
   <a-card>
-    <div>
+    <!-- <div> -->
       <a-row :gutter="10">
         <a-col :span="4">
           <treedata @btnClick="btnTree"/>
@@ -20,6 +20,9 @@
             :columns="columns"
             :pagination="false"
             :customRow="setRow"
+            size="small"
+            :scroll="{x: 1500,y: 500}"
+             :bordered="true"
           ></a-table>
 
           <!-- 公共组件 明细table -->
@@ -27,11 +30,11 @@
         </a-col>
 
         <!-- 公共组件 模态框 -->
-        <ModelFrom ref="ModelFrom"/>
+        <ModelFrom ref="ModelFrom" @addSuccess="handelAddSuccess" />
 
         <ShiftForm ref="ShiftForm"/>
       </a-row>
-    </div>
+    <!-- </div> -->
   </a-card>
 </template>
 
@@ -122,9 +125,22 @@ export default {
       this.loading = true
       GetAll(params)
         .then(res => {
+          this.tableData=[]
           this.loading = false
-          this.tableData = res.result.items
-          this.pagination.total = res.result.totalCount
+          const result=res.result    
+          var index=0     
+          if(result){
+
+            result.items.forEach(e => {
+              e.findex=index+1
+              this.tableData.push(e)
+              index++
+            });
+              
+              //this.tableData = result.items
+              this.pagination.total = result.totalCount
+          }
+          
         })
         .catch(err => {
           this.loading = false
@@ -147,7 +163,19 @@ export default {
       
       this._loadData();
       
+    },
+    handelAddSuccess(){
+      this.loading=false
+      this.selectedRowKeys=[]
+      this._loadData()
+     
+
+
     }
+
+
+
+
   },
 
   //计算属性用于响应式的改变函数
@@ -159,4 +187,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 </style>

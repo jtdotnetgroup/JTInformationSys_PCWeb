@@ -18,6 +18,7 @@
       :pagination="false"
       :loading="loading"
       rowKey="key"
+      size="small"
     >
       <template  slot="fCommitAuxQty" slot-scope="text, record">
         <a-input-number v-model="record.fCommitAuxQty"></a-input-number>

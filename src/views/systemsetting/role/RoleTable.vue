@@ -8,7 +8,10 @@
       :dataSource="tableData"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
       :columns="columns"
+      :bordered="true"
       :pagination="false" rowKey="name"
+      size="small"
+      
     ></a-table>
     <roleEditModal ref="roleModal" @Save="handelSave"/>
     <a-modal/>
@@ -34,9 +37,9 @@ export default {
       },
       fields: Fields,
       columns: [
-        { title: '名称', dataIndex: 'name' },
-        { title: '显示名称', dataIndex: 'displayName' },
-        { title: '描述', dataIndex: 'description' }
+        { title: '名称', dataIndex: 'name',align: 'center'},
+        { title: '显示名称', dataIndex: 'displayName',align: 'center' },
+        { title: '描述', dataIndex: 'description',align: 'center' }
       ],
       tableData: [],
       selectedRowKeys: [],

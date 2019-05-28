@@ -18,6 +18,7 @@
       :loading="taskschedulLoading"
       :scroll="scroll"
       :customRow="setRow"
+      size="small"
     ></a-table>
 
     <div id="button">
@@ -27,7 +28,7 @@
     </div>
 
     <a-table
-      id="card"
+      id="card" size="small"
       bordered
       :dataSource="detailData"
       :columns="detailColumns"
@@ -129,6 +130,8 @@ export default {
   },
   methods: {
     _loadData() {
+
+      var _this=this
       var params = {
         SkipCount: this.pagination.current - 1,
         MaxResultCount: this.pagination.pageSize
@@ -138,7 +141,14 @@ export default {
         .then(res => {
           const result = res.result
           if (result) {
-            this.dataSource = result.items
+
+            result.items.forEach(e=>{
+              e.计划完工日期=this.$moment(e.计划完工日期).format('YYYY-MM-DD hh:mm:ss')
+              e.计划开工日期=this.$moment(e.计划开工日期).format('YYYY-MM-DD hh:mm:ss')
+
+               this.dataSource.push(e)
+            })
+
             this.pagination.total = result.totalCount
           }
           this.taskschedulLoading = false

@@ -6,8 +6,7 @@ const store = {
     organizations: [],
     workcenters: [],
     workers: [],
-    tableData: [],
-    total: 50
+    tableData: []
 
   },
   mutations: {
@@ -20,10 +19,10 @@ const store = {
     SET_WORKERS: (state, payload) => {
       state.workers = payload
     },
-    SET_Employees: (state, payload, ptotal) => {
+    SET_Employees: (state, payload) => {
       state.tableData = payload
-      state.total = ptotal
     }
+
   },
   actions: {
     GetOrganizations ({ commit }, params) {

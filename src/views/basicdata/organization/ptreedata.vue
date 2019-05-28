@@ -1,7 +1,8 @@
 <template>
   <div>
 
-    <a-directory-tree  :treeData="organizations"   defaultExpandAll @select="onButtonClick"></a-directory-tree> 
+    <a-directory-tree  style="overflow-x:auto;overflow-y:hidden;width:100%;
+height:600px;" :treeData="organizations"   defaultExpandAll @select="onButtonClick"></a-directory-tree> 
  
 
   </div>
@@ -43,8 +44,7 @@ export default {
       // }
       //  GetTreeList(params).then(res => {          
       //      const results = res.result
-      //      this.organizations=results;
-          
+      //      this.organizations=results;         
       //     // consloe.log(results)
       //  }).catch(err=>{
       //       console.log(err)
@@ -66,4 +66,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+
+
 </style>

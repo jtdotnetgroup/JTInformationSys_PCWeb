@@ -37,7 +37,7 @@
       </a-button>
     </div>
 
-    <a-table id="card" bordered :columns="columnsMX" :pagination="false"></a-table>
+    <a-table id="cardd" size="small" bordered :columns="columnsMX" :pagination="false"></a-table>
 
     <DispatchWorkModalForm ref="DispatchWorkModalForm"/>
   </a-card>
@@ -120,7 +120,15 @@ export default {
           this.dataTable=[]
           if (result && result.items.length > 0) {
             //绑定到表格上
-            this.dataTable = result.items
+
+            result.items.forEach(e => {
+              e.fDate=this.$moment(e.fDate).format('YYYY-MM-DD hh:mm:ss')
+              this.dataTable.push(e)
+            });
+
+
+
+            //this.dataTable = result.items
           }
 
         })

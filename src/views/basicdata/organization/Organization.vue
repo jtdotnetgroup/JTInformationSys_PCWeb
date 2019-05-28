@@ -4,7 +4,7 @@
 
     <div>
       <a-row :gutter="10">
-        <a-col :span="4">
+        <a-col :span="4" >
           <treeData @btnClick="btnTree"/>
         </a-col>
         <a-col :span="20">
@@ -14,32 +14,35 @@
             @pageChange="onPaginationChange"
           />
           <a-table
+             :loading="loading"
             :dataSource="tableData"
             :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
             :columns="columns"
             :pagination="false"
-            rowKey="Id"
+             rowKey="id"
+             :bordered="true"
+             :scroll="{x: 1500,y: 500}"
+             size="small"
           >
-            <!-- <template slot="roles" slot-scope="roles">                      
-                        <span v-for="(role,index) in roles.split(',')" :key="index">{{role}},</span>
-            </template>-->
+         
 
             <template slot="fSex" slot-scope="fSex">
-              <span>{{fSex==1?"男":"女"}}</span>
+              <span >{{fSex==1?"男":"女"}}</span>
             </template>
             <template slot="fWorkingState" slot-scope="fWorkingState">
-              <span>{{fWorkingState==1?"在职":"离职"}}</span>
+              <span >{{fWorkingState==1?"在职":"离职"}}</span>
             </template>
 
             <template slot="fSystemUser" slot-scope="fSystemUser">
-              <!-- <span>{{fSystemUser==1?"是":"否"}}</span> -->
+           
+            <div v-if="fSystemUser==1" class="tabletd">
+                <a-checkbox :checked="true" ></a-checkbox>
 
-              <div v-if="fSystemUser==1">
-                <a-checkbox :checked="true"></a-checkbox>
-              </div>
-              <div v-else>
-                <a-checkbox :checked="false"></a-checkbox>
-              </div>
+             </div>
+              <div v-else class="tabletd">
+                  <a-checkbox :checked="false" ></a-checkbox>
+             </div>
+     
             </template>
           </a-table>
         </a-col>
@@ -49,7 +52,7 @@
       <ModalFromOr ref="ModalFromOr"/>
 
       <!-- 新增员工弹框 -->
-      <ModalFromEn ref="ModalFromEn"/>
+      <ModalFromEn ref="ModalFromEn"   @addSuccess="handelAddSuccess"/>
     </div>
   </a-card>
 </template>
@@ -76,9 +79,10 @@ export default {
     return {
       pagination: {
         current: 1,
+        pageSize: 10,
         total: 50
       },
-      //tableData: this.$store.getters.employees,
+      loading:true,
       tableData:[],
       columns: columns,
       selectedRowKeys: [],
@@ -86,44 +90,40 @@ export default {
       treevaule: '',
       treeId: '', //用于记录树形的ID
       isEdit: false,
-      FMpnos: ''
     }
   },
 
   mounted() {
-    //this.LoadGetFMpno()
+  this._LoadData()
   },
-  computed: {
-    tableData1() {
-      return store.getters.employees
-    }
-  },
+ 
   methods: {
     //查询员工信息表
     _LoadData() {
+      var _this=this;
       // var params = {
       //   Id: this.treeId==''?0:this.treeId,
       //   SkipCount: this.pagination.current - 1,
       //   MaxResultCount: this.pagination.pageSize
       // }
-
       //  this.$store.dispatch('GetEmployees',params)
       var params = {
         Id: this.treeId == '' ? 0 : this.treeId,
         SkipCount: this.pagination.current - 1,
         MaxResultCount: this.pagination.pageSize
       }
-
       GetAllEmployee(params)
         .then(res => {
-          this.tableData = []
-          const result = res.result
+          _this.tableData = []
+          const result = res.result  
           if (result) {
-            this.tableData = result.items
-            this.pagination.total = result.totalCount
+            _this.tableData = result.items
+            _this.pagination.total = result.totalCount
+            _this.loading = false
           }
         })
         .catch(err => {
+           this.loading = false
           console.log(err)
         })
     },
@@ -135,8 +135,9 @@ export default {
     onPaginationChange(page, size) {
       this.pagination.current = page
       this.pagination.pageSize = size
-      this._loadData()
+      this._LoadData()
     },
+    //点击新增修改等按钮的方法
     handleBtnClick(val) {
       var _this = this
       switch (val) {
@@ -153,7 +154,6 @@ export default {
           break
         }
         case '新建员工': {
-          //this.LoadGetFMpno()
           this.isEdit = false
           var formData = {}
           formData = this.treevaule
@@ -234,15 +234,9 @@ export default {
               Delete(params)
                 .then(res => {
                   if (res.result > 0) {
-                    _this.$message.success('成功')
-
-                    var params = {
-                      Id: _this.treeId == '' ? 0 : _this.treeId,
-                      SkipCount: 0,
-                      MaxResultCount: 100
-                    }
-
-                    _this.$store.dispatch('GetEmployees', params)
+                    _this.$message.success('成功')          
+                    _this._LoadData()
+                    //_this.$store.dispatch('GetEmployees', params)
                   } else {
                     _this.$message.error('失败')
                   }
@@ -264,18 +258,6 @@ export default {
       }
     },
 
-    LoadGetFMpno() {
-      GetFMpno()
-        .then(res => {
-          const results = res.result
-          this.FMpnos = results
-          console.log(results)
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    },
-
     //点击树形的办法
     btnTree(obj) {
       if (obj.selectedNodes.length > 0) {
@@ -283,11 +265,31 @@ export default {
         this.selectedRows = []
         this.treevaule = obj
         this.treeId = obj.selectedNodes[0].componentOptions.propsData.dataRef.id
+        this.loading=true
         this._LoadData()
       } else {
         this.treevaule = ''
       }
+    },
+    //员工模态宽执行回掉的方法
+    handelAddSuccess(){
+      this.loading=true
+      this.selectedRowKeys=[];
+      this._LoadData();
+      this.treevaule=''
     }
   }
 }
 </script>
+
+<style scoped>
+
+.tabletd{
+  text-align: center
+}
+
+
+
+</style>
+
+
