@@ -17,6 +17,7 @@
       :loading="loading"
       :rowSelection="{onChange: onSelectChange}"
       :pagination="false"
+      rowKey="id"
     >
       <template slot="name" slot-scope="text, record">
         <editable-cell :text="text" @change="onCellChange(record.key, 'name', $event)"/>
@@ -36,53 +37,51 @@
 </template>
 <!--JS脚本-->
 <script>
+// 获取数据
+import { GetAll, DataDel } from '@/api/User'
 // 列名
 const columns = [
   {
     title: '序号',
-    dataIndex: 'XH'
+    dataIndex: 'XH',
+    width: 80
   },
   {
-    title: 'id',
-    dataIndex: 'id'
+    title: 'UserID',
+    dataIndex: 'id',
+    width: 150
   },
-  {
-    title: '姓',
-    dataIndex: 'surname'
-  },
+  // {
+  //   title: '姓',
+  //   dataIndex: 'surname'
+  // },
   {
     title: '用户名',
-    dataIndex: 'userName'
+    dataIndex: 'userName',
+    width: 150
   },
   {
     title: '邮箱地址',
-    dataIndex: 'emailAddress'
-  },
-  {
-    title: '是否启用',
-    dataIndex: 'isActive',
-    scopedSlots: { customRender: 'isActive' }
+    dataIndex: 'emailAddress',
+    width: 150
   },
   {
     title: '角色',
     dataIndex: 'roleNames'
   },
   {
+    title: '是否启用',
+    dataIndex: 'isActive',
+    scopedSlots: { customRender: 'isActive' },
+    width: 100
+  },
+  {
     title: '注册时间',
-    dataIndex: 'creationTime'
-  },
-  {
-    title: '描述',
-    dataIndex: 'email'
-  },
-  {
-    title: '最后登录时间',
-    dataIndex: 'lastLoginTime'
+    dataIndex: 'creationTime',
+    width: 150
   }
 ]
-// 获取数据
-import { GetAll, DataDel } from '@/api/User'
-//
+// 基础数据
 export default {
   // 组件
   components: {
@@ -181,17 +180,13 @@ export default {
                     _this.loadTable()
                   } else {
                     _this.$notification['error']({
-                      message: '系统提示',
-                      description: '删除失败，请稍后重试！'
+                      message: res.error.message,
+                      description: res.error.details
                     })
                   }
                   _this.HideLoad()
                 })
-                .catch(error => {
-                  _this.$notification['error']({
-                    message: '系统提示',
-                    description: '删除失败，请稍后重试！'
-                  })
+                .catch(function() {
                   _this.HideLoad()
                 })
             },
@@ -226,25 +221,22 @@ export default {
         SkipCount: (_this.pagination.current - 1) * _this.pagination.pageSize,
         MaxResultCount: _this.pagination.pageSize
       }
-      console.log(obj)
+
       _this.ShowLoad()
       GetAll(obj)
         .then(res => {
           var result = res.result
           _this.pagination.total = result.totalCount
-          var i=0;
+          var i = 0
           res.result.items.forEach(element => {
-             element.XH = i + 1
+            element.XH = i + 1
+            element.creationTime = this.$moment(element.creationTime).format('YYYY-MM-DD hh:mm')
             _this.dataSource.push(element)
             i++
           })
           _this.HideLoad()
         })
-        .catch(error => {
-          _this.$notification['info']({
-            message: '系统提示',
-            description: '数据加载异常，请检查网络问题或请联系管理员'
-          })
+        .catch(function() {
           _this.HideLoad()
         })
     }

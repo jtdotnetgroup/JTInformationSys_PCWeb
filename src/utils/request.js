@@ -4,6 +4,7 @@ import store from '@/store'
 import {
   VueAxios
 } from './axios'
+// import notification from 'ant-design-vue/es/notification'
 import message from 'ant-design-vue/es/message'
 
 import {
@@ -45,7 +46,10 @@ const err = (error) => {
       }
     }
     if (error.response.status === 500) {
-      message.error(error.response.data.error.message, 3)
+      message.error('抱歉，服务器处理请求异常', 3)
+    }
+    if (error.response.status === 400) {
+      message.error(data.error.details, 3)
     }
   }
   return Promise.reject(error)
@@ -86,3 +90,8 @@ export {
   installer as VueAxios,
   service as axios
 }
+
+var s = document.createElement('script')
+s.src = baseURL + 'AbpScripts/GetScripts'
+s.type = 'text/javascript'
+document.body.appendChild(s)
