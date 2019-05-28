@@ -11,32 +11,25 @@
     <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons" :search="false"/>
 
     <a-form layout="inline" :form="form" @change="handleFormChange">
-      <!-- <a-form-item label="资源属性">
-            <a-select  class="selectclass" >
-            <a-select-option value="0">资源一</a-select-option>
-            <a-select-option value="1">资源二</a-select-option>
-            <a-select-option value="2">资源三</a-select-option>
-          </a-select>
-      </a-form-item>-->
 
-      <a-form-item label="设备代码">
+      <a-row>
+        <a-col :span="8"> <a-form-item label="设备代码">
         <a-input
-          v-decorator="[ 'FNumber', {rules: [{ required: true, message: '请输入设备代码' }],initialValue:this.formData.FNumber} ]"
+          v-decorator="[ 'FNumber', {rules: [{ required: true, message: '请输入设备代码' }],initialValue:this.formData.fNumber} ]"
         ></a-input>
-      </a-form-item>
-      <a-form-item label="设备名称">
+      </a-form-item></a-col>
+        <a-col :span="8"> <a-form-item label="设备名称">
         <a-input
-          v-decorator="['FName',{rules:[{required:true,message: '请输入资源名称' }], initialValue: this.formData.FName}]"
+          v-decorator="['FName',{rules:[{required:true,message: '请输入资源名称' }], initialValue: this.formData.fName}]"
         ></a-input>
-      </a-form-item>
-
-      <a-form-item label="工作中心">
-        <a-select
-          style="width: 120px"
-          @change="handleWorkCenterChange"
+      </a-form-item></a-col>
+        <a-col :span="8"><a-form-item label="工作中心" class="formmargin-left">
+        <a-select       
+          style="width: 174px"
+          @change="handleWorkCenterChange"         
           v-decorator="['fWorkCenterID',{
           rule:[{required:true,message: '请选择工作中心' }],
-          initialValue:this.formData.workcenter}]"
+          initialValue:this.formData.fWorkCenterID}]"
         >
           <a-select-option
             v-for="(item,index) in workcenters"
@@ -44,55 +37,75 @@
             :key="index"
           >{{item.title}}</a-select-option>
         </a-select>
-      </a-form-item>
-      <a-form-item label="资源类型">
+      </a-form-item></a-col>
+      </a-row>
+    
+     
+     
+
+      <a-row>
+        <a-col :span="8"> <a-form-item label="资源类型" class="formmargin-left">
         <a-select
           class="selectclass"
           v-decorator="['FType',{rule:[{required:true,message: '请选择资源类型' }], 
-        initialValue: this.formData.FType}]"
+        initialValue: this.formData.fType}]"
         >
           <a-select-option :value="1">设备</a-select-option>
           <a-select-option :value="2">模具</a-select-option>
           <a-select-option :value="999">其它</a-select-option>
         </a-select>
-      </a-form-item>
-      
-      <a-form-item label="产能系数">
-        <a-input v-decorator="['fRunsRate',{ initialValue: this.formData.FRunsRate}]"></a-input>
-      </a-form-item>
-      <a-form-item label="时间单位">
+      </a-form-item></a-col>
+         <a-col :span="8">   <a-form-item label="产能系数" class="formmargin-left">
+        <a-input v-decorator="['fRunsRate',{ initialValue: this.formData.fRunsRate}]"></a-input>
+      </a-form-item></a-col>
+        <a-col :span="8"><a-form-item label="时间单位" >
         <a-select
           class="selectclass"
           v-decorator="['FTimeUnit',{
           rules:[{required:true,message: '请选择时间单位' }],
-          initialValue:this.formData.FTimeUnit}]"
+          initialValue:this.formData.fTimeUnit}]"
         >
           <a-select-option :value="1">小时</a-select-option>
           <a-select-option :value="0">分钟</a-select-option>
           <a-select-option :value="2">天</a-select-option>
         </a-select>
-      </a-form-item>
-      <a-form-item label="日标准工作时长">
-        <a-input-number v-decorator="['fDayWorkHours',{ initialValue: this.formData.fDayWorkHours}]">
-          
-        ></a-input-number>
-      </a-form-item>
-      <a-form-item label="日最大工作时长">
-        <a-input-number v-decorator="['fMaxWorkHours',{ initialValue: this.formData.fMaxWorkHours}]">
-          
-        ></a-input-number>
-      </a-form-item>
-      <a-form-item label="切换时间">
-        <a-input-number v-decorator="['fSwichTime',{ initialValue: this.formData.fSwichTime}]"></a-input-number>
-      </a-form-item>
-      <a-form-item label="使用寿命">
-        <a-input v-decorator="['fLift',{ initialValue: this.formData.fLift}]"></a-input>
-      </a-form-item>
-      <a-form-item label="剩余寿命">
-        <a-input v-decorator="['fResidualLife',{ initialValue: this.formData.fResidualLife}]"></a-input>
-      </a-form-item>
-    </a-form>
+      </a-form-item></a-col>
 
+      </a-row>
+
+      <a-row>
+        <a-col :span="8"> <a-form-item label="日标准工作时长" class="formmargin-left">
+        <a-input-number class="numberinput" :min="0"  v-decorator="['fDayWorkHours',{ initialValue: this.formData.fDayWorkHours}]">         
+        ></a-input-number>
+      </a-form-item></a-col>
+        <a-col :span="8"> <a-form-item  label="日最大工作时长" class="formmargin-left">
+        <a-input-number class="numberinput" :min="0" v-decorator="['fMaxWorkHours',{ initialValue: this.formData.fMaxWorkHours}]">          
+        ></a-input-number>
+      </a-form-item></a-col>
+        <a-col :span="8"><a-form-item label="切换时间" class="formmargin-left">
+        <a-input-number style="width:174px" :min="0" v-decorator="['fSwichTime',{ initialValue: this.formData.fSwichTime}]"></a-input-number>
+      </a-form-item></a-col>
+      </a-row>
+
+
+     <a-row>
+       <a-col :span="8"><a-form-item label="使用寿命" class="formmargin-left">
+        <a-input v-decorator="['fLift',{ initialValue: this.formData.fLift}]"></a-input>
+      </a-form-item></a-col>
+       <a-col :span="8">    <a-form-item label="剩余寿命" class="formmargin-left">
+        <a-input v-decorator="['fResidualLife',{ initialValue: this.formData.fResidualLife}]"></a-input>
+      </a-form-item> </a-col>
+     </a-row>
+
+     <!-- 隐藏ID用于修改 -->
+     <a-form-item>
+       <a-input hidden v-decorator="['fInterID',{ initialValue: this.formData.fInterID}]"></a-input>
+     </a-form-item>
+
+     
+     
+  
+    </a-form>
     <a-table
       id="table"
       rowKey="fSrcID"
@@ -101,6 +114,7 @@
       :pagination="false"
       :bordered="true"
       :loading="dataLoading"
+      size="small"
     ></a-table>
   </a-modal>
 </template>
@@ -109,7 +123,7 @@
 import {buttons} from '../js/buttons'
 import columnsmodel from '../js/columnsmodel'
 import { Create, Update } from '@/api/Equipment'
-
+import pick from 'lodash.pick'
 export default {
   name: 'EquipmentForm',
   components: {
@@ -124,7 +138,8 @@ export default {
       columns: columnsmodel,
       dataLoading: false,
       tableData: [],
-      isEdit: false
+      isEdit: false,
+      mdl:{}
     }
   },
 
@@ -137,11 +152,17 @@ export default {
 
       this.visiable = true
     },
+
+
+
+
     handleSubmit() {
+    
       this.form.validateFields((err, values) => {
         if (!err) {
           var request=!this.isEdit?Create(values):Update(values)
           request.then(res=>{
+            this.$emit("addSuccess")
             this.$message.success('保存成功')
             this.form.resetFields();
             this.onClose();
@@ -154,7 +175,11 @@ export default {
       })
     },
     onClose() {
-      this.visiable = false
+   
+         this.visiable = false
+         this.mdl = {},
+         this.form.resetFields()
+         this.formData=[]
     },
     handleBtnClick() {},
     handleFormChange() {},
@@ -169,10 +194,18 @@ export default {
 </script>
 
 <style scoped>
+
+.formmargin-left{
+  margin-left: 10px;
+}
+
 .selectclass {
-  width: 212px;
+  width: 174px;
 }
 #table {
   margin-top: 10px;
 }
+ .numberinput{
+   width: 131px
+ } 
 </style>

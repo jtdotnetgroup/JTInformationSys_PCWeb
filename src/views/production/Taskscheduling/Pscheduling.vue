@@ -118,11 +118,8 @@ export default {
               e.计划开工日期=this.$moment(e.计划开工日期).format('YYYY-MM-DD hh:mm:ss')
 
                this.dataSource.push(e)
-
             })
 
-
-            // this.dataSource = result.items
             this.pagination.total = result.totalCount
           }
           this.taskschedulLoading = false

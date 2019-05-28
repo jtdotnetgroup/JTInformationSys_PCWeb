@@ -23,7 +23,7 @@
 
 
       <a-row>
-        <a-col :span="12"> <a-form-item label="上级组织" >
+        <a-col :span="12"> <a-form-item label="上级组织" class="inputmargin-left">
         <a-tree-select     
           style="width: 174px"
           :value="value"
@@ -35,7 +35,7 @@
           :treeData="organizations"
         ></a-tree-select>
       </a-form-item></a-col>
-        <a-col :span="12">  <a-form-item label="组织类型">
+        <a-col :span="12">  <a-form-item label="组织类型" >
         <a-select class="selectclass" v-decorator="['OrganizationType',{rules: [{ required: true, message: '请选择组织类型' }]} ]">
           <a-select-option
             v-for="(item,index) in Soptions"
@@ -54,17 +54,17 @@
     </a-row> -->
 
     <a-row>
-      <a-col :span="12"> <a-form-item label="数据连接">
+      <a-col :span="12"> <a-form-item label="数据连接" class="inputmargin-left"> 
         <a-input v-decorator="['DataBaseConnection',{rules: []}]"></a-input>
       </a-form-item></a-col>
-      <a-col :span="12"> <a-form-item label="组织负责人">
+      <a-col :span="12"> <a-form-item label="组织负责人" >
         <a-input v-decorator="['ERPOrganizationLeader',{rules: []}]"></a-input>
       </a-form-item></a-col>
     </a-row> 
 
      
      
-      <a-form-item label="ERP组织">
+      <a-form-item label="ERP组织" class="inputmargin-left">
         <a-input v-decorator="['ERPOrganization',{rules: []}]"></a-input>
       </a-form-item>
 
@@ -237,5 +237,8 @@ export default {
 <style  scoped>
 .selectclass {
   width: 174px;
+}
+.inputmargin-left{
+  margin-left: 10px
 }
 </style>

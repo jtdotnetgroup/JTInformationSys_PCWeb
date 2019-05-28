@@ -4,7 +4,7 @@
 
     <div>
       <a-row :gutter="10">
-        <a-col :span="4">
+        <a-col :span="4" >
           <treeData @btnClick="btnTree"/>
         </a-col>
         <a-col :span="20">
@@ -100,6 +100,7 @@ export default {
   methods: {
     //查询员工信息表
     _LoadData() {
+      var _this=this;
       // var params = {
       //   Id: this.treeId==''?0:this.treeId,
       //   SkipCount: this.pagination.current - 1,
@@ -111,14 +112,14 @@ export default {
         SkipCount: this.pagination.current - 1,
         MaxResultCount: this.pagination.pageSize
       }
-      GetAll(params)
+      GetAllEmployee(params)
         .then(res => {
-          this.tableData = []
+          _this.tableData = []
           const result = res.result  
           if (result) {
-            this.tableData = result.items
-            this.pagination.total = result.totalCount
-            this.loading = false
+            _this.tableData = result.items
+            _this.pagination.total = result.totalCount
+            _this.loading = false
           }
         })
         .catch(err => {

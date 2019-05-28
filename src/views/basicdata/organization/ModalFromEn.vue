@@ -452,7 +452,6 @@ export default {
 }
 .inputmargin-left{
   margin-left: 10px
-
 }
 
 

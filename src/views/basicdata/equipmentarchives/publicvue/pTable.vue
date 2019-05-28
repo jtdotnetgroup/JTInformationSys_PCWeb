@@ -5,7 +5,7 @@
         <a-icon type="schedule"/>产能数据
       </a-button>
     </div>
-    <a-table id="car" bordered :columns="columnsMX" :pagination="false" ></a-table>
+    <a-table id="car"  size="small"  :bordered="true"  :columns="columnsMX" :pagination="false" ></a-table>
   </div>
 </template>
 

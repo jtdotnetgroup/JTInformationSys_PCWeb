@@ -120,7 +120,15 @@ export default {
           this.dataTable=[]
           if (result && result.items.length > 0) {
             //绑定到表格上
-            this.dataTable = result.items
+
+            result.items.forEach(e => {
+              e.fDate=this.$moment(e.fDate).format('YYYY-MM-DD hh:mm:ss')
+              this.dataTable.push(e)
+            });
+
+
+
+            //this.dataTable = result.items
           }
 
         })
