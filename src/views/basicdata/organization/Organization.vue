@@ -14,32 +14,32 @@
             @pageChange="onPaginationChange"
           />
           <a-table
+             :loading="loading"
             :dataSource="tableData"
             :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
             :columns="columns"
             :pagination="false"
-            rowKey="id"
+             rowKey="id"
+             :bordered="true"
+             :scroll="{x: 1500,y: 500}"
+             size="small"
           >
-            <!-- <template slot="roles" slot-scope="roles">                      
-                        <span v-for="(role,index) in roles.split(',')" :key="index">{{role}},</span>
-            </template>-->
+         
 
             <template slot="fSex" slot-scope="fSex">
-              <span>{{fSex==1?"男":"女"}}</span>
+              <span >{{fSex==1?"男":"女"}}</span>
             </template>
             <template slot="fWorkingState" slot-scope="fWorkingState">
-              <span>{{fWorkingState==1?"在职":"离职"}}</span>
+              <span >{{fWorkingState==1?"在职":"离职"}}</span>
             </template>
 
             <template slot="fSystemUser" slot-scope="fSystemUser">
-              <!-- <span>{{fSystemUser==1?"是":"否"}}</span> -->
-
-
-            <div v-if="fSystemUser==1">
+           
+            <div v-if="fSystemUser==1" class="tabletd">
                 <a-checkbox :checked="true" ></a-checkbox>
 
              </div>
-              <div v-else>
+              <div v-else class="tabletd">
                   <a-checkbox :checked="false" ></a-checkbox>
              </div>
      
@@ -81,26 +81,21 @@ export default {
         pageSize: 10,
         total: 50
       },
+      loading:true,
       tableData:[],
-      //tableData: this.$store.getters.employees,
       columns: columns,
       selectedRowKeys: [],
       buttons: buttons,
       treevaule:'',
       treeId: '', //用于记录树形的ID
       isEdit: false,
-      FMpnos:'',
     }
   },
 
   mounted() {
   this._LoadData()
   },
-  //  computed: {
-  //   tableData(){
-  //     return store.getters.employees
-  //   },
-  // },
+ 
   methods: {
     //查询员工信息表
     _LoadData() {
@@ -116,9 +111,11 @@ export default {
           if (result) {
             this.tableData = result.items
             this.pagination.total = result.totalCount
+            this.loading = false
           }
         })
         .catch(err => {
+           this.loading = false
           console.log(err)
         })
     },
@@ -132,6 +129,7 @@ export default {
       this.pagination.pageSize = size
       this._LoadData()
     },
+    //点击新增修改等按钮的方法
     handleBtnClick(val) {
       var _this = this
       switch (val) {
@@ -146,7 +144,6 @@ export default {
           break
         }
         case '新建员工': {
-          //this.LoadGetFMpno()
           this.isEdit = false
           var formData = {}
           formData = this.treevaule
@@ -260,12 +257,15 @@ export default {
         this.selectedRows = []
         this.treevaule = obj
         this.treeId = obj.selectedNodes[0].componentOptions.propsData.dataRef.id
+        this.loading=true
         this._LoadData()
       } else {
         this.treevaule = ''
       }
     },
+    //员工模态宽执行回掉的方法
     handelAddSuccess(){
+      this.loading=true
       this.selectedRowKeys=[];
       this._LoadData();
       this.treevaule=''
@@ -273,3 +273,15 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+
+.tabletd{
+  text-align: center
+}
+
+
+
+</style>
+
+

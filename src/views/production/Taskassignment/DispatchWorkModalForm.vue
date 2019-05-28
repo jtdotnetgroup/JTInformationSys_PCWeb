@@ -18,6 +18,7 @@
       :pagination="false"
       :loading="loading"
       rowKey="key"
+      size="small"
     >
       <template v-for="(col,index) in editColumns" :slot="col" slot-scope="text, record">
         <EditableCellInput :key="index" :text="text" @change="onCellChange(record, col, $event)"/>

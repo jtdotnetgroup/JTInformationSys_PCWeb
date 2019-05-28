@@ -2,29 +2,33 @@
   <a-modal
     title="新增/维护"
     :visible="visiable"
-    width="620px"
+    width="660px"
     style="left:80px"
     :maskClosable="false"
     @ok="handleSubmit"
     @cancel="onClose"
   >
     <a-form layout="inline" :form="form" @change="handleFormChange">
-      <a-form-item label="员工编码">
+      
+       <a-row>
+         <a-col :span="12"> <a-form-item label="员工编码">
         <a-input
           v-decorator="['FMpno',{rules: [{ required: true, message: '请输入员工编码' }]} ]"
           disabled
         ></a-input>
-      </a-form-item>
-      <a-form-item label="员工姓名">
+      </a-form-item></a-col>
+         <a-col :span="12"><a-form-item label="员工姓名">
         <a-input v-decorator="['FName',{rules: [{ required: true, message: '请输入员工姓名' }]} ]"></a-input>
-      </a-form-item>
+      </a-form-item></a-col>
+       </a-row>
 
-<a-row>
+     
+      
 
-  <a-col :span="12">
-   <a-form-item label="性别" style="margin-left: 10px;">
-    
-        <a-switch style="margin-left: 20px;"
+     <a-row>
+     <a-col :span="12">
+       <a-form-item label="性别"  class="inputmargin-left">  
+        <a-switch style="margin-left: 10px;"
           @change="onChangechecked"
           :checked="Sex"
           checkedChildren="男"
@@ -33,8 +37,8 @@
         />
       </a-form-item>
    </a-col >
-<a-col :span="12">
-      <a-form-item label="所属部门">
+     <a-col :span="12">
+      <a-form-item label="所属部门" class="inputmargin-left">
         <a-tree-select 
           style="width: 174px"
           :value="value"
@@ -51,7 +55,7 @@
    
 <a-row>
      <a-col :span="12">
-        <a-form-item label="系统">
+        <a-form-item label="系统" class="inputmargin-left"  >
         <a-checkbox :checked="FWorkingState" @change="onChangeFWorkingState">在职</a-checkbox>
         <a-checkbox :checked="FSystemUser" @change="onChangeFSystemUser">系统用户</a-checkbox>
          </a-form-item>
@@ -60,7 +64,7 @@
 
      <a-col :span="12">
        
-      <a-form-item label="上级主管">
+      <a-form-item label="上级主管" class="inputmargin-left">
         <!-- <a-input v-decorator="['FDepartment',{rules: [{ required: false, message: '请输入所属部门' }]} ]"></a-input> -->
         <a-tree-select 
           style="width: 174px"
@@ -79,16 +83,17 @@
 
 </a-row>
 
+  <a-row>
+    <a-col  :span="12"><a-form-item label="手机号码">
+          <a-input v-decorator="['FPhone',{rules: [{ required: true, message: '请输入手机号码' }]} ]"></a-input>
+        </a-form-item></a-col>
+    <a-col :span="12"> <a-form-item label="入职日期">
+          <a-date-picker
+            v-decorator="['FHiredate',{rules: [{ required: true, message: '请输入入职日期码' }]} ]"
+          ></a-date-picker>
+        </a-form-item></a-col>
+  </a-row>
 
-      <a-form-item label="手机号码">
-        <a-input v-decorator="['FPhone',{rules: [{ required: true, message: '请输入手机号码' }]} ]"></a-input>
-      </a-form-item>
-
-      <a-form-item label="入职日期">
-        <a-date-picker
-          v-decorator="['FHiredate',{rules: [{ required: true, message: '请输入入职日期码' }]} ]"
-        ></a-date-picker>
-      </a-form-item>
 
       <a-form-item label="邮件地址">
         <a-input
@@ -96,7 +101,7 @@
         ></a-input>
       </a-form-item>
 
-      <a-collapse defaultActiveKey="1" :bordered="false">
+      <!-- <a-collapse defaultActiveKey="1" :bordered="false">
         <a-collapse-panel
           key="1"
           style="background: #f7f7f7;border-radius: 4px;margin-bottom: 24px;border: 0;overflow: hidden"
@@ -107,7 +112,23 @@
               v-decorator="['FERPUser',{rules: []} ]"
             ></a-input>
           </a-form-item>
+          <a-form-item label="对应ERP职员">
+            <a-input
+              v-decorator="['FERPOfficeClerk',{rules: []} ]"
+            ></a-input>
+          </a-form-item>
+        </a-collapse-panel>
+      </a-collapse> -->
 
+
+       <a-collapse defaultActiveKey="1"  >
+        <a-collapse-panel header="ERP属性"  >
+        
+          <a-form-item label="对应ERP用户">
+            <a-input
+              v-decorator="['FERPUser',{rules: []} ]"
+            ></a-input>
+          </a-form-item>
           <a-form-item label="对应ERP职员">
             <a-input
               v-decorator="['FERPOfficeClerk',{rules: []} ]"
@@ -115,6 +136,12 @@
           </a-form-item>
         </a-collapse-panel>
       </a-collapse>
+
+
+
+
+
+
 
     </a-form>
   </a-modal>
@@ -183,7 +210,7 @@ export default {
 
       
     },
-   //编辑是搬定值
+   //编辑是绑定值
     Edit(formData) {
       console.log(formData)
       this.formData = formData
@@ -195,7 +222,7 @@ export default {
       console.log(this.FWorkingState)
 
       this.value = '' + formData.fDepartment + ''
-      this.valueTree=''+formData.fParentId+''
+      this.valueTree=''+formData.fParentId==0?formData.id:formData.fParentId+''
 
       this.mdl.FMpno = formData.fMpno
       this.mdl.FName = formData.fName
@@ -226,8 +253,7 @@ export default {
       //新建
       if (this.IsEdit == false) {
         this.form.validateFields((err, values) => {
-
-        
+      
           var params = {
             fMpno: values.FMpno,
             fName: values.FName,
@@ -273,10 +299,8 @@ export default {
               .then(res => {
                 if (res.result !== 0) {
                   _this.$message.success('成功')
-
                _this.$emit('addSuccess');
                   this.onClose()
-
                 } else {
                   _this.$message.error('失败')
                 }
@@ -428,4 +452,11 @@ export default {
 .selectclass {
   width: 212px;
 }
+.inputmargin-left{
+  margin-left: 10px
+
+}
+
+
+
 </style>

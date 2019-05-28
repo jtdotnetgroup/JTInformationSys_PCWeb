@@ -21,6 +21,7 @@
       :pagination="false"
       rowKey="任务单号" 
       :scroll="scroll"
+      size="small"
     >
       <template slot="serial" slot-scope="text">
         <span>{{dataTable.indexOf(text)+1}}</span>
@@ -36,7 +37,7 @@
       </a-button>
     </div>
 
-    <a-table id="cardd" bordered :columns="columnsMX" :pagination="false"></a-table>
+    <a-table id="cardd" size="small" bordered :columns="columnsMX" :pagination="false"></a-table>
 
     <DispatchWorkModalForm ref="DispatchWorkModalForm"/>
   </a-card>

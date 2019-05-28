@@ -51,7 +51,7 @@
       :columns="columns"
       :pagination="false"
       :bordered="true"
-      :loading="dataLoading"
+      :loading="dataLoading"   
     >
       <template v-for="(col,index) in editColumns" :slot="col" slot-scope="text, record, index">
         <editCell :key="index" :text="text" @change="onCellChange(record.日期, col, $event)"/>

@@ -59,30 +59,25 @@ export const asyncRouterMap = [
 
       },
 
-      // // 系统管理
+      // 报表管理
       {
-        path: '/systemmanage',
-        name: 'systemmanage',
+        path: '/Report',
+        name: 'Report',
         component: RouteView,
         hideChildrenInMenu: false,
-        meta: { title: '系统管理', keepAlive: true, icon: 'setting' },
+        meta: { title: '报表管理', keepAlive: true, icon: 'bar-chart' },
         children: [
           {
-            path: '/systemmanage/usermanage',
-            name: 'usermanage',
-            component: () => import('@/views/systemsetting/user/UserList'),
-            meta: { title: '用户管理', keepAlive: true }
+            path: '/Report/DataSource',
+            name: 'DataSource',
+            meta: { title: '数据源管理', keepAlive: true },
+            component: () => import('@/views/Report/DataSource/index')
           },
           {
-            path: '/systemmanage/rolemanage',
-            name: 'rolemanage',
-            component: () => import('@/views/systemsetting/role/RoleTable'),
-            meta: { title: '角色管理', keepAlive: true }
-          }, {
-            path: '/systemmanage/taskdispatch',
-            name: 'taskdispatch',
-            meta: { title: '任务调度', keepAlive: true },
-            component: () => import('@/views/systemsetting/taskdispatch/Task')
+            path: '/Report/Setting',
+            name: 'Setting',
+            meta: { title: '报表设置', keepAlive: true },
+            component: () => import('@/views/Report/Setting/index')
           }
         ]
       },
@@ -110,28 +105,35 @@ export const asyncRouterMap = [
 
         ]
       },
-      // 报表管理
+
+      // // 系统管理
       {
-        path: '/Report',
-        name: 'Report',
+        path: '/systemmanage',
+        name: 'systemmanage',
         component: RouteView,
         hideChildrenInMenu: false,
-        meta: { title: '报表管理', keepAlive: true, icon: 'bar-chart' },
+        meta: { title: '系统管理', keepAlive: true, icon: 'setting' },
         children: [
           {
-            path: '/Report/DataSource',
-            name: 'DataSource',
-            meta: { title: '数据源管理', keepAlive: true },
-            component: () => import('@/views/Report/DataSource/index')
+            path: '/systemmanage/usermanage',
+            name: 'usermanage',
+            component: () => import('@/views/systemsetting/user/UserList'),
+            meta: { title: '用户管理', keepAlive: true }
           },
           {
-            path: '/Report/Setting',
-            name: 'Setting',
-            meta: { title: '报表设置', keepAlive: true },
-            component: () => import('@/views/Report/Setting/index')
+            path: '/systemmanage/rolemanage',
+            name: 'rolemanage',
+            component: () => import('@/views/systemsetting/role/RoleTable'),
+            meta: { title: '角色管理', keepAlive: true }
+          }, {
+            path: '/systemmanage/taskdispatch',
+            name: 'taskdispatch',
+            meta: { title: '任务调度', keepAlive: true },
+            component: () => import('@/views/systemsetting/taskdispatch/Task')
           }
         ]
       }
+
     ]
   },
   {
