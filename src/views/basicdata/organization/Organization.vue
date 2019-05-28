@@ -58,7 +58,8 @@
 </template>
 
 <script>
-import { GetAll, DeleteOu,  } from '@/api/Organization'
+import { GetAll, DeleteOu } from '@/api/Organization'
+import{GetAll as GetAllEmployee}from '@/api/Employee'
 import { GetFMpno } from '@/api/Employee'
 import { Delete } from '@/api/Employee'
 
@@ -86,7 +87,7 @@ export default {
       columns: columns,
       selectedRowKeys: [],
       buttons: buttons,
-      treevaule:'',
+      treevaule: '',
       treeId: '', //用于记录树形的ID
       isEdit: false,
     }
@@ -99,8 +100,14 @@ export default {
   methods: {
     //查询员工信息表
     _LoadData() {
+      // var params = {
+      //   Id: this.treeId==''?0:this.treeId,
+      //   SkipCount: this.pagination.current - 1,
+      //   MaxResultCount: this.pagination.pageSize
+      // }
+      //  this.$store.dispatch('GetEmployees',params)
       var params = {
-        Id: this.treeId==''?0:this.treeId,
+        Id: this.treeId == '' ? 0 : this.treeId,
         SkipCount: this.pagination.current - 1,
         MaxResultCount: this.pagination.pageSize
       }
@@ -135,12 +142,14 @@ export default {
       switch (val) {
         case '新建组织': {
           var formData = {}
-          if (!(!!this.treevaule)) {
-            formData.Code = '00' + (store.getters.organizations.length + 1)
+
+          if (!!!this.treevaule) {
+            formData.Code = '0' + (store.getters.organizations.length + 1)
           } else {
             formData = this.treevaule
           }
           this.$refs.ModalFromOr.showModal(formData)
+
           break
         }
         case '新建员工': {
@@ -224,11 +233,9 @@ export default {
               Delete(params)
                 .then(res => {
                   if (res.result > 0) {
-                    _this.$message.success('成功')
-
-               
-                _this._LoadData()
-
+                    _this.$message.success('成功')          
+                    _this._LoadData()
+                    //_this.$store.dispatch('GetEmployees', params)
                   } else {
                     _this.$message.error('失败')
                   }

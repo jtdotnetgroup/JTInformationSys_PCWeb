@@ -28,6 +28,6 @@ export function Delete (Id) {
   return axios({
     url: '/api/services/app/Role/Delete',
     method: 'Delete',
-    data: { Id }
+    params: { Id }
   })
 }

@@ -212,14 +212,12 @@ export default {
     },
    //编辑是绑定值
     Edit(formData) {
-      console.log(formData)
       this.formData = formData
 
       this.Sex = formData.fSex == 1 ? true : false
 
       this.FWorkingState = formData.fWorkingState == 1 ? true : false
       this.FSystemUser = formData.fSystemUser == 1 ? true : false
-      console.log(this.FWorkingState)
 
       this.value = '' + formData.fDepartment + ''
       this.valueTree=''+formData.fParentId==0?formData.id:formData.fParentId+''

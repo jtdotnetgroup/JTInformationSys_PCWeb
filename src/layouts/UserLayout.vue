@@ -22,7 +22,7 @@
           <a href="_self">条款</a>
         </div>
         <div class="copyright">
-          Copyright &copy; 2019 捷特软件
+          Copyright &copy; 2014-2019 捷特软件
         </div>
       </div>
     </div>

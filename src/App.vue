@@ -19,7 +19,7 @@ export default {
     }
   },
   mounted () {
-    GetScripts();
+   
   }
 }
 </script>

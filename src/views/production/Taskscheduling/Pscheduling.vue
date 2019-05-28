@@ -8,7 +8,7 @@
       @pageChange="onPaginationChange"
     />
 
-    <a-table
+    <a-table 
       rowKey="任务单号"
       :dataSource="dataSource"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"

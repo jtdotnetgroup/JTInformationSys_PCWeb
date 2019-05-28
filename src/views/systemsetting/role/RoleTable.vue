@@ -13,8 +13,7 @@
       size="small"
       
     ></a-table>
-
-    <roleEditModal ref="roleModal"/>
+    <roleEditModal ref="roleModal" @Save="handelSave"/>
     <a-modal/>
   </a-card>
 </template>
@@ -105,12 +104,30 @@ export default {
           if(this.selectedRows.length===0){
             return;
           }
+          if(this.selectedRowKeys.length>1){
+            this.$message.error('暂不支持批量删除',2)
+            return;
+          }
+
+          const {id}=this.selectedRows[0];
+          Delete(id)
+          .then(res=>{
+            this._loadData();
+            this.$message.success('删除成功')
+          }).catch(err=>{
+            console.log(err)
+          })
+
           break;
         }
       }
     },
     handleCreateSubmit(values) {
       console.log(values)
+    },
+    handelSave(){
+      this._loadData();
+      this.selectedRowKeys=[];
     }
   },
   computed: {
