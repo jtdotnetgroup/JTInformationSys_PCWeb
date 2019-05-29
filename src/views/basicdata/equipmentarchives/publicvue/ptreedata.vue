@@ -1,8 +1,8 @@
 <template>
     <div>
-     
-          <a-tree   :treeData="organizations" defaultExpandAll @click="onButtonClick()">
-         </a-tree>
+        
+        <a-directory-tree :treeData="organizations" defaultExpandAll @select="onButtonClick">
+         </a-directory-tree>
 
     </div>
 </template>
@@ -11,22 +11,25 @@
     export default {
         data() {
             return {
-                 organizations:[
-                    {title:'xxx工作中心'},
-                    {title:'xxx工作中心'},
-                    {title:'xxx工作中心'}
-                ]
+                 
             }
+        },
+        mounted(){
+          this._LoadData();
         },
         methods: {
-            onButtonClick(){
-                this.$emit('btnClick');
+            _LoadData(){
+                this.$store.dispatch('GetWorkCenters')
+            },
+            onButtonClick(keys,e){
+                this.$emit('btnClick',keys,e);
             }
         },
-        
-
-
-
+        computed: {
+           organizations(){
+               return this.$store.getters.workcenters
+           } 
+        },
     }
 </script>
 

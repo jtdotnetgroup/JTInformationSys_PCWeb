@@ -7,3 +7,11 @@ export function SaveDispBillList (data) {
     data: data
   })
 }
+
+export function GetDailyDispBillList (params) {
+  return axios({
+    url: '/api/services/app/ICMODispBill/GetDailyDispatchList',
+    method: 'get',
+    params
+  })
+}

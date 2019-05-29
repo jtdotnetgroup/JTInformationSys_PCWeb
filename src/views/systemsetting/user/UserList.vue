@@ -162,6 +162,7 @@ export default {
               description: '请选择一个'
             })
             return
+
           }
           // 提示是否执行删除，是则继续，否则温馨提示
           _this.$confirm({

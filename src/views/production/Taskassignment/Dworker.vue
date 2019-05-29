@@ -14,13 +14,14 @@
     <a-table
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
       :dataSource="dataTable"
-      :columns="columnsjs"
+      :columns="columnsMain"
       :loading="taskschedulLoading"
       bordered
       onRow="{this.onClickRow}"
       :pagination="false"
-      rowKey="任务单号" 
+      rowKey="Id" 
       :scroll="scroll"
+      size="small"
     >
       <template slot="serial" slot-scope="text">
         <span>{{dataTable.indexOf(text)+1}}</span>
@@ -36,7 +37,7 @@
       </a-button>
     </div>
 
-    <a-table id="cardd" bordered :columns="columnsMX" :pagination="false"></a-table>
+    <a-table id="cardd" size="small" bordered :columns="columnsMX" :pagination="false"></a-table>
 
     <DispatchWorkModalForm ref="DispatchWorkModalForm"/>
   </a-card>
@@ -44,13 +45,12 @@
 
 <script>
 import buttons from './js/buttons'
-import tableheader from './js/tableheader'
-import { columns as mainColumns } from './js/tableheader'
+import {columnsMX,columnsMT,columns as mainColumns} from './js/tableheader'
 import { columns } from './js/tablehhe'
 
 import { getRoleList, getServiceList } from '@/api/manage'
 import { GetDailyAll, GetDispBillAll, CreateAll, GetDaily } from '@/api/test/get'
-import{ICMODailyGetAll} from '@/api/ICMODaily'
+import{ICMODailyGetAll,GetGroupDailyList} from '@/api/ICMODaily'
 import { constants } from 'crypto'
 
 export default {
@@ -74,13 +74,13 @@ export default {
       },
       buttonp: buttons.buttonp,
       buttonps: buttons.buttonps,
-      columnsMT: tableheader.columnsMT,
+      columnsMT: columnsMT,
       // 高级搜索 展开/关闭
       advanced: false,
       selectedRowKeys: [],
       selectedRows: [],
       scroll: {
-        x: 3100,
+        x: 1500,
         y: 350
       },
       queryParam: {},
@@ -90,9 +90,9 @@ export default {
 
       dataTable: [],
 
-      columnsjs: mainColumns,
+      columnsMain: mainColumns,
 
-      columnsMX: tableheader.columnsMX,
+      columnsMX: columnsMX,
       taskschedulLoading: false,
       taskschedulLoadings: false,
       dataSource: [],
@@ -114,13 +114,21 @@ export default {
         MaxResultCount: this.pagination.pageSize
       }
       //后端获取数据
-      ICMODailyGetAll(params)
+      GetGroupDailyList(params)
         .then(res => {
           const result = res.result
           this.dataTable=[]
           if (result && result.items.length > 0) {
             //绑定到表格上
-            this.dataTable = result.items
+
+            result.items.forEach(e => {
+              e.fDate=this.$moment(e.fDate).format('YYYY-MM-DD hh:mm:ss')
+              this.dataTable.push(e)
+            });
+
+
+
+            //this.dataTable = result.items
           }
 
         })
@@ -131,7 +139,7 @@ export default {
 
     pageChangeClick(page, pageSize) {
       ;(this.pagination.current = page), (this.pagination.pageSize = pageSize)
-      this._loadData();
+      this._LoadMainData();
     },
 
     hideModal() {
@@ -217,52 +225,52 @@ export default {
       }
     },
 
-    _loadData(fSrcID) {
-      this.taskschedulLoadings = true
-      var params = {
-        SkipCount: this.pagination.current - 1,
-        MaxResultCount: this.pagination.pageSize,
-        FSrcID: fSrcID
-      }
+    // _loadData(fSrcID) {
+    //   this.taskschedulLoadings = true
+    //   var params = {
+    //     SkipCount: this.pagination.current - 1,
+    //     MaxResultCount: this.pagination.pageSize,
+    //     FSrcID: fSrcID
+    //   }
 
-      var _this = this
-      GetDispBillAll(params)
-        .then(res => {
-          this.taskschedulLoadings = false
-          _this.dataSource = []
-          var data = res.result
-          if (data.items.length == 0) {
-            return
-          }
-          _this.dataTableArrget.push(data.items)
+    //   var _this = this
+    //   GetDispBillAll(params)
+    //     .then(res => {
+    //       this.taskschedulLoadings = false
+    //       _this.dataSource = []
+    //       var data = res.result
+    //       if (data.items.length == 0) {
+    //         return
+    //       }
+    //       _this.dataTableArrget.push(data.items)
 
-          var result = []
-          var index = 0
-          data.items.forEach(item => {
-            index = index + 1
-            var datasss = {
-              key: index,
-              indexname: index,
-              日期: this.$moment(item.日期).format('YYYY-MM-DD'),
-              机台: item.机台,
-              班组: item.班组,
-              操作员: item.操作员,
-              派工数量: item.派工数量,
-              完成数量: item.完成数量,
-              合格数量: item.合格数量,
-              计划数量: item.计划数量,
-              任务单号: item.fmoBillNo
-            }
-            result.push(datasss)
-          })
+    //       var result = []
+    //       var index = 0
+    //       data.items.forEach(item => {
+    //         index = index + 1
+    //         var datasss = {
+    //           key: index,
+    //           indexname: index,
+    //           日期: this.$moment(item.日期).format('YYYY-MM-DD'),
+    //           机台: item.机台,
+    //           班组: item.班组,
+    //           操作员: item.操作员,
+    //           派工数量: item.派工数量,
+    //           完成数量: item.完成数量,
+    //           合格数量: item.合格数量,
+    //           计划数量: item.计划数量,
+    //           任务单号: item.fmoBillNo
+    //         }
+    //         result.push(datasss)
+    //       })
 
-          _this.dataSource = result
-        })
-        .catch(function(error) {
-          console.log(error)
-          this.taskschedulLoadings = false
-        })
-    },
+    //       _this.dataSource = result
+    //     })
+    //     .catch(function(error) {
+    //       console.log(error)
+    //       this.taskschedulLoadings = false
+    //     })
+    // },
 
     handleBtnClick(val) {
       //   if (val == '查询') {
@@ -278,12 +286,11 @@ export default {
 
       switch (val) {
         case '派工': {
-          // if (this.selectedRows.length === 1) {
-          //   var row = this.selectedRows[0]
-          //   this.$refs.DispatchWorkModalForm.show(row)
-          // }
-          var row = this.selectedRows[0]
-          this.$refs.DispatchWorkModalForm.show(row)
+          if (this.selectedRows.length === 1) {
+            var row = this.selectedRows[0]
+            this.$refs.DispatchWorkModalForm.show(row)
+          }
+          
         }
       }
     },

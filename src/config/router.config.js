@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/layouts'
-import { bxAnaalyse, Basics } from '@/core/icons'
+// import { bxAnaalyse, basics } from '@/core/icons'
 
 export const asyncRouterMap = [
   {
@@ -59,52 +59,6 @@ export const asyncRouterMap = [
 
       },
 
-      // // 系统管理
-      {
-        path: '/systemmanage',
-        name: 'systemmanage',
-        component: RouteView,
-        hideChildrenInMenu: false,
-        meta: { title: '系统管理', keepAlive: true, icon: 'setting' },
-        children: [
-          {
-            path: '/systemmanage/usermanage',
-            name: 'usermanage',
-            component: () => import('@/views/systemsetting/user/UserList'),
-            meta: { title: '用户管理', keepAlive: true }
-          },
-          {
-            path: '/systemmanage/rolemanage',
-            name: 'rolemanage',
-            component: () => import('@/views/systemsetting/role/RoleTable'),
-            meta: { title: '角色管理', keepAlive: true }
-          }
-        ]
-      },
-
-      // 基础资料
-
-      {
-        path: '/basicdata',
-        name: 'basicdata',
-        component: RouteView,
-        hideChildrenInMenu: false,
-        meta: { title: '基础资料', keepAlive: true, icon: 'codepen' },
-        children: [
-          {
-            path: '/basicdata/organization',
-            name: 'organization',
-            meta: { title: '组织架构', keepAlive: true },
-            component: () => import('@/views/basicdata/organization/Organization')
-          },
-          {
-            path: '/basicdata/equipmentarchives',
-            name: 'equipmentarchives',
-            meta: { title: '设备档案', keepAlive: true },
-            component: () => import('@/views/basicdata/equipmentarchives/EquipmentArchives')
-          }
-        ]
-      },
       // 报表管理
       {
         path: '/Report',
@@ -124,6 +78,58 @@ export const asyncRouterMap = [
             name: 'Setting',
             meta: { title: '报表设置', keepAlive: true },
             component: () => import('@/views/Report/Setting/index')
+          }
+        ]
+      },
+
+      // 基础资料
+
+      {
+        path: '/basicdata',
+        name: 'basicdata',
+        component: RouteView,
+        hideChildrenInMenu: false,
+        meta: { title: '基础资料', keepAlive: true, icon: 'codepen' },
+        children: [
+          {
+            path: '/basicdata/organization',
+            name: 'organization',
+            meta: { title: '组织架构', keepAlive: true },
+            component: () => import('@/views/basicdata/organization/Organization')
+          }, {
+            path: '/basicdata/equipmentarchives',
+            name: 'equipmentarchives',
+            meta: { title: '设备档案', keepAlive: true },
+            component: () => import('@/views/basicdata/equipmentarchives/EquipmentArchives')
+          }
+
+        ]
+      },
+
+      // // 系统管理
+      {
+        path: '/systemmanage',
+        name: 'systemmanage',
+        component: RouteView,
+        hideChildrenInMenu: false,
+        meta: { title: '系统管理', keepAlive: true, icon: 'setting' },
+        children: [
+          {
+            path: '/systemmanage/usermanage',
+            name: 'usermanage',
+            component: () => import('@/views/systemsetting/user/UserList'),
+            meta: { title: '用户管理', keepAlive: true }
+          },
+          {
+            path: '/systemmanage/rolemanage',
+            name: 'rolemanage',
+            component: () => import('@/views/systemsetting/role/RoleTable'),
+            meta: { title: '角色管理', keepAlive: true }
+          }, {
+            path: '/systemmanage/taskdispatch',
+            name: 'taskdispatch',
+            meta: { title: '任务调度', keepAlive: true },
+            component: () => import('@/views/systemsetting/taskdispatch/Task')
           }
         ]
       },
@@ -183,6 +189,7 @@ export const asyncRouterMap = [
           }
         ]
       }
+
     ]
   },
   {

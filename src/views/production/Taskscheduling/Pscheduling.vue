@@ -8,7 +8,7 @@
       @pageChange="onPaginationChange"
     />
 
-    <a-table
+    <a-table 
       rowKey="任务单号"
       :dataSource="dataSource"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
@@ -18,6 +18,7 @@
       :loading="taskschedulLoading"
       :scroll="scroll"
       :customRow="setRow"
+      size="small"
     ></a-table>
 
     <div id="button">
@@ -26,7 +27,7 @@
       </a-button>
     </div>
 
-    <a-table id="card" bordered :dataSource="dataSourceMX" :columns="columnsMX" :pagination="false"></a-table>
+    <a-table id="card"  size="small" bordered :dataSource="dataSourceMX" :columns="columnsMX" :pagination="false"></a-table>
 
     <dispatch ref="taskDispatch"/>
     <ImportExcel ref="ImportExcel"/>
@@ -100,6 +101,8 @@ export default {
   },
   methods: {
     _loadData() {
+
+      var _this=this
       var params = {
         SkipCount: this.pagination.current - 1,
         MaxResultCount: this.pagination.pageSize
@@ -109,7 +112,14 @@ export default {
         .then(res => {
           const result = res.result
           if (result) {
-            this.dataSource = result.items
+
+            result.items.forEach(e=>{
+              e.计划完工日期=this.$moment(e.计划完工日期).format('YYYY-MM-DD hh:mm:ss')
+              e.计划开工日期=this.$moment(e.计划开工日期).format('YYYY-MM-DD hh:mm:ss')
+
+               this.dataSource.push(e)
+            })
+
             this.pagination.total = result.totalCount
           }
           this.taskschedulLoading = false

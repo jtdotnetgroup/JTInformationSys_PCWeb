@@ -18,29 +18,29 @@
       :pagination="false"
       :loading="loading"
       rowKey="key"
+      size="small"
     >
-      <template v-for="(col,index) in editColumns" :slot="col" slot-scope="text, record">
-        <EditableCellInput :key="index" :text="text" @change="onCellChange(record, col, $event)"/>
+      <template  slot="fCommitAuxQty" slot-scope="text, record">
+        <a-input-number v-model="record.fCommitAuxQty"></a-input-number>
       </template>
+      <template slot="fWorkerID" slot-scope="text,record">
+        <a-select v-model="record.fWorkerID">
+          <a-select-option v-for="(item,index) in workers" :key="index" :value="item.id">{{item.fName}}</a-select-option>
+        </a-select>
+      </template>
+      
 
-      <template slot="operation" slot-scope="text, record">
-        <a-popconfirm
-          v-if="dataSource.length"
-          title="Sure to delete?"
-          @confirm="() => onDelete(record.fSrcID)"
-        >
-          <a href="javascript:;" style="margin-left: 20px">Delete</a>
-        </a-popconfirm>
-      </template>
+      
     </a-table>
   </a-modal>
 </template>
 
 <script>
 import buttons from './js/buttons'
-import tableHeader from './js/tableheader'
+import {columnsMT} from './js/tableheader'
 import { GetDispBillAll } from '@/api/test/get'
-import {SaveDispBillList} from '@/api/DispBill'
+import {SaveDispBillList,GetDailyDispBillList} from '@/api/DispBill'
+
 export default {
   components: {
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
@@ -71,13 +71,13 @@ export default {
             data.push({
               fid:row.fid,
               fSrcID:this.DailyData.fid,
-              fShift:row.班次,
-              fMachineID:row.设备,
+              fShift:row.fShiftID,
+              fMachineID:row.fMachineID,
               fWorkCenterID:0,
-              fCommitAuxQty:row.派工数量,
-              fWorker:row.操作员,
-              fmoBillNo:this.DailyData.任务单号,
-              fmoInterID:this.DailyData.fmoInterID
+              fCommitAuxQty:row.fCommitAuxQty,
+              fWorker:row.fWorkerID,
+              fmoBillNo:this.DailyData.fmoBillNo,
+              fmoInterID:row.fmoInterID
             })
           });
 
@@ -103,20 +103,20 @@ export default {
       this._LoadData();
     },
     _LoadData() {
-      var params={FSrcID:this.DailyData.fid}
-      GetDispBillAll(params).then(res=>{
+      var params={fmoBillNos:this.DailyData.fmoBillNo,DatelList:this.DailyData.fDate}
+      GetDailyDispBillList(params).then(res=>{
         console.log(res)
         this.loading=false
         var result=res.result;
-        if(result&&result.length>0){
+        if(result&&result.items.length>0){
           let index=0
-          result.forEach(e => {
+          result.items.forEach(e => {
             e.key=index;
             index++;
-            e.日期=this.$moment(e.日期).format('YYYY-MM-D')
+            e.fDate=this.$moment(e.fDate).format('YYYY-MM-D')
           });
 
-          this.dataSource=result
+          this.dataSource=result.items
         }
       }).catch(error=>{
         this.loading=false
@@ -146,8 +146,8 @@ export default {
       visible: false,
       DailyData:{},
       loading:false,
-      columnsMT:tableHeader.columnsMT,
-      editColumns:['机台','操作员','班次','派工数量'],
+      columnsMT:columnsMT,
+      editColumns:['fCommitAuxQty'],
       selectColumns:[]
     }
   },
@@ -166,6 +166,14 @@ export default {
       }
 
       return result;
+    },
+    workers(){
+
+      if(this.$store.getters.workers.length===0){
+        this.$store.dispatch('GetWorkers')
+      }
+
+      return this.$store.getters.workers
     }
   }
 }

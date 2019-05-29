@@ -34,3 +34,11 @@ export function ImportExcelList (data) {
     data
   })
 }
+
+export function GetGroupDailyList (params) {
+  return axios({
+    url: '/api/services/app/ICMODaily/GetGroupDailyList',
+    method: 'get',
+    params
+  })
+}

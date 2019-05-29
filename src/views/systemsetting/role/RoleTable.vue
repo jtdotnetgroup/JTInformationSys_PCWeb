@@ -8,9 +8,13 @@
       :dataSource="tableData"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
       :columns="columns"
+      :bordered="true"
       :pagination="false" rowKey="name"
+      size="small"
+      
     ></a-table>
-    <roleEditModal ref="roleModal"/>
+    <roleEditModal ref="roleModal" @Save="handelSave"/>
+    <a-modal/>
   </a-card>
 </template>
 
@@ -33,9 +37,9 @@ export default {
       },
       fields: Fields,
       columns: [
-        { title: '名称', dataIndex: 'name' },
-        { title: '显示名称', dataIndex: 'displayName' },
-        { title: '描述', dataIndex: 'description' }
+        { title: '名称', dataIndex: 'name',align: 'center'},
+        { title: '显示名称', dataIndex: 'displayName',align: 'center' },
+        { title: '描述', dataIndex: 'description',align: 'center' }
       ],
       tableData: [],
       selectedRowKeys: [],
@@ -90,13 +94,40 @@ export default {
           break;
         }
         case '编辑':{
+          if(this.selectedRows.length===0){
+            return;
+          }
           this.$refs.roleModal.show(this.selectedRows[0])
+          break;
+        }
+        case '删除':{
+          if(this.selectedRows.length===0){
+            return;
+          }
+          if(this.selectedRowKeys.length>1){
+            this.$message.error('暂不支持批量删除',2)
+            return;
+          }
+
+          const {id}=this.selectedRows[0];
+          Delete(id)
+          .then(res=>{
+            this._loadData();
+            this.$message.success('删除成功')
+          }).catch(err=>{
+            console.log(err)
+          })
+
           break;
         }
       }
     },
     handleCreateSubmit(values) {
       console.log(values)
+    },
+    handelSave(){
+      this._loadData();
+      this.selectedRowKeys=[];
     }
   },
   computed: {
