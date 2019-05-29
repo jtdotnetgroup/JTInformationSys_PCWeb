@@ -15,12 +15,15 @@ import bootstrap from './core/bootstrap'
 import './core/use'
 import './permission' // permission control
 import './utils/filter' // global filter
+import { Localization } from './utils/helper/localization'
 
 import moment from 'moment'
 
 Vue.config.productionTip = false
 Vue.prototype.$moment = moment
 Vue.prototype.$message = message
+Vue.prototype.$Localiztion = Localization
+
 // mount axios Vue.$http and this.$http
 Vue.use(VueAxios)
 

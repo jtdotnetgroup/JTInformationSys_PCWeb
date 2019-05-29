@@ -17,6 +17,7 @@
       :bordered="true"
       :loading="taskschedulLoading"
       :scroll="scroll"
+      :customRow="setRow"
     ></a-table>
 
     <div id="button">
@@ -27,94 +28,6 @@
 
     <a-table id="card" bordered :dataSource="dataSourceMX" :columns="columnsMX" :pagination="false"></a-table>
 
-    <!-- <div id="divmodal">
-      <a-modal
-        title="新增/维护"
-        v-model="visible"
-        @ok="hideModal"
-        okText="确认"
-        cancelText="取消"
-        width="1000px"
-        style="left:80px"
-        :maskClosable="maskClosable"
-      >
-        <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonps"/>
-
-        <div class="table-page-search-wrapper" id="card">
-          <a-form layout="inline">
-            <a-row :gutter="48">
-              <a-col :md="8" :sm="24">
-                <a-form-item label="任务单号">
-                  <a-input v-model="queryParam.id" placeholder/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="计划开工">
-                  <a-date-picker
-                    v-model="queryParam.date"
-                    style="width: 100%"
-                    placeholder="请输入计划开工"
-                  />
-                </a-form-item>
-              </a-col>
-
-              <template v-if="advanced">
-                <a-col :md="8" :sm="24">
-                  <a-form-item label="计划完工">
-                    <a-date-picker
-                      v-model="queryParam.date"
-                      style="width: 100%"
-                      placeholder="请输入计划完工"
-                    />
-                  </a-form-item>
-                </a-col>
-
-                <a-col :md="8" :sm="24">
-                  <a-form-item label="计划数量">
-                    <a-input-number v-model="queryParam.callNo" style="width: 100%"/>
-                  </a-form-item>
-                </a-col>
-
-                <a-col :md="8" :sm="24">
-                  <a-form-item label="排产数量">
-                    <a-input-number v-model="queryParam.callNo" style="width: 100%"/>
-                  </a-form-item>
-                </a-col>
-
-                <a-col :md="8" :sm="24">
-                  <a-form-item label="日产量">
-                    <a-input-number v-model="queryParam.callNo" style="width: 100%"/>
-                  </a-form-item>
-                </a-col>
-              </template>
-              <a-col :md="!advanced && 8 || 24" :sm="24">
-                <span
-                  class="table-page-search-submitButtons"
-                  :style="advanced && { float: 'right', overflow: 'hidden' } || {} "
-                >
-                  <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-                  <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
-                  <a @click="toggleAdvanced" style="margin-left: 8px">
-                    {{ advanced ? '收起' : '展开' }}
-                    <a-icon :type="advanced ? 'up' : 'down'"/>
-                  </a>
-                </span>
-              </a-col>
-            </a-row>
-          </a-form>
-        </div>
-
-        <a-table
-          id="card"
-          bordered
-          :dataSource="dataSourceMX"
-          :columns="columnsMT"
-          :pagination="false"
-        >
-         </a-table>
-      </a-modal> 
-    </div>-->
- 
     <dispatch ref="taskDispatch"/>
     <ImportExcel ref="ImportExcel"/>
   </a-card>
@@ -150,14 +63,11 @@ export default {
       columnsMT: tableheader.columnsMT,
       columnsMX: tableheader.columnsMX,
       dataSourceMX: tableheader.dataSourceMX,
-      dailyDataList:[],
       scroll: {
         x: 3100,
         y: 350
       },
-      taskschedulLoading: false,
-      detailLoading:false,
-      test: ''
+      taskschedulLoading: false
     }
   },
   mounted() {
@@ -223,6 +133,7 @@ export default {
         this.visible = true
       } else if (val == '排产') {
         if (this.selectedRowKeys.length === 1) this.$refs.taskDispatch.show(this.selectedRows[0])
+        
       } else if (val == '导入') {
         console.log(val);
         this.$refs.ImportExcel.show();
