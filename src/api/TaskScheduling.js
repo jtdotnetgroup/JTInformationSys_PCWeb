@@ -30,7 +30,7 @@ export function SaveDailyList (data) {
 export function GetAllDailyByFMOInterID (params) {
   // 根据任务单ID获取所有日计划单排产数据
   return axios({
-    url: '/api/services/app/ICMODaily/GetDialyQtyListByFMOInterID',
+    url: '/api/services/app/ICMODaily/GetMOBillPlanDetail',
     method: 'get',
     params: params
   })

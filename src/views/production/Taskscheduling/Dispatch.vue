@@ -213,6 +213,11 @@ export default {
   },
   computed: {
     tableData() {
+
+      if(this.dataSource.length>0){
+        return this.dataSource;
+      }
+
       let startDate = this.$moment(this.formData.计划开工日期)
       //结束日期推后一天
       let endDate = this.$moment(this.formData.计划完工日期).add(1, 'days')
