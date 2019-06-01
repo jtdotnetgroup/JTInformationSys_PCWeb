@@ -46,4 +46,7 @@ export default {
     -webkit-box-shadow:none !important;
     box-shadow:none !important;
   }
+  .ant-table-body{
+    margin:0 0 !important;
+  }
 </style>
