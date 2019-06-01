@@ -114,8 +114,8 @@ export default {
           if (result) {
 
             result.items.forEach(e=>{
-              e.计划完工日期=this.$moment(e.计划完工日期).format('YYYY-MM-DD hh:mm:ss')
-              e.计划开工日期=this.$moment(e.计划开工日期).format('YYYY-MM-DD hh:mm:ss')
+              e.计划完工日期=this.$moment(e.计划完工日期).format('YYYY-MM-DD')
+              e.计划开工日期=this.$moment(e.计划开工日期).format('YYYY-MM-DD')
 
                this.dataSource.push(e)
             })

@@ -47,3 +47,23 @@ export function DeleteOu (params) {
 
   })
 }
+
+// 删除组织
+export function GetOuByID (params) {
+  return axios({
+    url: '/api/services/app/Organization/Get', // /api/services/app/VW_MOBillList/GetDaTask
+    method: 'GET',
+    params: params
+
+  })
+}
+
+// 编辑组织
+export function Update (params) {
+  return axios({
+    url: '/api/services/app/Organization/Update', // /api/services/app/VW_MOBillList/GetDaTask
+    method: 'PUT',
+    data: params
+
+  })
+}

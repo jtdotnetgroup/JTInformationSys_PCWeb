@@ -2,7 +2,7 @@
   <a-modal
     title="新增/维护"
     :visible="visiable"
-    width="660px"
+    width="800px"
     style="left:80px"
     :maskClosable="false"
     @ok="handleSubmit"
@@ -11,9 +11,9 @@
     <a-form layout="inline" :form="form" @change="handleFormChange">
       
        <a-row>
-         <a-col :span="12"> <a-form-item label="员工编码">
+         <a-col :span="12"> <a-form-item label="员工编号">
         <a-input
-          v-decorator="['FMpno',{rules: [{ required: true, message: '请输入员工编码' }]} ]"
+          v-decorator="['FMpno',{rules: [{ required: true, message: '请输入员工编号' }]} ]"
           disabled
         ></a-input>
       </a-form-item></a-col>
@@ -62,10 +62,8 @@
     </a-col>
 
 
-     <a-col :span="12">
-       
+     <a-col :span="12">     
       <a-form-item label="上级主管" class="inputmargin-left">
-        <!-- <a-input v-decorator="['FDepartment',{rules: [{ required: false, message: '请输入所属部门' }]} ]"></a-input> -->
         <a-tree-select 
           style="width: 174px"
           :value="valueTree"
@@ -78,13 +76,23 @@
         ></a-tree-select>
       
       </a-form-item>
-
     </a-col>
-
 </a-row>
 
+<a-row v-show="FSystemUser">
+  <a-col :span="12">
+      <a-form-item label="员工账户" class="inputmargin-left">
+        <a-input v-decorator="['UserName',{rules: []} ]"  :disabled="disabled"></a-input>
+      </a-form-item>
+      <a-form-item label="员工密码">
+        <a-input v-decorator="['Password',{rules: [{ required: true, message: '请输入员工密码' }]}  ]" :disabled="disabled" ></a-input>
+      </a-form-item>
+  </a-col>
+</a-row>
+
+
   <a-row>
-    <a-col  :span="12"><a-form-item label="手机号码">
+    <a-col :span="12"><a-form-item label="手机号码">
           <a-input v-decorator="['FPhone',{rules: [{ required: true, message: '请输入手机号码' }]} ]"></a-input>
         </a-form-item></a-col>
     <a-col :span="12"> <a-form-item label="入职日期">
@@ -122,8 +130,7 @@
 
 
        <a-collapse defaultActiveKey="1"  >
-        <a-collapse-panel header="ERP属性"  >
-        
+        <a-collapse-panel header="ERP属性" style="background-color: #F2F2F2" key="1" >  
           <a-form-item label="对应ERP用户">
             <a-input
               v-decorator="['FERPUser',{rules: []} ]"
@@ -140,15 +147,14 @@
 
 
 
-
-
-
     </a-form>
   </a-modal>
 </template>
 
 <script>
 import pick from 'lodash.pick'
+
+import regular from './regular'
 
 import { CreateEm, GetFMpno, Update,GetTreeListEn } from '@/api/Employee'
 
@@ -166,7 +172,8 @@ export default {
       Sex: true,
       FWorkingState: true,
       FSystemUser: false,
-      IsEdit: false
+      IsEdit: false,
+      disabled:false
     }
   },
   mounted() {
@@ -185,10 +192,10 @@ export default {
     showModal(formData, isEdit) {
       this.visiable = true
       this.IsEdit = isEdit
-      this.LoadGetFMpno()
-      
-
+  
+    
       if (isEdit == false) {
+        this.LoadGetFMpno()
         this.add(formData)
       } else {
         this.Edit(formData)
@@ -208,7 +215,9 @@ export default {
         }
       }
 
-      
+     
+       // this.disabled=true
+        
     },
    //编辑是绑定值
     Edit(formData) {
@@ -218,10 +227,8 @@ export default {
 
       this.FWorkingState = formData.fWorkingState == 1 ? true : false
       this.FSystemUser = formData.fSystemUser == 1 ? true : false
-
-      this.value = '' + formData.fDepartment + ''
-      this.valueTree=''+formData.fParentId==0?formData.id:formData.fParentId+''
-
+      this.value = '' + formData.fDepartment + ''//所属部门
+      this.valueTree=''+formData.fParentId==0?''+formData.id+'':formData.fParentId+''//上级主管
       this.mdl.FMpno = formData.fMpno
       this.mdl.FName = formData.fName
       this.mdl.FPhone = formData.fPhone
@@ -229,6 +236,16 @@ export default {
       this.mdl.FEmailAddress = formData.fEmailAddress
       this.mdl.FERPUser = formData.ferpUser
       this.mdl.FERPOfficeClerk = formData.ferpOfficeClerk
+      this.mdl.UserName=formData.userName
+      this.mdl.Password=formData.password
+
+
+      if(formData.userName!==""&&formData.password!==""){
+        this.disabled=true
+      }else{
+        this.disabled=false
+      }
+
       this.$nextTick(() => {
         this.form.setFieldsValue(
           pick(
@@ -240,7 +257,9 @@ export default {
             'FHiredate',
             'FEmailAddress',
             'FERPUser',
-            'FERPOfficeClerk'
+            'FERPOfficeClerk',
+            'UserName',
+            'Password'
           )
         )
       })
@@ -265,30 +284,31 @@ export default {
             fEmailAddress: values.FEmailAddress,
             ferpUser: values.FERPUser==''?0:values.FERPUser,
             ferpOfficeClerk: values.FERPOfficeClerk==''?0:values.ferpOfficeClerk,
-          
+            user:{
+            UserName:values.UserName,
+            Password:values.Password
           }
 
-          var reg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
-          if(!reg.test(values.FEmailAddress))
+       }
+
+          if(!regular.Email.test(values.FEmailAddress))
           {
             this.$message.error('邮箱格式不正确')
             return;
           }
-          
-          if(this.FWorkingState==false){
-
-            this.$message.error('默认新增是员工必须为在职状态')
-            return;
-          }
-
-         var regphone=/^(13[0-9]|14[5-9]|15[012356789]|166|17[0-8]|18[0-9]|19[8-9])[0-9]{8}$/
-          if(!regphone.test(values.FPhone))
+              
+          if(!regular.phone.test(values.FPhone))
           {
             this.$message.error('手机号码不正确')
             return;
           }
 
-          // values.fSex=this.Sex?1:2  这样赋值
+
+          if(this.FWorkingState==false){
+
+            this.$message.error('默认新增是员工必须为在职状态')
+            return;
+          }
 
           console.log(params)
           if (!err) {
@@ -322,36 +342,33 @@ export default {
               values.fDepartment=this.value
           }else{
              values.fDepartment=this.formData.fDepartment     
-          }
-         
+          }         
           values.fUserId=this.formData.fUserId
+
+          values.user={
+            UserName:values.UserName,
+            Password:values.Password
+          }
           
-          var regphone=/^(13[0-9]|14[5-9]|15[012356789]|166|17[0-8]|18[0-9]|19[8-9])[0-9]{8}$/
-          if(!regphone.test(values.FPhone))
+          if(!regular.phone.test(values.FPhone))
           {
             this.$message.error('手机号码不正确')
             return;
           }
-
-
-         var reg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
-          if(!reg.test(values.FEmailAddress))
+      
+          if(!regular.Email.test(values.FEmailAddress))
           {
             this.$message.error('邮箱格式不正确')
             return;
           }
 
 
-
           if (!err) {
             Update(values)
               .then(res => {
                 if (res.result !== 0) {
-                  _this.$message.success('成功')
-            
-
+                  _this.$message.success('成功')         
                _this.$emit('addSuccess');
-
                this.onClose()
                 } else {
                   _this.$message.error('失败')
@@ -387,7 +404,6 @@ export default {
     //性别触发方法
     onChangechecked(checked) {
       this.Sex = checked
-      console.log(checked)
     },
     //在职状态触发
     onChangeFWorkingState(e) {
@@ -397,11 +413,18 @@ export default {
     //系统用户
     onChangeFSystemUser(e) {
       this.FSystemUser = e.target.checked
-      console.log(e)
+
+      if(this.IsEdit==false){
+         this.disabled=false    
+      }else{
+        if(this.formData.password!==""){
+          this.disabled=true
+        }else{
+           this.disabled=false
+        }   
+      }
+     
     },
-
-
-
 
 //获取编号
      LoadGetFMpno(){
@@ -416,18 +439,15 @@ export default {
       .catch(err => {
         console.log(err)
       })
-
      },
 
 
     //上级主管
     LoadTreeData(){
       var _this=this
-
       var params = {
         ParentID: 0,
       }
-
       GetTreeListEn(params)
         .then(res => {
           this.treeDatas = []

@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import { GetAll, DeleteOu } from '@/api/Organization'
+import { GetAll, DeleteOu,GetOuByID } from '@/api/Organization'
 import{GetAll as GetAllEmployee}from '@/api/Employee'
 import { GetFMpno } from '@/api/Employee'
 import { Delete } from '@/api/Employee'
@@ -90,6 +90,7 @@ export default {
       treevaule: '',
       treeId: '', //用于记录树形的ID
       isEdit: false,
+      EditArr:{}
     }
   },
 
@@ -101,12 +102,7 @@ export default {
     //查询员工信息表
     _LoadData() {
       var _this=this;
-      // var params = {
-      //   Id: this.treeId==''?0:this.treeId,
-      //   SkipCount: this.pagination.current - 1,
-      //   MaxResultCount: this.pagination.pageSize
-      // }
-      //  this.$store.dispatch('GetEmployees',params)
+      
       var params = {
         Id: this.treeId == '' ? 0 : this.treeId,
         SkipCount: this.pagination.current - 1,
@@ -142,17 +138,30 @@ export default {
       var _this = this
       switch (val) {
         case '新建组织': {
+          this.isEdit = false
           var formData = {}
-
-          if (!!!this.treevaule) {
-            formData.Code = '0' + (store.getters.organizations.length + 1)
+          if (!(!!this.treevaule)) {
+            formData.Code = '00' + (store.getters.organizations.length + 1)
           } else {
             formData = this.treevaule
           }
-          this.$refs.ModalFromOr.showModal(formData)
-
+          this.$refs.ModalFromOr.showModal(formData,this.isEdit)
           break
         }
+
+        case '编辑组织': {
+          this.isEdit = true
+          var formData = {}
+          if (this.treevaule=="") {
+            this.$message.error('选择你要编辑的组织')
+          }else{           
+            formData=this.EditArr
+            this.$refs.ModalFromOr.showModal(formData,this.isEdit)
+          }       
+          break
+        }
+
+
         case '新建员工': {
           this.isEdit = false
           var formData = {}
@@ -219,7 +228,7 @@ export default {
         }
         case '删除员工': {
           if (_this.selectedRows.length !== 1) {
-            this.$message.info('请选择需要删除删除的员工')
+            this.$message.info('请选择需要删除的员工')
             return
           }
 
@@ -258,15 +267,39 @@ export default {
       }
     },
 
+      //通过ID去查询组织的信息
+    LoadDataGetOUByID(){    
+      var _this=this   
+      var params={
+        id:this.treeId==''?0:this.treeId
+      }
+      GetOuByID(params).then(res=>{
+        const result=res.result
+        if(result){
+        
+          //  _this.$nextTick(()=>{
+              _this.EditArr=result
+           //})
+          console.log(result)
+        }
+      }).catch(err=>{
+        console.log(err)
+      })
+    },
+
     //点击树形的办法
     btnTree(obj) {
       if (obj.selectedNodes.length > 0) {
+         
         this.selectedRowKeys = []
-        this.selectedRows = []
+        this.selectedRows = []     
+        this.loading=true    
         this.treevaule = obj
         this.treeId = obj.selectedNodes[0].componentOptions.propsData.dataRef.id
-        this.loading=true
+        this.LoadDataGetOUByID()
         this._LoadData()
+       
+       
       } else {
         this.treevaule = ''
       }
@@ -287,7 +320,6 @@ export default {
 .tabletd{
   text-align: center
 }
-
 
 
 </style>

@@ -122,12 +122,9 @@ export default {
             //绑定到表格上
 
             result.items.forEach(e => {
-              e.fDate=this.$moment(e.fDate).format('YYYY-MM-DD hh:mm:ss')
+              e.fDate=this.$moment(e.fDate).format('YYYY-MM-DD')
               this.dataTable.push(e)
             });
-
-
-
             //this.dataTable = result.items
           }
 

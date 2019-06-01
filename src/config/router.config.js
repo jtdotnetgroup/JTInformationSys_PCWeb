@@ -101,8 +101,13 @@ export const asyncRouterMap = [
             name: 'equipmentarchives',
             meta: { title: '设备档案', keepAlive: true },
             component: () => import('@/views/basicdata/equipmentarchives/EquipmentArchives')
+          },
+          {
+            path: '/basicdata/Processmaintenance',
+            name: 'Processmaintenance',
+            meta: { title: '不良项目维护', keepAlive: true },
+            component: () => import('@/views/basicdata/Processmaintenance/Process')
           }
-
         ]
       },
 
