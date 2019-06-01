@@ -28,7 +28,7 @@
     </div>
 
     <a-table
-      id="card"
+      id="card" size="small"
       bordered
       :dataSource="detailData"
       :columns="detailColumns"
@@ -91,8 +91,9 @@ export default {
           totalCommit:this.dailyDataList.totalCommit
         };
         this.dailyDataList.details.forEach(e => {
-          var plancol=e.fDate+'Plan'
-          var commitcol=e.fDate+'Commit'
+          var date=this.$moment(e.fDate).format('MM-DD')
+          var plancol=date+'Plan'
+          var commitcol=date+'Commit'
           row[plancol]=e.dayPlan
           row[commitcol]=e.dayCommit
         });
@@ -109,16 +110,19 @@ export default {
       })
       if (!!this.dailyDataList && !!this.dailyDataList.details) {
         this.dailyDataList.details.forEach(r => {
+          var date=this.$moment(r.fDate).format('MM-DD')
           var column = {
-            title: r.fDate,
+            title: date,
             children: [
               {
                 title: '计划',
-                dataIndex: r.fDate + 'Plan'
+                dataIndex: date + 'Plan',
+                algin:'center'
               },
               {
                 title: '实际',
-                dataIndex: r.fDate + 'Commit'
+                dataIndex: date + 'Commit',
+                algin:'center'
               }
             ]
           }
