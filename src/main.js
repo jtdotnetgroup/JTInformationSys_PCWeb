@@ -21,7 +21,7 @@ import { Localization } from './utils/helper/localization'
 import moment from 'moment'
 
 Vue.config.productionTip = false
-Vue.prototype.$moment = moments
+Vue.prototype.$moment = moment
 Vue.prototype.$Localiztion = Localization
 // Vue.prototype.$message = message
 
