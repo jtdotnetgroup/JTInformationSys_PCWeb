@@ -4,6 +4,7 @@ import store from '@/store'
 import {
   VueAxios
 } from './axios'
+// import notification from 'ant-design-vue/es/notification'
 import message from 'ant-design-vue/es/message'
 
 import {
@@ -16,7 +17,8 @@ if (url.indexOf('http://222.72.134.71') >= 0) {
   baseURL = 'http://222.72.134.71:8093'
 } else if (url.indexOf('localhost') >= 0) {
   // 开发环境
-  baseURL = 'http://localhost:21021/'
+  // baseURL = 'http://localhost:21021/'
+  baseURL = 'http://localhost:21021'
 } else {
   baseURL = 'http://222.72.134.71:8093'
 }
@@ -45,7 +47,10 @@ const err = (error) => {
       }
     }
     if (error.response.status === 500) {
-      message.error(error.response.data.error.message, 3)
+      message.error('抱歉，服务器处理请求异常', 3)
+    }
+    if (error.response.status === 400) {
+      message.error(data.error.details, 3)
     }
   }
   return Promise.reject(error)
@@ -86,3 +91,8 @@ export {
   installer as VueAxios,
   service as axios
 }
+
+var s = document.createElement('script')
+s.src = baseURL + 'AbpScripts/GetScripts'
+s.type = 'text/javascript'
+document.body.appendChild(s)
