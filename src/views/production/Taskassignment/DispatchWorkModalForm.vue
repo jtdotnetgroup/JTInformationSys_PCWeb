@@ -114,7 +114,10 @@ export default {
             e.key=index;
             index++;
             e.fDate=this.$moment(e.fDate).format('YYYY-MM-D')
+            e.fBillTime=this.$moment(e.fBillTime).format('YYYY-MM-DD hh:mm:ss')
           });
+
+        
 
           this.dataSource=result.items
         }

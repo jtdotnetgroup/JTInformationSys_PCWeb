@@ -8,14 +8,17 @@
     @ok="handleSubmit"
     @cancel="onClose"
   >
+   <!-- :value="value" -->
     <a-form layout="inline" :form="form" @change="handleFormChange">
       <a-row>
         <a-col :span="12">
           <a-form-item label="产品名称"  style="margin-left:16px">
             <a-select
-          
-              showSearch
-              :value="value"
+             
+              showSearch           
+               v-decorator="['fItemID',{
+          rules:[{required:true,message: '请选择产品名称' }]}]"
+              
               placeholder="产品名称"
               style="width: 200px"
               :defaultActiveFirstOption="false"
@@ -74,7 +77,7 @@
 
 <script>
 import { GetICItem,Create,Update } from '@/api/TB_BadItemRelation'
-
+import pick from 'lodash.pick'
 export default {
   data() {
     return {
@@ -84,7 +87,8 @@ export default {
       //FDeleted: false,
       data: [],
       value: undefined,
-      IsEdit: false
+      IsEdit: false,
+      mdl:{}
     }
   },
   methods: {
@@ -98,18 +102,26 @@ export default {
         this.IsEdit = true
         this.formData = formData
        // this.FDeleted = formData.fDeleted
-        this.value = formData.fItemName
+       // this.value = formData.fItemName
+      
+        this.mdl.fItemID=formData.fItemName
+        this.$nextTick(()=>{
+          this.form.setFieldsValue(pick( this.mdl,'fItemID'))
+        })
+
+
       }
     },
     handleSubmit() {
       this.form.validateFields((err, values) => {
         if (!err) {
-
-         
-
           if(this.formData.fid==''){
           //values.fDeleted=this.FDeleted
-          values.fItemID=this.value
+          // if(this.value==undefined||this.value==''){
+          //   this.$message.error("不能为空")
+          //   return
+          // }
+          // values.fItemID=this.value
           values.fOperID=this.formData.key
           values.fid=0
 
@@ -160,8 +172,9 @@ export default {
     },
 
     handleChange(value) {
-      console.log(value)
-      this.value = value
+
+    this.value = value
+   
     },
 
     //远程搜索产品
