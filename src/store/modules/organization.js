@@ -24,11 +24,26 @@ const store = {
     }
 
   },
+
   actions: {
+
     GetOrganizations ({ commit }, params) {
       GetTreeList(params).then(res => {
         var organizations = res.result
-        commit('SET_ORGANIZATIONS', organizations)
+
+        // TerrArray()
+        // var organizations = []
+        // res.result.forEach(e => {
+        //   e.slots = { icon: 'smile' }
+        //   organizations.push(e)
+        // })
+
+        var array = TerrArray(organizations)
+
+        // console.log(array)
+
+        console.log(array)
+        commit('SET_ORGANIZATIONS', array)
       }).catch(err => {
         console.log(err)
       })
@@ -73,6 +88,22 @@ const store = {
       })
     }
   }
+}
+
+// 递归的方法拼接图标
+function TerrArray (data) {
+  var tree = []
+  for (var i = 0; i < data.length; i++) {
+    var obj = data[i]
+    obj.slots = { icon: 'folder' }
+
+    if (data[i].children.length > 0) {
+      obj.slots = { icon: 'folderopen' }
+      TerrArray(data[i].children)
+      tree.push(obj)
+    }
+  }
+  return tree
 }
 
 export default store

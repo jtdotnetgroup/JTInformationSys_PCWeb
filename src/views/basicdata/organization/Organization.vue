@@ -5,7 +5,9 @@
     <div>
       <a-row :gutter="10">
         <a-col :span="4" >
-          <treeData @btnClick="btnTree"/>
+
+          <treeData @btnClick="btnTree"  />
+
         </a-col>
         <a-col :span="20">
           <pagination
@@ -49,7 +51,7 @@
       </a-row>
 
       <!-- 新增组织弹框 -->
-      <ModalFromOr ref="ModalFromOr"/>
+      <ModalFromOr ref="ModalFromOr" @Eidt="OUEidt"/>
 
       <!-- 新增员工弹框 -->
       <ModalFromEn ref="ModalFromEn"   @addSuccess="handelAddSuccess"/>
@@ -276,19 +278,22 @@ export default {
       GetOuByID(params).then(res=>{
         const result=res.result
         if(result){
-        
-          //  _this.$nextTick(()=>{
-              _this.EditArr=result
-           //})
-          console.log(result)
+               
+          _this.EditArr=result
         }
       }).catch(err=>{
         console.log(err)
       })
     },
 
+
+   // 组织模态款修改回调刷新编辑之后的数据
+   OUEidt(){
+    this.LoadDataGetOUByID()
+   },
     //点击树形的办法
     btnTree(obj) {
+      console.log(obj)
       if (obj.selectedNodes.length > 0) {
          
         this.selectedRowKeys = []
@@ -297,9 +302,7 @@ export default {
         this.treevaule = obj
         this.treeId = obj.selectedNodes[0].componentOptions.propsData.dataRef.id
         this.LoadDataGetOUByID()
-        this._LoadData()
-       
-       
+        this._LoadData()    
       } else {
         this.treevaule = ''
       }
@@ -309,7 +312,7 @@ export default {
       this.loading=true
       this.selectedRowKeys=[];
       this._LoadData();
-      this.treevaule=''
+      this.treevaule=''   
     }
   }
 }

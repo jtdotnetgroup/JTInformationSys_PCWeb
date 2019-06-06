@@ -1,8 +1,15 @@
 <template>
   <div>
 
-    <a-directory-tree  style="overflow-x:auto;overflow-y:hidden;width:100%;
-height:600px;" :treeData="organizations"   defaultExpandAll @select="onButtonClick"></a-directory-tree> 
+  <a-tree  :showIcon="true" style="overflow-x:auto;overflow-y:hidden;width:100%; 
+height:600px;" :treeData="organizations"   defaultExpandAll @select="onButtonClick"   >
+
+
+ <a-icon slot="folderopen" type="folder-open" /> 
+
+   <a-icon slot="folder" type="folder" /> 
+
+</a-tree> 
  
 
   </div>
@@ -28,9 +35,17 @@ export default {
       this._LoadData();
   },
 
-  methods: {
-      
+
+
+
+  methods: { 
+    
+    // AddAndUpdate(){
+    //   console.log("执行")
+    // },
+   
     _LoadData() {
+      
        var params={
         ParentID:0
       }
@@ -38,7 +53,6 @@ export default {
         this.$store.dispatch('GetOrganizations',params)
       }
       
-
       // var params={
       //   ParentID:0
       // }
@@ -49,8 +63,6 @@ export default {
       //  }).catch(err=>{
       //       console.log(err)
       //  })
-
-
     },
 
     onButtonClick(keys,e) {
@@ -66,7 +78,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 
 
 </style>

@@ -148,18 +148,18 @@ export default {
           }       
 
           break
-          case '删除':
+          case '禁用':
 
           var _this=this
 
           if (_this.selectedRows.length !== 1) {
-            this.$message.info('请选择需要删除的不良项目')
+            this.$message.info('请选择需要禁用的不良项目')
             return
           }
 
           this.$confirm({
             title: '系统提示！',
-            content: '确定要删除选中的吗?',
+            content: '确定要禁用选中的吗?',
             onOk() {
               var params = {
                 fid: _this.selectedRows[0].fid
@@ -180,7 +180,7 @@ export default {
                 })
             },
             onCancel() {
-              _this.$message.warning('数据要谨慎删除')
+              _this.$message.warning('数据要谨慎禁用')
             }
           })
           

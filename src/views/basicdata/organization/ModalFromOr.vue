@@ -191,7 +191,7 @@ export default {
       this.mdl.Remark=formData.remark 
       this.mdl.DataBaseConnection=formData.dataBaseConnection
       this.ParentIdvalue=''+formData.parentId==0?formData.id:formData.parentId+''
-      this.Workshoptype=formData.fWorkshopType==0?false:true
+      this.Workshoptype=formData.fWorkshopType
       
       //强制再次渲染的方法
       this.$nextTick(() => {
@@ -212,7 +212,7 @@ export default {
             values.id=this.formData.id
             values.parentId=this.ParentIdvalue
             //values.organizationType=this.SelectClickValue
-            values.fWorkshopType=this.Workshoptype==false?0:1
+            values.fWorkshopType=this.Workshoptype
             values.creationTime=this.$moment(this.formData.creationTime)
             values.creatorUserId=this.formData.creatorUserId
 
@@ -230,6 +230,7 @@ export default {
           }
 
           if(!err){
+            var _this=this
 
              Update(values)
             .then(res => {
@@ -238,7 +239,9 @@ export default {
                 var params = {
                   ParentID: 0
                 }
-                this.$store.dispatch('GetOrganizations', params)
+
+                _this.$emit("Eidt")
+               // _this.$store.dispatch('GetOrganizations', params)
                 this.onClose();
               
               } else {
