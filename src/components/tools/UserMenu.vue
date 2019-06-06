@@ -20,7 +20,7 @@
             size="small"
             src="http://hbimg.b0.upaiyun.com/ea52c1c9e5df4039ce5275095a0649921ad083244d20a-Lf82xv_fw658"
           />
-          <span>1001</span>
+          <span>{{name}}</span>
         </span>
         <a-menu slot="overlay" class="user-dropdown-menu-wrapper">
           <a-menu-item key="0">
@@ -55,11 +55,12 @@
 <script>
 import NoticeIcon from '@/components/NoticeIcon'
 import { mapActions, mapGetters } from 'vuex'
-
+import Vue from 'vue'
 export default {
   data() {
     return {
-      Isfullscreen: false
+      Isfullscreen: false,
+      name: sessionStorage.getItem('name')
     }
   },
   name: 'UserMenu',
