@@ -145,6 +145,7 @@ export default {
 
   methods: {
     showModal(formData) {
+      
       if (!!formData) {
         this.isEdit = true
         this.formData = formData
@@ -152,10 +153,6 @@ export default {
 
       this.visiable = true
     },
-
-
-
-
     handleSubmit() {
     
       this.form.validateFields((err, values) => {
@@ -179,7 +176,8 @@ export default {
          this.visiable = false
          this.mdl = {},
          this.form.resetFields()
-         this.formData=[]
+         this.formData={}
+         this.isEdit=false
     },
     handleBtnClick() {},
     handleFormChange() {},

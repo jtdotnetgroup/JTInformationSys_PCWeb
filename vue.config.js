@@ -7,6 +7,7 @@ function resolve (dir) {
 
 // vue.config.js
 module.exports = {
+
   publicPath: '/',
 
   configureWebpack: {

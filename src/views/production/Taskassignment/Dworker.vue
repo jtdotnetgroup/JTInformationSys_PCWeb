@@ -222,70 +222,14 @@ export default {
       }
     },
 
-    // _loadData(fSrcID) {
-    //   this.taskschedulLoadings = true
-    //   var params = {
-    //     SkipCount: this.pagination.current - 1,
-    //     MaxResultCount: this.pagination.pageSize,
-    //     FSrcID: fSrcID
-    //   }
 
-    //   var _this = this
-    //   GetDispBillAll(params)
-    //     .then(res => {
-    //       this.taskschedulLoadings = false
-    //       _this.dataSource = []
-    //       var data = res.result
-    //       if (data.items.length == 0) {
-    //         return
-    //       }
-    //       _this.dataTableArrget.push(data.items)
-
-    //       var result = []
-    //       var index = 0
-    //       data.items.forEach(item => {
-    //         index = index + 1
-    //         var datasss = {
-    //           key: index,
-    //           indexname: index,
-    //           日期: this.$moment(item.日期).format('YYYY-MM-DD'),
-    //           机台: item.机台,
-    //           班组: item.班组,
-    //           操作员: item.操作员,
-    //           派工数量: item.派工数量,
-    //           完成数量: item.完成数量,
-    //           合格数量: item.合格数量,
-    //           计划数量: item.计划数量,
-    //           任务单号: item.fmoBillNo
-    //         }
-    //         result.push(datasss)
-    //       })
-
-    //       _this.dataSource = result
-    //     })
-    //     .catch(function(error) {
-    //       console.log(error)
-    //       this.taskschedulLoadings = false
-    //     })
-    // },
 
     handleBtnClick(val) {
-      //   if (val == '查询') {
-      //   } else if (val == '派工') {
-      // if (this.selectedRowKeys.length === 1)
-      //     console.log(this.selectedRows[0])
-      //  this.visible = true
-      //  const dataTableArry = [...this.dataTableArry]
-      //  const dstarget = dataTableArry.find(item =>item.日期  === this.selectedRows[0].日期)
-      //   console.log(dstarget)
-      //     this._loadData(dstarget.fSrcID)
-      //   }
-
       switch (val) {
         case '派工': {
-          if (this.selectedRows.length === 1) {
-            var row = this.selectedRows[0]
-            this.$refs.DispatchWorkModalForm.show(row)
+          if (this.selectedRows.length >0) {
+            var rowSelection = this.selectedRows
+            this.$refs.DispatchWorkModalForm.show(rowSelection)
           }
           
         }

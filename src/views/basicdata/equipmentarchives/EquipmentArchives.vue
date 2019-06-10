@@ -66,7 +66,8 @@ export default {
       selectedRows: [],
       buttons: buttons.buttons,
       loading: false,
-      OrganizationID:0
+      OrganizationID:0,
+      OrgCode:''
     }
   },
   methods: {
@@ -120,7 +121,8 @@ export default {
       var params = {
         SkipCount: this.pagination.current - 1,
         MaxResultCount: this.pagination.size,
-        OrganizationID:this.OrganizationID>0?this.OrganizationID:''
+        OrganizationID:this.OrganizationID>0?this.OrganizationID:'',
+        OrganizationCode:this.OrgCode
       }
       this.loading = true
       GetAll(params)
@@ -148,18 +150,11 @@ export default {
     },
 
     btnTree(keys,e) {
-     
       if(keys.length===0){
         return;
       }
 
-      var node= this.$store.getters.workcenters.filter((e)=>{
-        return e.key===keys[0]
-      })
-
-      const {id}=node[0];
-
-      this.OrganizationID=id;
+      this.OrgCode=keys[0];
       
       this._loadData();
       
@@ -168,8 +163,8 @@ export default {
       this.loading=false
       this.selectedRowKeys=[]
       this._loadData()
-     
-
+    },
+    getOrgID(code){
 
     }
 
@@ -182,7 +177,8 @@ export default {
   computed: {},
   mounted() {
     this._loadData()
-  }
+  },
+  
 }
 </script>
 

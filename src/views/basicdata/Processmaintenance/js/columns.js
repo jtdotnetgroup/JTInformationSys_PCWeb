@@ -1,5 +1,6 @@
 const columns = [
 
+  // { title: '产品', width: 180, align: 'center', dataIndex: 'fItemName' },
   { title: '工序', width: 100, align: 'center', dataIndex: 'fOperName' },
   { title: '不良项目代码', width: 180, align: 'center', dataIndex: 'fNumber' },
   { title: '不良项目名称', width: 100, align: 'center', dataIndex: 'fName' },

@@ -9,8 +9,6 @@
     @cancel="onClose"
   >
     <a-form layout="inline" :form="form" @change="handleFormChange">
-
-
     <a-row>
       <a-col :span="12"><a-form-item label="组织编码">
         <a-input v-decorator="['Code',{rules: [{ required: true, message: '请输入组织编码' }]} ]" disabled></a-input>
@@ -19,11 +17,9 @@
         <a-input v-decorator="['DisplayName',{rules: [{ required: true, message: '请输入组织名称' }]}]"></a-input>
       </a-form-item></a-col>
     </a-row>
-
-
-
       <a-row>
-        <a-col :span="12"> <a-form-item label="上级组织" class="inputmargin-left">
+        <a-col :span="12"> 
+          <a-form-item label="上级组织" class="inputmargin-left">
         <a-tree-select     :disabled="disabled"
           style="width: 174px"  
           :value="ParentIdvalue"
@@ -46,8 +42,6 @@
         </a-select>
       </a-form-item></a-col>
       </a-row>
-     
-      
      <a-row>
       <a-col :span="12"><a-form-item label="组织负责人" >
         <a-input v-decorator="['ERPOrganizationLeader',{rules: []}]"></a-input>
@@ -149,7 +143,6 @@ export default {
         this.Add(formData)
  
       }
-
     },
 
     //新增的操作
@@ -192,6 +185,7 @@ export default {
       this.mdl.DataBaseConnection=formData.dataBaseConnection
       this.ParentIdvalue=''+formData.parentId==0?0:formData.parentId+''
       this.Workshoptype=formData.fWorkshopType
+      // this.Workshoptype=formData.fWorkshopType==0?false:true
       
       //强制再次渲染的方法
       this.$nextTick(() => {
@@ -217,17 +211,17 @@ export default {
             values.creatorUserId=this.formData.creatorUserId
 
 
-       var reg=/^[0-9]*$/
-        if(!reg.test(values.ERPOrganizationLeader))
-          {
-            this.$message.error('ERP组织负责人为数字')
-            return;
-          }
-          else if(!reg.test(values.ERPOrganization)){
+      //  var reg=/^[0-9]*$/
+      //   if(!reg.test(values.ERPOrganizationLeader))
+      //     {
+      //       this.$message.error('ERP组织负责人为数字')
+      //       return;
+      //     }
+      //     else if(!reg.test(values.ERPOrganization)){
 
-            this.$message.error('ERP组织为数字')
-            return;
-          }
+      //       this.$message.error('ERP组织为数字')
+      //       return;
+      //     }
 
           if(!err){
             var _this=this
@@ -240,10 +234,12 @@ export default {
                   ParentID: 0
                 }
 
-                _this.$emit("Eidt")
+                // _this.$emit("Eidt")
                // _this.$store.dispatch('GetOrganizations', params)
+                this.$store.dispatch('GetOrganizations', params)
+                this.$emit('updateOrg')
                 this.onClose();
-              
+
               } else {
                 this.$message.error('失败')
               }

@@ -20,126 +20,131 @@
       rowKey="key"
       size="small"
     >
-      <template  slot="fCommitAuxQty" slot-scope="text, record">
+      <template slot="fCommitAuxQty" slot-scope="text, record">
         <a-input-number v-model="record.fCommitAuxQty"></a-input-number>
       </template>
       <template slot="fWorkerID" slot-scope="text,record">
         <a-select v-model="record.fWorkerID">
-          <a-select-option v-for="(item,index) in workers" :key="index" :value="item.id">{{item.fName}}</a-select-option>
+          <a-select-option
+            v-for="(item,index) in workers"
+            :key="index"
+            :value="item.id"
+          >{{item.fName}}</a-select-option>
         </a-select>
       </template>
-      
-
-      
     </a-table>
   </a-modal>
 </template>
 
 <script>
 import buttons from './js/buttons'
-import {columnsMT} from './js/tableheader'
+import { columnsMT } from './js/tableheader'
 import { GetDispBillAll } from '@/api/test/get'
-import {SaveDispBillList,GetDailyDispBillList} from '@/api/DispBill'
+import { SaveDispBillList, GetDailyDispBillList } from '@/api/DispBill'
 
 export default {
   components: {
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
-    EditableCellSelect:()=>import('./pubilcvue/EditableCellSelect'),
-    EditableCellInput:()=>import('@/JtComponents/JITEditCell')
+    EditableCellSelect: () => import('./pubilcvue/EditableCellSelect'),
+    EditableCellInput: () => import('@/JtComponents/JITEditCell')
   },
   methods: {
     handleBtnClickModal(val) {
-      switch(val){
-        case '新增':{
-          
-          var index=this.dataSource.length;
-
-          this.dataSource.push({
-            日期:this.DailyData.日期,
-            fSrcID:this.DailyData.fSrcID,
-            key:index,
-            fid:'',
-            fmoBillNo:this.DailyData.fmoBillNo,
-            fmoInterID:this.DailyData.fmoInterID
-          })
-          break;
+      switch (val) {
+        case '新增': {
+          break
         }
-        case '保存':{
-          this.loading=true
-          const data=[]
-          this.dataSource.forEach(row => {
-            data.push({
-              fid:row.fid,
-              fSrcID:this.DailyData.fid,
-              fShift:row.fShiftID,
-              fMachineID:row.fMachineID,
-              fWorkCenterID:0,
-              fCommitAuxQty:row.fCommitAuxQty,
-              fWorker:row.fWorkerID,
-              fmoBillNo:this.DailyData.fmoBillNo,
-              fmoInterID:row.fmoInterID
-            })
-          });
-
-          const obj={
-            details:data
-          }
-
-          SaveDispBillList(obj).then(res=>{
-            this.loading=false;
-            this.onClose();
-          }).catch(err=>{
-            console.log(err)
-            this.loading=false;
-          })
-          break;
+        case '保存': {
+          this.saveData()
+          break
         }
       }
+    },
+    saveData() {
+      this.loading = true
+      const data = []
+      this.dataSource.forEach(row => {
+        data.push({
+          fid: row.fid,
+          fSrcID: '',
+          fShift: row.fShiftID,
+          fMachineID: row.fMachineID,
+          fWorkCenterID: 0,
+          fCommitAuxQty: row.fCommitAuxQty,
+          fWorker: row.fWorkerID,
+          fmoBillNo: row.fmoBillNo,
+          fmoInterID: row.fmoInterID
+        })
+      })
+
+      const obj = {
+        details: data
+      }
+
+      SaveDispBillList(obj)
+        .then(res => {
+          this.loading = false
+          this.onClose()
+        })
+        .catch(err => {
+          console.log(err)
+          this.loading = false
+        })
     },
     show(data) {
       this.visible = true
       this.DailyData = data
-      this.loading=true;
-      this._LoadData();
+      this.loading = true
+      this._LoadData()
     },
     _LoadData() {
-      var params={fmoBillNos:this.DailyData.fmoBillNo,DatelList:this.DailyData.fDate}
-      GetDailyDispBillList(params).then(res=>{
-        console.log(res)
-        this.loading=false
-        var result=res.result;
-        if(result&&result.items.length>0){
-          let index=0
-          result.items.forEach(e => {
-            e.key=index;
-            index++;
-            e.fDate=this.$moment(e.fDate).format('YYYY-MM-D')
-            e.fBillTime=this.$moment(e.fBillTime).format('YYYY-MM-DD hh:mm:ss')
-          });
+      console.log(this.DailyData)
+      var params = { fmoBillNos: [], DatelList: [] }
 
-        
-
-          this.dataSource=result.items
-        }
-      }).catch(error=>{
-        this.loading=false
+      this.DailyData.forEach(row => {
+        params.fmoBillNos.push(row.fmoBillNo)
+        params.DatelList.push(row.fDate)
       })
-    },
-    handleSubmit(){
 
+      console.log(params)
+
+      GetDailyDispBillList(params)
+        .then(res => {
+          console.log(res)
+          this.loading = false
+          var result = res.result
+          if (result && result.items.length > 0) {
+            let index = 0
+            result.items.forEach(e => {
+              e.key = index
+              index++
+              e.fDate = this.$moment(e.fDate).format('YYYY-MM-D')
+              e.fBillTime = this.$moment(e.fBillTime).format('YYYY-MM-DD hh:mm:ss')
+            })
+
+            this.dataSource = result.items
+          }
+        })
+        .catch(error => {
+          this.loading = false
+        })
     },
-    onCellChange(rowData,dataIndex,value){
-      const dataSource=[...this.dataSource]
-      const row=this.dataSource.find(r=>r.key===rowData.key)
-      if(row){
-        row[dataIndex]=value
-        this.dataSource=dataSource
+    handleSubmit() {
+      this.saveData()
+      this.onClose()
+    },
+    onCellChange(rowData, dataIndex, value) {
+      const dataSource = [...this.dataSource]
+      const row = this.dataSource.find(r => r.key === rowData.key)
+      if (row) {
+        row[dataIndex] = value
+        this.dataSource = dataSource
       }
     },
-    onClose(){
-      this.dataSource=[]
-      this.DailyData={}
-      this.visible=false
+    onClose() {
+      this.dataSource = []
+      this.DailyData = {}
+      this.visible = false
     }
   },
   data() {
@@ -147,32 +152,31 @@ export default {
       buttonp: buttons.buttonps,
       dataSource: [],
       visible: false,
-      DailyData:{},
-      loading:false,
-      columnsMT:columnsMT,
-      editColumns:['fCommitAuxQty'],
-      selectColumns:[]
+      DailyData: {},
+      loading: false,
+      columnsMT: columnsMT,
+      editColumns: ['fCommitAuxQty'],
+      selectColumns: []
     }
   },
   computed: {
-    tableData(){
-      var result=[]
-      var index=0;
-      
+    tableData() {
+      var result = []
+      var index = 0
+
       for (let i = 0; i < this.dataSource.length; i++) {
-        const row = this.dataSource[i];
-        row.key=index
-        index++;
+        const row = this.dataSource[i]
+        row.key = index
+        index++
         console.log(row)
-        
+
         result.push(row)
       }
 
-      return result;
+      return result
     },
-    workers(){
-
-      if(this.$store.getters.workers.length===0){
+    workers() {
+      if (this.$store.getters.workers.length === 0) {
         this.$store.dispatch('GetWorkers')
       }
 
