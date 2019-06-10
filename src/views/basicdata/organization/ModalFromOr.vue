@@ -190,7 +190,7 @@ export default {
       this.mdl.ERPOrganizationLeader=formData.erpOrganizationLeader==''?0:formData.erpOrganizationLeader
       this.mdl.Remark=formData.remark 
       this.mdl.DataBaseConnection=formData.dataBaseConnection
-      this.ParentIdvalue=''+formData.parentId==0?formData.id:formData.parentId+''
+      this.ParentIdvalue=''+formData.parentId==0?0:formData.parentId+''
       this.Workshoptype=formData.fWorkshopType
       
       //强制再次渲染的方法

@@ -92,13 +92,16 @@ export default {
     onPaginationChange(page, size) {
       this.pagination.current = page
       this.pagination.pageSize = size
+     this._LoadData()
     },
     
     //加载不良项目的方法
     _LoadData() {
       var _this = this
       var params = {
-        FOperID: this.FOperID == 0 ? 0 : this.FOperID
+        FOperID: this.FOperID == 0 ? 0 : this.FOperID,
+        SkipCount: this.pagination.current - 1,
+        MaxResultCount: this.pagination.pageSize
       }
 
       GetAllBadItemRelation(params)
@@ -211,6 +214,7 @@ export default {
 
         this._LoadData()
       } else {
+        this.FOperID = 0
       }
     }
   }
