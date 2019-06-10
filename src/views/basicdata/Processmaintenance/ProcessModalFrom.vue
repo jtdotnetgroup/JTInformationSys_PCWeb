@@ -11,8 +11,8 @@
    <!-- :value="value" -->
     <a-form layout="inline" :form="form" @change="handleFormChange">
       <a-row>
-        <a-col :span="12">
-          <a-form-item label="产品名称"  style="margin-left:16px">
+        <!-- <a-col :span="12"> -->
+          <!-- <a-form-item label="产品名称"  style="margin-left:16px">
             <a-select
              
               showSearch           
@@ -30,11 +30,11 @@
             >
               <a-select-option v-for="d in data" :key="d.fItemID">{{d.fName}}</a-select-option>
             </a-select>
-          </a-form-item>
-        </a-col>
+          </a-form-item> -->
+        <!-- </a-col> -->
         <a-col :span="12">
           <a-form-item label="不良项目代码">
-            <a-input
+            <a-input :disabled="this.IsEdit"
               v-decorator="['fNumber',{rules: [{required:true,message: '请输入不良项目代码' }],initialValue:this.formData.fNumber}] "
             ></a-input>
           </a-form-item>

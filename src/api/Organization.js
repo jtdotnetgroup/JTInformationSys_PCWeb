@@ -48,7 +48,7 @@ export function DeleteOu (params) {
   })
 }
 
-// 删除组织
+//
 export function GetOuByID (params) {
   return axios({
     url: '/api/services/app/Organization/Get', // /api/services/app/VW_MOBillList/GetDaTask

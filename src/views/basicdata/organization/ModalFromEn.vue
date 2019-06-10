@@ -9,22 +9,16 @@
     @cancel="onClose"
   >
     <a-form layout="inline" :form="form" @change="handleFormChange">
-      
        <a-row>
          <a-col :span="12"> <a-form-item label="员工编号">
-        <a-input
+        <a-input :disabled="this.IsEdit" 
           v-decorator="['FMpno',{rules: [{ required: true, message: '请输入员工编号' }]} ]"
-          disabled
         ></a-input>
       </a-form-item></a-col>
          <a-col :span="12"><a-form-item label="员工姓名">
         <a-input v-decorator="['FName',{rules: [{ required: true, message: '请输入员工姓名' }]} ]"></a-input>
       </a-form-item></a-col>
        </a-row>
-
-     
-      
-
      <a-row>
      <a-col :span="12">
        <a-form-item label="性别"  class="inputmargin-left">  
@@ -81,11 +75,11 @@
 
 <a-row v-show="FSystemUser">
   <a-col :span="12">
-      <a-form-item label="员工账户" class="inputmargin-left">
+      <a-form-item label="员工账户" class="inputmargin-left1">
         <a-input v-decorator="['UserName',{rules: []} ]"  :disabled="disabled"></a-input>
       </a-form-item>
       <a-form-item label="员工密码">
-        <a-input v-decorator="['Password',{rules: [{ required: true, message: '请输入员工密码' }]}  ]" :disabled="disabled" ></a-input>
+        <a-input v-decorator="['Password',{rules: [{ required: false, message: '请输入员工密码' }]}  ]" :disabled="disabled" ></a-input>
       </a-form-item>
   </a-col>
 </a-row>
@@ -93,41 +87,19 @@
 
   <a-row>
     <a-col :span="12"><a-form-item label="手机号码">
-          <a-input v-decorator="['FPhone',{rules: [{ required: true, message: '请输入手机号码' }]} ]"></a-input>
+          <a-input v-decorator="['FPhone',{rules: [{ required: false, message: '请输入手机号码' }]} ]"></a-input>
         </a-form-item></a-col>
     <a-col :span="12"> <a-form-item label="入职日期">
           <a-date-picker
-            v-decorator="['FHiredate',{rules: [{ required: true, message: '请输入入职日期码' }]} ]"
+            v-decorator="['FHiredate',{rules: [{ required: false, message: '请输入入职日期码' }]} ]"
           ></a-date-picker>
         </a-form-item></a-col>
   </a-row>
-
-
       <a-form-item label="邮件地址">
         <a-input
-          v-decorator="['FEmailAddress',{rules: [{ required: true, message: '请输入正确邮件地址'}]} ]"
+          v-decorator="['FEmailAddress',{rules: [{ required: false, message: '请输入正确邮件地址'}]} ]"
         ></a-input>
       </a-form-item>
-
-      <!-- <a-collapse defaultActiveKey="1" :bordered="false">
-        <a-collapse-panel
-          key="1"
-          style="background: #f7f7f7;border-radius: 4px;margin-bottom: 24px;border: 0;overflow: hidden"
-        >
-          <template slot="header">ERP属性</template>
-          <a-form-item label="对应ERP用户">
-            <a-input
-              v-decorator="['FERPUser',{rules: []} ]"
-            ></a-input>
-          </a-form-item>
-          <a-form-item label="对应ERP职员">
-            <a-input
-              v-decorator="['FERPOfficeClerk',{rules: []} ]"
-            ></a-input>
-          </a-form-item>
-        </a-collapse-panel>
-      </a-collapse> -->
-
 
        <a-collapse defaultActiveKey="1"  >
         <a-collapse-panel header="ERP属性" style="background-color: #F2F2F2" key="1" >  
@@ -159,6 +131,7 @@ import regular from './regular'
 import { CreateEm, GetFMpno, Update,GetTreeListEn } from '@/api/Employee'
 
 export default {
+  name:'EmployeeModal',
   data() {
     return {
       visiable: false,
@@ -171,7 +144,7 @@ export default {
       mdl: {},
       Sex: true,
       FWorkingState: true,
-      FSystemUser: false,
+      FSystemUser: true,
       IsEdit: false,
       disabled:false
     }
@@ -192,10 +165,8 @@ export default {
     showModal(formData, isEdit) {
       this.visiable = true
       this.IsEdit = isEdit
-  
-    
-      if (isEdit == false) {
-        this.LoadGetFMpno()
+      if (isEdit === false) {
+        // this.LoadGetFMpno()
         this.add(formData)
       } else {
         this.Edit(formData)
@@ -291,21 +262,7 @@ export default {
 
        }
 
-          if(!regular.Email.test(values.FEmailAddress))
-          {
-            this.$message.error('邮箱格式不正确')
-            return;
-          }
-              
-          if(!regular.phone.test(values.FPhone))
-          {
-            this.$message.error('手机号码不正确')
-            return;
-          }
-
-
           if(this.FWorkingState==false){
-
             this.$message.error('默认新增是员工必须为在职状态')
             return;
           }
@@ -350,17 +307,17 @@ export default {
             Password:values.Password
           }
           
-          if(!regular.phone.test(values.FPhone))
-          {
-            this.$message.error('手机号码不正确')
-            return;
-          }
+          // if(!regular.phone.test(values.FPhone))
+          // {
+          //   this.$message.error('手机号码不正确')
+          //   return;
+          // }
       
-          if(!regular.Email.test(values.FEmailAddress))
-          {
-            this.$message.error('邮箱格式不正确')
-            return;
-          }
+          // if(!regular.Email.test(values.FEmailAddress))
+          // {
+          //   this.$message.error('邮箱格式不正确')
+          //   return;
+          // }
 
 
           if (!err) {
@@ -370,9 +327,7 @@ export default {
                   _this.$message.success('成功')         
                _this.$emit('addSuccess');
                this.onClose()
-                } else {
-                  _this.$message.error('失败')
-                }
+                } 
               })
               .catch(err => {
                 console.log(err)
@@ -389,7 +344,7 @@ export default {
         this.value = '',
         this.Sex = true,
         this.FWorkingState = true,
-        this.FSystemUser = false
+        this.FSystemUser = true
     },
     handleFormChange() {},
     onChange(value) {

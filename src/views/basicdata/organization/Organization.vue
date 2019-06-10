@@ -49,7 +49,7 @@
       </a-row>
 
       <!-- 新增组织弹框 -->
-      <ModalFromOr ref="ModalFromOr"/>
+      <ModalFromOr ref="ModalFromOr" @updateOrg="LoadDataGetOUByID"/>
 
       <!-- 新增员工弹框 -->
       <ModalFromEn ref="ModalFromEn"   @addSuccess="handelAddSuccess"/>

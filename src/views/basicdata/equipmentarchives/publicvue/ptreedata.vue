@@ -19,7 +19,7 @@
         },
         methods: {
             _LoadData(){
-                this.$store.dispatch('GetWorkCenters')
+                this.$store.dispatch('GetOrganizations')
             },
             onButtonClick(keys,e){
                 this.$emit('btnClick',keys,e);
@@ -27,7 +27,7 @@
         },
         computed: {
            organizations(){
-               return this.$store.getters.workcenters
+               return this.$store.getters.organizations
            } 
         },
     }

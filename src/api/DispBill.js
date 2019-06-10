@@ -8,10 +8,10 @@ export function SaveDispBillList (data) {
   })
 }
 
-export function GetDailyDispBillList (params) {
+export function GetDailyDispBillList (data) {
   return axios({
-    url: '/api/services/app/ICMODispBill/GetDailyDispatchList',
-    method: 'get',
-    params
+    url: '/api/services/app/ICMODispBill/Post_GetDailyDispatchList',
+    method: 'post',
+    data
   })
 }

@@ -33,6 +33,7 @@
       :dataSource="detailData"
       :columns="detailColumns"
       :pagination="false"
+      :loading="detailLoading"
     ></a-table>
 
     <dispatch ref="taskDispatch"/>
@@ -75,7 +76,8 @@ export default {
         y: 350
       },
       taskschedulLoading: false,
-      dailyDataList: []
+      dailyDataList: [],
+      detailLoading:false
     }
   },
   mounted() {
@@ -202,6 +204,7 @@ export default {
       }
     },
     GetAllDailyData(fmoInterID) {
+      this.detailLoading=true
       const params = {
         FMOInterID: fmoInterID
       }
@@ -212,10 +215,12 @@ export default {
           const result = res.result
           this.dailyDataList = result
           this.detailColumns();
+          this.detailLoading=false;
         })
         .catch(error => {
           this.detailLoading = false
           console.log(error)
+          this.detailLoading=false
         })
     }
   }
