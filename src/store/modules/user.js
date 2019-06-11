@@ -42,9 +42,11 @@ const user = {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
           const result = response.result
-          console.log(Vue.ls)
           Vue.ls.set(ACCESS_TOKEN, result.accessToken, 7 * 24 * 60 * 60 * 1000)
-          commit('SET_TOKEN', result.token)
+          Vue.ls.set('Name', result.name, 7 * 24 * 60 * 60 * 1000)
+          commit('SET_TOKEN', result.accessToken)
+          commit('SET_NAME', result.name)
+          sessionStorage.setItem('name', result.name)
           resolve()
         }).catch(error => {
           reject(error)

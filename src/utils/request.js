@@ -121,8 +121,3 @@ export {
   installer as VueAxios,
   service as axios
 }
-
-var s = document.createElement('script')
-s.src = baseURL + 'AbpScripts/GetScripts'
-s.type = 'text/javascript'
-document.body.appendChild(s)

@@ -51,10 +51,10 @@ const columns = [
     dataIndex: 'id',
     width: 150
   },
-  // {
-  //   title: '姓',
-  //   dataIndex: 'surname'
-  // },
+  {
+    title: '姓名',
+    dataIndex: 'surname'
+  },
   {
     title: '用户名',
     dataIndex: 'userName',
