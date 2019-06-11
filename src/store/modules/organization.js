@@ -36,7 +36,7 @@ const store = {
     GetWorkCenters ({ commit }, params) {
       // 获取所有车间,车间代码为4
       params = {
-        OrganizationType: 4
+        isWorkCenter: true
       }
 
       GetAll(params)

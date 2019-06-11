@@ -33,25 +33,55 @@ const err = (error) => {
   if (error.response) {
     const data = error.response.data
     const token = Vue.ls.get(ACCESS_TOKEN)
-    if (error.response.status === 403) {
-      message.error('抱歉，你没有权限操作！', 3)
-    }
-    if (error.response.status === 401 && !(data.result && data.result.isLogin)) {
-      message.error('未授权,请登录', 3)
-      if (token) {
-        store.dispatch('Logout').then(() => {
-          setTimeout(() => {
-            window.location.reload()
-          }, 1500)
+
+    switch (error.response.status) {
+      case 403: {
+        message.error('抱歉，你没有权限操作！', 3)
+        break
+      }
+      case 401: {
+        if (!(data.result && data.result.isLogin)) {
+          message.error('未授权,请登录', 3)
+          if (token) {
+            store.dispatch('Logout').then(() => {
+              setTimeout(() => {
+                window.location.reload()
+              }, 1500)
+            })
+          }
+        }
+        break
+      }
+      case 500: {
+        const err = error.response.data.error
+        message.error(err.message, 3)
+        break
+      }
+      case 400: {
+        data.details.forEach(e => {
+          message.error(e, 2)
         })
+        break
       }
     }
-    if (error.response.status === 500) {
-      message.error('抱歉，服务器处理请求异常', 3)
-    }
-    if (error.response.status === 400) {
-      message.error(data.error.details, 3)
-    }
+
+    // if (error.response.status === 401 && !(data.result && data.result.isLogin)) {
+    //   message.error('未授权,请登录', 3)
+    //   if (token) {
+    //     store.dispatch('Logout').then(() => {
+    //       setTimeout(() => {
+    //         window.location.reload()
+    //       }, 1500)
+    //     })
+    //   }
+    // }
+    // if (error.response.status === 500) {
+    //   const err = error.response.data.error
+    //   message.error(err.message, 3)
+    // }
+    // if (error.response.status === 400) {
+    //   message.error(data.error.details, 3)
+    // }
   }
   return Promise.reject(error)
 }

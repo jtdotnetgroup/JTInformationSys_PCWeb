@@ -167,16 +167,13 @@ export default {
     getOrgID(code){
 
     }
-
-
-
-
   },
 
   //计算属性用于响应式的改变函数
   computed: {},
   mounted() {
     this._loadData()
+    this.$store.dispatch('GetWorkCenters');
   },
   
 }

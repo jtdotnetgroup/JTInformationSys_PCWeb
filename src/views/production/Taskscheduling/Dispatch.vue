@@ -123,6 +123,7 @@ export default {
         fmoBillNo: this.formData.任务单号,
         dailies: []
       }
+
       //添加明细
       this.dataSource.forEach(row => {
         data.dailies.push({
@@ -215,6 +216,11 @@ export default {
     tableData() {
 
       if(this.dataSource.length>0){
+
+        this.dataSource.forEach(row => {
+          row.日期=this.$moment(row.日期).format('YYYY-MM-D')
+        });
+
         return this.dataSource;
       }
 

@@ -10,13 +10,7 @@ height:600px;" :treeData="organizations"   defaultExpandAll @select="onButtonCli
 
 <script>
 import { GetTreeList } from '@/api/Organization'
-import { Item } from 'ant-design-vue/es/vc-menu';
-import { constants } from 'crypto';
-import { close } from 'fs';
 import store from '@/store'
-
-
-
 export default {
   data() {
     return {
