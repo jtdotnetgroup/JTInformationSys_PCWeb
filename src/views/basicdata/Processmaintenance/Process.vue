@@ -92,13 +92,16 @@ export default {
     onPaginationChange(page, size) {
       this.pagination.current = page
       this.pagination.pageSize = size
+     this._LoadData()
     },
     
     //加载不良项目的方法
     _LoadData() {
       var _this = this
       var params = {
-        FOperID: this.FOperID == 0 ? 0 : this.FOperID
+        FOperID: this.FOperID == 0 ? 0 : this.FOperID,
+        SkipCount: this.pagination.current - 1,
+        MaxResultCount: this.pagination.pageSize
       }
 
       GetAllBadItemRelation(params)
@@ -148,18 +151,18 @@ export default {
           }       
 
           break
-          case '删除':
+          case '禁用':
 
           var _this=this
 
           if (_this.selectedRows.length !== 1) {
-            this.$message.info('请选择需要删除的不良项目')
+            this.$message.info('请选择需要禁用的不良项目')
             return
           }
 
           this.$confirm({
             title: '系统提示！',
-            content: '确定要删除选中的吗?',
+            content: '确定要禁用选中的吗?',
             onOk() {
               var params = {
                 fid: _this.selectedRows[0].fid
@@ -180,7 +183,7 @@ export default {
                 })
             },
             onCancel() {
-              _this.$message.warning('数据要谨慎删除')
+              _this.$message.warning('数据要谨慎禁用')
             }
           })
           
@@ -211,6 +214,7 @@ export default {
 
         this._LoadData()
       } else {
+        this.FOperID = 0
       }
     }
   }

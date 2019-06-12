@@ -10,17 +10,15 @@
   >
    <!-- :value="value" -->
     <a-form layout="inline" :form="form" @change="handleFormChange">
-      <a-row>
-        <!-- <a-col :span="12"> -->
-          <!-- <a-form-item label="产品名称"  style="margin-left:16px">
-            <a-select
-             
+      <!-- <a-row>
+        <a-col :span="24">
+          <a-form-item label="   产 品 名 称  ">
+            <a-select       
               showSearch           
                v-decorator="['fItemID',{
-          rules:[{required:true,message: '请选择产品名称' }]}]"
-              
+              rules:[{required:true,message: '请选择产品名称' }]}]"    
               placeholder="产品名称"
-              style="width: 200px"
+              style="width: 600px"
               :defaultActiveFirstOption="false"
               :showArrow="false"
               :filterOption="false"
@@ -28,18 +26,11 @@
               @change="handleChange"
               :notFoundContent="null"
             >
-              <a-select-option v-for="d in data" :key="d.fItemID">{{d.fName}}</a-select-option>
+              <a-select-option v-for="d in data" :key="d.fItemID">{{d.fName}}<span style="color:red">|| </span> {{"物料编码"+  d.fNumber}}</a-select-option>
             </a-select>
-          </a-form-item> -->
-        <!-- </a-col> -->
-        <a-col :span="12">
-          <a-form-item label="不良项目代码">
-            <a-input :disabled="this.IsEdit"
-              v-decorator="['fNumber',{rules: [{required:true,message: '请输入不良项目代码' }],initialValue:this.formData.fNumber}] "
-            ></a-input>
           </a-form-item>
         </a-col>
-      </a-row>
+      </a-row> -->
 
       <a-row>
         <a-col :span="12">
@@ -49,6 +40,13 @@
             ></a-input>
           </a-form-item>
         </a-col>
+   <a-col :span="12">
+         <a-form-item label="不良项目代码">
+            <a-input
+              v-decorator="['fNumber',{rules: [{required:true,message: '请输入不良项目代码' }],initialValue:this.formData.fNumber}] "
+            ></a-input>
+          </a-form-item>
+   </a-col>
         <!-- <a-col :span="12">
           <a-form-item label="是否启用">
             <a-switch
@@ -104,10 +102,10 @@ export default {
        // this.FDeleted = formData.fDeleted
        // this.value = formData.fItemName
       
-        this.mdl.fItemID=formData.fItemName
-        this.$nextTick(()=>{
-          this.form.setFieldsValue(pick( this.mdl,'fItemID'))
-        })
+        // this.mdl.fItemID=formData.fItemName
+        // this.$nextTick(()=>{
+        //   this.form.setFieldsValue(pick( this.mdl,'fItemID'))
+        // })
 
 
       }
@@ -128,16 +126,16 @@ export default {
           }else{
          // values.fDeleted=this.formData.fDeleted!==''?this.FDeleted:this.formData.fDeleted
 
-             var reg=/^[0-9]*$/
+          //    var reg=/^[0-9]*$/
 
-            var fItemID=0
-            if(!reg.test(this.value)){
-              fItemID=this.formData.fItemID
-            }else{
-              fItemID=this.value
-            }
+          //   var fItemID=0
+          //   if(!reg.test(this.value)){
+          //     fItemID=this.formData.fItemID
+          //   }else{
+          //     fItemID=this.value
+          //   }
 
-          values.fItemID=this.formData.fItemID!==''?fItemID:this.formData.fItemID
+          // values.fItemID=this.formData.fItemID!==''?fItemID:this.formData.fItemID
           values.fid=this.formData.fid==''?0:this.formData.fid
           values.fOperID=this.formData.fOperID
           }
@@ -165,17 +163,26 @@ export default {
       this.form.resetFields()
       this.formData = []
     },
+    //产品搜索的方法
     handleSearch(value) {
-      this._loadDataProduct(value)
+
+
+      console.log(value)
+
+      if(value.length>=3){
+        this._loadDataProduct(value)
+
+      }
+
 
       //fetch(value, data => this.data = data);
     },
 
-    handleChange(value) {
+    // handleChange(value) {
 
-    this.value = value
+    // this.value = value
    
-    },
+    // },
 
     //远程搜索产品
     _loadDataProduct(value) {

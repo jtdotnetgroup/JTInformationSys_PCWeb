@@ -184,7 +184,8 @@ export default {
       this.mdl.Remark=formData.remark 
       this.mdl.DataBaseConnection=formData.dataBaseConnection
       this.ParentIdvalue=''+formData.parentId==0?0:formData.parentId+''
-      this.Workshoptype=formData.fWorkshopType==0?false:true
+      this.Workshoptype=formData.fWorkshopType
+      // this.Workshoptype=formData.fWorkshopType==0?false:true
       
       //强制再次渲染的方法
       this.$nextTick(() => {
@@ -223,6 +224,7 @@ export default {
       //     }
 
           if(!err){
+            var _this=this
 
              Update(values)
             .then(res => {
@@ -231,6 +233,9 @@ export default {
                 var params = {
                   ParentID: 0
                 }
+
+                // _this.$emit("Eidt")
+               // _this.$store.dispatch('GetOrganizations', params)
                 this.$store.dispatch('GetOrganizations', params)
                 this.$emit('updateOrg')
                 this.onClose();

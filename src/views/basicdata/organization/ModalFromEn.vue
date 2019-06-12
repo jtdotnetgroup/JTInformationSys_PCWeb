@@ -68,8 +68,13 @@
     </a-col>
 </a-row>
 
-<a-row v-show="FSystemUser">
+<a-row v-if="FSystemUser">
   <a-col :span="12">
+      <!-- <a-form-item label="员工账户" class="inputmargin-left">
+        <a-input v-decorator="['UserName',{rules: [],initialValue:this.formData.userName} ]"  :disabled="disabled"></a-input>
+      </a-form-item>
+      <a-form-item label="员工密码">
+        <a-input v-decorator="['Password',{initialValue:this.formData.password,rules: [{ required: true, message: '请输入员工密码' }]}  ]" :disabled="disabled" ></a-input> -->
       <a-form-item label="员工账户" class="inputmargin-left1">
         <a-input v-decorator="['UserName',{rules: []} ]"  :disabled="IsEdit&&!!this.mdl.UserName"></a-input>
       </a-form-item>
@@ -141,7 +146,8 @@ export default {
       FWorkingState: true,
       FSystemUser: true,
       IsEdit: false,
-      disabled:false
+      disabled:false,
+
     }
   },
   mounted() {
@@ -180,9 +186,8 @@ export default {
           this.value = ''
         }
       }
-
-     
-       // this.disabled=true
+      
+       
         
     },
    //编辑是绑定值
@@ -265,7 +270,7 @@ export default {
 
           console.log(params)
           if (!err) {
-            //console.log(params)
+            console.log(params)
             CreateEm(params)
               .then(res => {
                 if (res.result !== 0) {
@@ -312,7 +317,7 @@ export default {
           //   return;
           // }
 
-
+           console.log(values)
           if (!err) {
             Update(values)
               .then(res => {
@@ -364,12 +369,15 @@ export default {
       this.FSystemUser = e.target.checked
 
       if(this.IsEdit==false){
-         this.disabled=false    
+         this.disabled=false   
+        
       }else{
         if(this.formData.password!==""){
           this.disabled=true
+      
         }else{
            this.disabled=false
+         
         }   
       }
      
@@ -401,7 +409,7 @@ export default {
         .then(res => {
           this.treeDatas = []
           const result = res.result
-          console.log(result)
+         // console.log(result)
           if (result) {
             this.treeDatas = result
           }
