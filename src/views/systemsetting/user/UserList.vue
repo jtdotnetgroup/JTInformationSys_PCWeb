@@ -67,7 +67,7 @@ const columns = [
   },
   {
     title: '角色',
-    dataIndex: 'roleNames'
+    dataIndex: 'roleName'
   },
   {
     title: '是否启用',
@@ -230,7 +230,10 @@ export default {
           var i = 0
           res.result.items.forEach(element => {
             element.XH = i + 1
-            element.creationTime = this.$moment(element.creationTime).format('YYYY-MM-DD hh:mm')
+            element.creationTime = this.$moment(element.creationTime).format('YYYY-MM-DD hh:mm');
+            console.log(element.roleNames.join(","))
+            element.roleName =element.roleNames.join(",");
+            
             _this.dataSource.push(element)
             i++
           })
