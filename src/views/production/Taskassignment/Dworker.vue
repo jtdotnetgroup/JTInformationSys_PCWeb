@@ -40,7 +40,10 @@
     <a-table id="cardd" size="small" bordered :columns="columnsMX" :pagination="false"></a-table>
 
     <DispatchWorkModalForm ref="DispatchWorkModalForm"/>
+
+    <!-- <a style="display:none" href="javascript:;"  id="btn"  title="回到顶部" @click="backTop"></a> -->
   </a-card>
+  
 </template>
 
 <script>
@@ -253,4 +256,16 @@ export default {
   margin-top: 10px;
   background-color: #e6f7ff;
 }
+/* #btn {
+    width:40px;
+    height: 40px;
+    position:fixed;
+    left:60%;
+    bottom:30px;
+    background:url(@/public/Thetopup)  no-repeat  left top ;
+    margin-left: 610px;
+} */
+/* #btn:hover {
+    background:url(@/public/Thetopup)  no-repeat  left -40px;
+} */
 </style>

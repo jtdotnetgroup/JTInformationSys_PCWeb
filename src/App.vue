@@ -2,7 +2,9 @@
   <a-locale-provider :locale="locale">
     <div id="app">
       <router-view/>
+    
     </div>
+     
   </a-locale-provider>
 </template>
 
@@ -15,12 +17,15 @@ export default {
   mixins: [AppDeviceEnquire],
   data () {
     return {
-      locale: zhCN
+      locale: zhCN   
     }
   },
   mounted () {
-   
-  }
+
+  //window.addEventListener('scroll', this.scrollToTop)   
+  },
+
+
 }
 </script>
 <style>
@@ -49,4 +54,7 @@ export default {
   .ant-table-body{
     margin:0 0 !important;
   }
+
+
+
 </style>
