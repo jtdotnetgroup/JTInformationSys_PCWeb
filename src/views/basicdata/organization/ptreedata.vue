@@ -2,7 +2,7 @@
   <div>
 
   <a-tree  :showIcon="true" style="overflow-x:auto;overflow-y:hidden;width:100%; 
-height:600px;" :treeData="organizations"   defaultExpandAll @select="onButtonClick"   >
+height:600px;" :treeData="organizations"   @select="onButtonClick"   >
 
 
  <a-icon slot="folderopen" type="folder-open" /> 
@@ -17,9 +17,7 @@ height:600px;" :treeData="organizations"   defaultExpandAll @select="onButtonCli
 
 <script>
 import { GetTreeList } from '@/api/Organization'
-import { Item } from 'ant-design-vue/es/vc-menu';
-import { constants } from 'crypto';
-import { close } from 'fs';
+
 import store from '@/store'
 
 
@@ -43,9 +41,12 @@ export default {
     // AddAndUpdate(){
     //   console.log("执行")
     // },
+
    
+
     _LoadData() {
-      
+     
+     
        var params={
         ParentID:0
       }
@@ -67,7 +68,16 @@ export default {
 
     onButtonClick(keys,e) {
       this.$emit('btnClick',e)
-    }
+    },
+
+    //  ondefaultExpandedKeys(){
+    //   var key=[]
+    //    this.$store.dispatch('GetOrganizations',{ParentID:0}).forEach(e => {
+    //     key.push(e.key)
+    //   });
+    //  return key
+    // }
+
   },
   computed: {
     organizations(){

@@ -350,6 +350,7 @@ export default {
         this.Sex = true,
         this.FWorkingState = true,
         this.FSystemUser = true
+        this.disabled=false
     },
     handleFormChange() {},
     onChange(value) {

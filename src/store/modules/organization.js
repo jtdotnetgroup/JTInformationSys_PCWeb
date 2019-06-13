@@ -100,8 +100,8 @@ function TerrArray (data) {
     if (data[i].children.length > 0) {
       obj.slots = { icon: 'folderopen' }
       TerrArray(data[i].children)
-      tree.push(obj)
     }
+    tree.push(obj)
   }
   return tree
 }
