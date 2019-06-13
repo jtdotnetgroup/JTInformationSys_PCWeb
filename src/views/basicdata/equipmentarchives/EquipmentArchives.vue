@@ -119,7 +119,7 @@ export default {
 
     _loadData() {
       var params = {
-        SkipCount: this.pagination.current - 1,
+        SkipCount: (this.pagination.current - 1)*this.pagination.size,
         MaxResultCount: this.pagination.size,
         OrganizationID:this.OrganizationID>0?this.OrganizationID:'',
         OrganizationCode:this.OrgCode

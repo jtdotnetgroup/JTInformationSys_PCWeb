@@ -37,8 +37,8 @@ const exampleMX = {
   'fBillTime': '派工日期',
   'machine': '设备',
   'fMachineID': 'fMachineID',
-  'worker': '',
-  'fWorkerID': '员工',
+  'worker': '员工',
+  'fWorkerID': '',
   'fShift': '班次',
   'fCommitAuxQty': '派工数量',
   'fBiller': '计划员'
@@ -58,25 +58,12 @@ columns.push(
   }
 )
 
-// const keys = Object.keys(example)
-// console.log(example)
-// keys.forEach(key => {
-//   if (example[key].match(/[\u4e00-\u9fa5]*/)[0].length !== 0) {
-//     var col = {
-//       title: example[key],
-//       dataIndex: key,
-//       key: key,
-//       align: 'center',
-//       width: 130
-//     }
-
-//     // if (editColumns.includes(key)) {
-//     //   col.scopedSlots = { customRender: key }
-//     // }
-
-//     columns.push(col)
-//   }
-// })
+columnsMX.push({
+  title: '操作',
+  scopedSlots: { customRender: 'actions' },
+  align: 'center',
+  width: 150
+})
 
 function GenericColumns (data) {
   const result = []

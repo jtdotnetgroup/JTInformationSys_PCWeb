@@ -15,3 +15,11 @@ export function GetDailyDispBillList (data) {
     data
   })
 }
+
+export function GetAllDispBill (params) {
+  return axios({
+    url: '/api/services/app/ICMODispBill/GetAll',
+    method: 'get',
+    params
+  })
+}

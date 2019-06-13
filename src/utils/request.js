@@ -54,7 +54,7 @@ const err = (error) => {
       }
       case 500: {
         const err = error.response.data.error
-        message.error(err.message, 3)
+        message.error(err.details, 3)
         break
       }
       case 400: {

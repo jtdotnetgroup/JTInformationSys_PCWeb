@@ -8,7 +8,7 @@
     @ok="handleSubmit"
     @cancel="onClose"
   >
-    <a-form layout="inline" :form="form" @change="handleFormChange">
+    <a-form layout="inline" :form="form" @change="handleFormChange" :loading="loading">
        <a-row>
          <a-col :span="12"> <a-form-item label="员工编号">
         <a-input :disabled="this.IsEdit" 
@@ -78,8 +78,6 @@
       </a-form-item>
   </a-col>
 </a-row>
-
-
   <a-row>
     <a-col :span="12"><a-form-item label="手机号码">
           <a-input v-decorator="['FPhone',{rules: [{ required: false, message: '请输入手机号码' }]} ]"></a-input>
@@ -141,7 +139,8 @@ export default {
       FWorkingState: true,
       FSystemUser: true,
       IsEdit: false,
-      disabled:false
+      disabled:false,
+      loading:false
     }
   },
   mounted() {
@@ -265,6 +264,7 @@ export default {
 
           console.log(params)
           if (!err) {
+            this.loading=true;
             //console.log(params)
             CreateEm(params)
               .then(res => {
@@ -273,9 +273,11 @@ export default {
                _this.$emit('addSuccess');
                   this.onClose()
                 } 
+                this.loading=false
               })
               .catch(err => {
                 console.log(err)
+                this.loading=false
               })
           }
         })
@@ -401,7 +403,6 @@ export default {
         .then(res => {
           this.treeDatas = []
           const result = res.result
-          console.log(result)
           if (result) {
             this.treeDatas = result
           }

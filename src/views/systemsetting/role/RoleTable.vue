@@ -64,12 +64,12 @@ export default {
   },
   methods: {
     _loadData(){
-      this.queryParams.SkipCount=this.pagination.current-1;
+      this.queryParams.SkipCount=(this.pagination.current-1)*this.pagination.size;
       this.queryParams.MaxResultCount=this.pagination.size;
       this.loading=true;
       GetAll(this.queryParams).then(res=>{
         var result=res.result;
-
+        this.pagination.total=result.totalCount
         if(result.items.length>0){
           this.tableData=result.items;
         }
@@ -108,7 +108,6 @@ export default {
             this.$message.error('暂不支持批量删除',2)
             return;
           }
-
           const {id}=this.selectedRows[0];
           Delete(id)
           .then(res=>{
@@ -116,6 +115,9 @@ export default {
             this.$message.success('删除成功')
           }).catch(err=>{
             console.log(err)
+          }).finally(()=>{
+            this.selectedRowKeys=[]
+            this.selectedRows=[]
           })
 
           break;
