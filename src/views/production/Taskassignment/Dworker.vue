@@ -46,14 +46,16 @@
       :pagination="false"
       :dataSource="tableDataMX"
     >
-    <template slot="actions" slot-scope="scope">
+    <template slot="actions" slot-scope="text,record">
       <a-button type="primary">编辑</a-button>
-      <a-button type="danger">作废</a-button>
-      <a-button type="">异常</a-button>
+      <a-button type="danger">关闭</a-button>
+      <a-button  @click="showException(record)">异常</a-button>
     </template>
     </a-table>
 
     <DispatchWorkModalForm ref="DispatchWorkModalForm"/>
+
+    <ExceptionModal ref="ExceptionModal" />
   </a-card>
 </template>
 
@@ -76,7 +78,8 @@ export default {
 
     EditableCell: () => import('./pubilcvue/EditableCellSelect'),
     EditableCellInput: () => import('./pubilcvue/EditableCellInput'),
-    DispatchWorkModalForm: () => import('./DispatchWorkModalForm')
+    DispatchWorkModalForm: () => import('./DispatchWorkModalForm'),
+    ExceptionModal:()=>import('./ICMOException')
   },
   data() {
     return {
@@ -148,6 +151,11 @@ export default {
         .finally(() => {
           this.taskschedulLoading = false
         })
+    },
+
+    showException(record){
+      console.log(record)
+      this.$refs.ExceptionModal.show(record.dispFid)
     },
 
     pageChangeClick(page, pageSize) {
