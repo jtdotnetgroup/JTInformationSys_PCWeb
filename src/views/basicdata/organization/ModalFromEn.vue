@@ -8,7 +8,7 @@
     @ok="handleSubmit"
     @cancel="onClose"
   >
-    <a-form layout="inline" :form="form" @change="handleFormChange">
+    <a-form layout="inline" :form="form" @change="handleFormChange" :loading="loading">
        <a-row>
          <a-col :span="12"> <a-form-item label="员工编号">
         <a-input :disabled="this.IsEdit" 
@@ -33,9 +33,8 @@
    </a-col >
      <a-col :span="12">
       <a-form-item label="所属部门" class="inputmargin-left">
-        <a-tree-select 
+        <a-tree-select v-decorator="['fDepartment',{rules: [{ required: true, message: '请选择所属部门' }]} ]"
           style="width: 174px"
-          :value="value"
           :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
           placeholder="所属部门"
           allowClear
@@ -46,7 +45,6 @@
       </a-form-item>
 </a-col>
 </a-row>
-   
 <a-row>
      <a-col :span="12">
         <a-form-item label="系统" class="inputmargin-left"  >
@@ -54,8 +52,6 @@
         <a-checkbox :checked="FSystemUser" @change="onChangeFSystemUser">系统用户</a-checkbox>
          </a-form-item>
     </a-col>
-
-
      <a-col :span="12">     
       <a-form-item label="上级主管" class="inputmargin-left">
         <a-tree-select 
@@ -68,7 +64,6 @@
           @change="onChangeTree"
           :treeData="treeDatas"
         ></a-tree-select>
-      
       </a-form-item>
     </a-col>
 </a-row>
@@ -81,15 +76,13 @@
       <a-form-item label="员工密码">
         <a-input v-decorator="['Password',{initialValue:this.formData.password,rules: [{ required: true, message: '请输入员工密码' }]}  ]" :disabled="disabled" ></a-input> -->
       <a-form-item label="员工账户" class="inputmargin-left1">
-        <a-input v-decorator="['UserName',{rules: []} ]"  :disabled="disabled"></a-input>
+        <a-input v-decorator="['UserName',{rules: []} ]"  :disabled="IsEdit&&!!this.mdl.UserName"></a-input>
       </a-form-item>
       <a-form-item label="员工密码">
-        <a-input v-decorator="['Password',{rules: [{ required: false, message: '请输入员工密码' }]}  ]" :disabled="disabled" ></a-input>
+        <a-input v-decorator="['Password',{rules: [{ required: false, message: '请输入员工密码' }]}  ]" :disabled="IsEdit&&!!this.mdl.Password" ></a-input>
       </a-form-item>
   </a-col>
 </a-row>
-
-
   <a-row>
     <a-col :span="12"><a-form-item label="手机号码">
           <a-input v-decorator="['FPhone',{rules: [{ required: false, message: '请输入手机号码' }]} ]"></a-input>
@@ -152,7 +145,7 @@ export default {
       FSystemUser: true,
       IsEdit: false,
       disabled:false,
-
+      loading:false
     }
   },
   mounted() {
@@ -205,18 +198,18 @@ export default {
       this.FSystemUser = formData.fSystemUser == 1 ? true : false
       this.value = '' + formData.fDepartment + ''//所属部门
       this.valueTree=''+formData.fParentId==0?''+formData.id+'':formData.fParentId+''//上级主管
+      this.mdl.fDepartment=formData.fDepartment
       this.mdl.FMpno = formData.fMpno
       this.mdl.FName = formData.fName
       this.mdl.FPhone = formData.fPhone
-      this.mdl.FHiredate = this.$moment(formData.fHiredate)
+      this.mdl.FHiredate =formData.fHiredate && this.$moment(formData.fHiredate)
       this.mdl.FEmailAddress = formData.fEmailAddress
       this.mdl.FERPUser = formData.ferpUser
       this.mdl.FERPOfficeClerk = formData.ferpOfficeClerk
       this.mdl.UserName=formData.userName
       this.mdl.Password=formData.password
 
-
-      if(formData.password!==""){
+      if(formData.userName!==""&&formData.password!==""){
         this.disabled=true
       }else{
         this.disabled=false
@@ -235,7 +228,8 @@ export default {
             'FERPUser',
             'FERPOfficeClerk',
             'UserName',
-            'Password'
+            'Password',
+            'fDepartment'
           )
         )
       })
@@ -254,12 +248,12 @@ export default {
             fDepartment: this.value, //部门
             fWorkingState: this.FWorkingState ? 1 : 2, //1 在职 2不在职
             fSystemUser: this.FSystemUser ? 1 : 2, //1 是系统用户 2是系统用户
-            fParentId: this.valueTree==''?0:this.valueTree,//上级主管
+            fParentId: this.valueTree===''?0:this.valueTree,//上级主管
             fPhone: values.FPhone,
             fHiredate: values.FHiredate,
             fEmailAddress: values.FEmailAddress,
-            ferpUser: values.FERPUser==''?0:values.FERPUser,
-            ferpOfficeClerk: values.FERPOfficeClerk==''?0:values.ferpOfficeClerk,
+            ferpUser: values.FERPUser===''?0:values.FERPUser,
+            ferpOfficeClerk: values.FERPOfficeClerk===''?0:values.ferpOfficeClerk,
             user:{
             UserName:values.UserName,
             Password:values.Password
@@ -274,20 +268,20 @@ export default {
 
           console.log(params)
           if (!err) {
-            console.log(params)
+            this.loading=true;
+            //console.log(params)
             CreateEm(params)
               .then(res => {
                 if (res.result !== 0) {
                   _this.$message.success('成功')
                _this.$emit('addSuccess');
                   this.onClose()
-                } else {
-                  _this.$message.error('失败')
-                }
+                } 
+                this.loading=false
               })
               .catch(err => {
                 console.log(err)
-                 _this.$message.error('失败')
+                this.loading=false
               })
           }
         })
@@ -343,14 +337,14 @@ export default {
     },
     onClose() {
         this.visiable = false
-         this.mdl = {},
+         this.mdl = {}
          this.form.resetFields()
          this.valueTree=''
-        this.value = '',
-        this.Sex = true,
-        this.FWorkingState = true,
+        this.value = ''
+        this.Sex = true
+        this.FWorkingState = true
         this.FSystemUser = true
-        this.disabled=false
+        this.IsEdit=false
     },
     handleFormChange() {},
     onChange(value) {
@@ -416,7 +410,6 @@ export default {
         .then(res => {
           this.treeDatas = []
           const result = res.result
-         // console.log(result)
           if (result) {
             this.treeDatas = result
           }

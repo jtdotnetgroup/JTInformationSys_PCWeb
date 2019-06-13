@@ -105,16 +105,18 @@ export default {
 
       GetDailyListByFMOInterID(params)
         .then(res => {
-          console.log('ok')
           var result = res.result
-          this.dataLoading = false
           if (result) {
+            result.forEach(row => {
+              row.fBillTime=this.$moment('YYYY-MM-D')
+            });
             this.dataSource = result
           }
         })
         .catch(err => {
-          this.dataLoading = false
           console.log(err)
+        }).finally(()=>{
+          this.dataLoading=false
         })
     },
     saveDailyList() {
@@ -123,6 +125,7 @@ export default {
         fmoBillNo: this.formData.任务单号,
         dailies: []
       }
+
       //添加明细
       this.dataSource.forEach(row => {
         data.dailies.push({
@@ -181,7 +184,6 @@ export default {
       this.selectedRows = selectedRows
     },
     onCellChange(key, dataIndex, value) {
-      console.log(value)
       const dataSource = [...this.dataSource]
       const dstarget = dataSource.find(item => this.$moment(item.日期).format('YYYY-MM-D') === key)
       const tabletarget = this.tableData.find(item => item.日期 === key)
@@ -215,6 +217,11 @@ export default {
     tableData() {
 
       if(this.dataSource.length>0){
+
+        this.dataSource.forEach(row => {
+          row.日期=this.$moment(row.日期).format('YYYY-MM-D')
+        });
+
         return this.dataSource;
       }
 

@@ -83,11 +83,12 @@ export default {
 
       SaveDispBillList(obj)
         .then(res => {
-          this.loading = false
-          this.onClose()
+          this.$message.success('派工单已生成')
+          this._LoadData()
         })
         .catch(err => {
           console.log(err)
+        }).finally(()=>{
           this.loading = false
         })
     },
@@ -130,7 +131,6 @@ export default {
         })
     },
     handleSubmit() {
-      this.saveData()
       this.onClose()
     },
     onCellChange(rowData, dataIndex, value) {

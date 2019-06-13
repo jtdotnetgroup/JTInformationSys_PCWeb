@@ -19,9 +19,10 @@
       bordered
       onRow="{this.onClickRow}"
       :pagination="false"
-      rowKey="Id" 
+      rowKey="Id"
       :scroll="scroll"
       size="small"
+      :customRow="setRow"
     >
       <template slot="serial" slot-scope="text">
         <span>{{dataTable.indexOf(text)+1}}</span>
@@ -37,7 +38,20 @@
       </a-button>
     </div>
 
-    <a-table id="cardd" size="small" bordered :columns="columnsMX" :pagination="false"></a-table>
+    <a-table
+      id="cardd"
+      size="small"
+      bordered
+      :columns="columnsMX"
+      :pagination="false"
+      :dataSource="tableDataMX"
+    >
+    <template slot="actions" slot-scope="scope">
+      <a-button type="primary">编辑</a-button>
+      <a-button type="danger">作废</a-button>
+      <a-button type="">异常</a-button>
+    </template>
+    </a-table>
 
     <DispatchWorkModalForm ref="DispatchWorkModalForm"/>
 
@@ -48,12 +62,13 @@
 
 <script>
 import buttons from './js/buttons'
-import {columnsMX,columnsMT,columns as mainColumns} from './js/tableheader'
+import { columnsMX, columnsMT, columns as mainColumns } from './js/tableheader'
 import { columns } from './js/tablehhe'
+import { GetAllDispBill,GetDailyDispBillList } from '@/api/DispBill'
 
 import { getRoleList, getServiceList } from '@/api/manage'
 import { GetDailyAll, GetDispBillAll, CreateAll, GetDaily } from '@/api/test/get'
-import{ICMODailyGetAll,GetGroupDailyList} from '@/api/ICMODaily'
+import { ICMODailyGetAll, GetGroupDailyList } from '@/api/ICMODaily'
 import { constants } from 'crypto'
 
 export default {
@@ -97,9 +112,8 @@ export default {
 
       columnsMX: columnsMX,
       taskschedulLoading: false,
-      taskschedulLoadings: false,
       dataSource: [],
-
+      tableDataMX: [],
       dataTableArry: [],
       dataTableArrget: []
     }
@@ -110,36 +124,38 @@ export default {
 
   //一开始就执行的方法
   methods: {
-    
     _LoadMainData() {
       const params = {
-        SkipCount: this.pagination.current - 1,
+        SkipCount: (this.pagination.current - 1) * this.pagination.pageSize,
         MaxResultCount: this.pagination.pageSize
       }
+      this.taskschedulLoading = true
       //后端获取数据
       GetGroupDailyList(params)
         .then(res => {
           const result = res.result
-          this.dataTable=[]
+          this.pagination.total = result.totalCount
+          this.dataTable = []
           if (result && result.items.length > 0) {
             //绑定到表格上
-
             result.items.forEach(e => {
-              e.fDate=this.$moment(e.fDate).format('YYYY-MM-DD')
+              e.fDate = this.$moment(e.fDate).format('YYYY-MM-DD')
               this.dataTable.push(e)
-            });
+            })
             //this.dataTable = result.items
           }
-
         })
         .catch(err => {
           console.log(err)
+        })
+        .finally(() => {
+          this.taskschedulLoading = false
         })
     },
 
     pageChangeClick(page, pageSize) {
       ;(this.pagination.current = page), (this.pagination.pageSize = pageSize)
-      this._LoadMainData();
+      this._LoadMainData()
     },
 
     hideModal() {
@@ -225,16 +241,42 @@ export default {
       }
     },
 
+    setRow(record) {
+      return {
+        on: {
+          //表格行点击事件
+          click: () => {
+            console.log(record)
+            var params = { fmoBillNos: [record.fmoBillNo], DatelList: [record.fDate]}
+            GetDailyDispBillList(params)
+              .then(res => {
+                var result = res.result
+                if (result && result.items.length > 0) {
+                  let index = 0
+                  result.items.forEach(e => {
+                    e.key = index
+                    index++
+                    e.fDate = this.$moment(e.fDate).format('YYYY-MM-D')
+                    e.fBillTime = this.$moment(e.fBillTime).format('YYYY-MM-DD hh:mm:ss')
+                  })
 
+                  this.tableDataMX = result.items
+                }
+              })
+              .catch(err => {})
+              .finally(() => {})
+          }
+        }
+      }
+    },
 
     handleBtnClick(val) {
       switch (val) {
         case '派工': {
-          if (this.selectedRows.length >0) {
+          if (this.selectedRows.length > 0) {
             var rowSelection = this.selectedRows
             this.$refs.DispatchWorkModalForm.show(rowSelection)
           }
-          
         }
       }
     },

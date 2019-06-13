@@ -220,6 +220,8 @@ export default {
                 .catch(err => {
                   console.log(err)
                   _this.$message.error('失败')
+                }).finally(()=>{
+                  this.LoadDataGetOUByID()
                 })
             },
             onCancel() {

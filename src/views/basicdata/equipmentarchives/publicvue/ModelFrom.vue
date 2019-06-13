@@ -7,8 +7,9 @@
     :maskClosable="false"
     @ok="handleSubmit"
     @cancel="onClose"
+    :loading="loading"
   >
-    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons" :search="false"/>
+    <tableOperatorBtn v-if="this.isEdit" @btnClick="handleBtnClick" :buttons="buttons" :search="false"/>
 
     <a-form layout="inline" :form="form" @change="handleFormChange">
 
@@ -16,6 +17,7 @@
         <a-col :span="8"> <a-form-item label="设备代码">
         <a-input
           v-decorator="[ 'FNumber', {rules: [{ required: true, message: '请输入设备代码' }],initialValue:this.formData.fNumber} ]"
+          :disable="isEdit"
         ></a-input>
       </a-form-item></a-col>
         <a-col :span="8"> <a-form-item label="设备名称">
@@ -26,9 +28,9 @@
         <a-col :span="8"><a-form-item label="工作中心" class="formmargin-left">
         <a-select       
           style="width: 174px"
-          @change="handleWorkCenterChange"         
+          @change="handleWorkCenterChange"        
           v-decorator="['fWorkCenterID',{
-          rule:[{required:true,message: '请选择工作中心' }],
+          rules:[{required:true,message: '请选择工作中心'}],
           initialValue:this.formData.fWorkCenterID}]"
         >
           <a-select-option
@@ -47,7 +49,7 @@
         <a-col :span="8"> <a-form-item label="资源类型" class="formmargin-left">
         <a-select
           class="selectclass"
-          v-decorator="['FType',{rule:[{required:true,message: '请选择资源类型' }], 
+          v-decorator="['FType',{rules:[{required:true,message: '请选择资源类型' }], 
         initialValue: this.formData.fType}]"
         >
           <a-select-option :value="1">设备</a-select-option>
@@ -62,7 +64,7 @@
         <a-select
           class="selectclass"
           v-decorator="['FTimeUnit',{
-          rules:[{required:true,message: '请选择时间单位' }],
+          rules:[{required:false,message: '请选择时间单位' }],
           initialValue:this.formData.fTimeUnit}]"
         >
           <a-select-option :value="1">小时</a-select-option>
@@ -139,7 +141,8 @@ export default {
       dataLoading: false,
       tableData: [],
       isEdit: false,
-      mdl:{}
+      mdl:{},
+      loading:false
     }
   },
 
@@ -157,6 +160,7 @@ export default {
     
       this.form.validateFields((err, values) => {
         if (!err) {
+          this.loading=true;
           var request=!this.isEdit?Create(values):Update(values)
           request.then(res=>{
             this.$emit("addSuccess")
@@ -165,8 +169,9 @@ export default {
             this.onClose();
             console.log(res)
           }).catch(err=>{
-            this.$message.error(err.message)
             console.log(err)
+          }).finally(()=>{
+            this.loading=false
           })
         }
       })

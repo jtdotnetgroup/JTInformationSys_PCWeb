@@ -119,7 +119,7 @@ export default {
 
     _loadData() {
       var params = {
-        SkipCount: this.pagination.current - 1,
+        SkipCount: (this.pagination.current - 1)*this.pagination.size,
         MaxResultCount: this.pagination.size,
         OrganizationID:this.OrganizationID>0?this.OrganizationID:'',
         OrganizationCode:this.OrgCode
@@ -167,16 +167,13 @@ export default {
     getOrgID(code){
 
     }
-
-
-
-
   },
 
   //计算属性用于响应式的改变函数
   computed: {},
   mounted() {
     this._loadData()
+    this.$store.dispatch('GetWorkCenters');
   },
   
 }

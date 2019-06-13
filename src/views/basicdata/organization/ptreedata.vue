@@ -1,27 +1,18 @@
 <template>
   <div>
-
-  <a-tree  :showIcon="true" style="overflow-x:auto;overflow-y:hidden;width:100%; 
-height:600px;" :treeData="organizations"   @select="onButtonClick"   >
-
-
- <a-icon slot="folderopen" type="folder-open" /> 
-
-   <a-icon slot="folder" type="folder" /> 
-
-</a-tree> 
- 
-
+    <a-directory-tree
+      style="overflow-x:auto;overflow-y:hidden;width:100%;height:600px;"
+      :expandedKeys="defaultExpandKeys"
+      :treeData="organizations"
+      @select="onButtonClick"
+      @expand="onExpand"
+    ></a-directory-tree>
   </div>
 </template>
 
 <script>
 import { GetTreeList } from '@/api/Organization'
-
 import store from '@/store'
-
-
-
 export default {
   data() {
     return {
@@ -30,64 +21,50 @@ export default {
     }
   },
   mounted() {
-      this._LoadData();
+    this._LoadData()
   },
 
-
-
-
-  methods: { 
-    
-    // AddAndUpdate(){
-    //   console.log("执行")
-    // },
-
-   
-
+  methods: {
     _LoadData() {
-     
-     
-       var params={
-        ParentID:0
+      var params = {
+        ParentID: 0
       }
-      if(this.$store.getters.organizations.length===0){
-        this.$store.dispatch('GetOrganizations',params)
+      if (this.$store.getters.organizations.length === 0) {
+        this.$store.dispatch('GetOrganizations', params)
       }
-      
       // var params={
       //   ParentID:0
       // }
-      //  GetTreeList(params).then(res => {          
+      //  GetTreeList(params).then(res => {
       //      const results = res.result
-      //      this.organizations=results;         
+      //      this.organizations=results;
       //     // consloe.log(results)
       //  }).catch(err=>{
       //       console.log(err)
       //  })
     },
 
-    onButtonClick(keys,e) {
-      this.$emit('btnClick',e)
+    onButtonClick(keys, e) {
+      this.$emit('btnClick', e)
     },
-
-    //  ondefaultExpandedKeys(){
-    //   var key=[]
-    //    this.$store.dispatch('GetOrganizations',{ParentID:0}).forEach(e => {
-    //     key.push(e.key)
-    //   });
-    //  return key
-    // }
-
+    onExpand() {}
   },
   computed: {
-    organizations(){
+    organizations() {
       return store.getters.organizations
+    },
+    
+    defaultExpandKeys(){
+      const keys=[]
+      store.getters.organizations.forEach(e => {
+        keys.push(e.key)
+      });
+
+      return keys
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-
-
 </style>

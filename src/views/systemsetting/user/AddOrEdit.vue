@@ -18,13 +18,13 @@
         >
           <a-input v-model="form.id" placeholder/>
         </a-form-item>
-        <!-- <a-form-item
-          label="姓："
+        <a-form-item
+          label="姓名："
           :label-col="formItemLayout.labelCol"
           :wrapper-col="formItemLayout.wrapperCol"
         >
           <a-input v-model="form.surname" placeholder/>
-        </a-form-item> -->
+        </a-form-item>
         <a-form-item
           label="用户名："
           :label-col="formItemLayout.labelCol"
@@ -32,13 +32,13 @@
         >
           <a-input v-model="form.userName" placeholder/>
         </a-form-item>
-        <a-form-item
+        <!-- <a-form-item
           label="昵称："
           :label-col="formItemLayout.labelCol"
           :wrapper-col="formItemLayout.wrapperCol"
         >
           <a-input v-model="form.name" placeholder/>
-        </a-form-item>
+        </a-form-item>-->
         <a-form-item
           label="邮箱地址："
           :label-col="formItemLayout.labelCol"
