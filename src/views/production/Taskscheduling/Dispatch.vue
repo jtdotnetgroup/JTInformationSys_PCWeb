@@ -51,7 +51,8 @@
       :columns="columns"
       :pagination="false"
       :bordered="true"
-      :loading="dataLoading"   
+      :loading="dataLoading"
+      :scroll="scroll"
     >
       <template v-for="(col,index) in editColumns" :slot="col" slot-scope="text, record, index">
         <editCell :key="index" :text="text" @change="onCellChange(record.日期, col, $event)"/>
@@ -86,7 +87,11 @@ export default {
       dataLoading: false,
       selectedRowKeys: [],
       selectedRows: [],
-      dataSource: []
+      dataSource: [],
+      scroll:{
+        x:2000,
+        y:400
+      }
     }
   },
   props: {

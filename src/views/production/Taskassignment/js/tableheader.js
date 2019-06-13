@@ -20,8 +20,8 @@ const exampleMT = {
   'fBillTime': '派工日期',
   'machine': '设备',
   'fMachineID': 'fMachineID',
-  'worker': '',
-  'fWorkerID': '员工',
+  'worker': '员工',
+  'fWorkerID': '',
   'fShift': '班次',
   'fCommitAuxQty': '派工数量',
   'fBiller': '计划员'

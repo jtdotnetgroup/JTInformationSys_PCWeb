@@ -34,7 +34,7 @@ keys.forEach(key => {
       title: key,
       dataIndex: key,
       key: key,
-      width: 60,
+      width: 100,
       align: 'center'
     }
 

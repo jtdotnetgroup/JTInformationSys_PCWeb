@@ -23,16 +23,21 @@
       <template slot="fCommitAuxQty" slot-scope="text, record">
         <a-input-number v-model="record.fCommitAuxQty"></a-input-number>
       </template>
-      <template slot="fWorkerID" slot-scope="text,record">
-        <a-select v-model="record.fWorkerID">
+      <template slot="worker" slot-scope="text,record">
+        <!-- <a-select v-model="record.fWorkerID">
           <a-select-option
             v-for="(item,index) in workers"
             :key="index"
             :value="item.id"
           >{{item.fName}}</a-select-option>
-        </a-select>
+        </a-select> -->
+        <a-button @click="showEmployeeForm(record)">
+          {{text}}
+          <a-icon type="search"></a-icon>
+        </a-button>
       </template>
     </a-table>
+    <EmployeeSelectForm ref="EmployeeSelectForm" @selectChange="handleEmployeeChange"/>
   </a-modal>
 </template>
 
@@ -46,7 +51,8 @@ export default {
   components: {
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
     EditableCellSelect: () => import('./pubilcvue/EditableCellSelect'),
-    EditableCellInput: () => import('@/JtComponents/JITEditCell')
+    EditableCellInput: () => import('@/JtComponents/JITEditCell'),
+    EmployeeSelectForm:()=>import('@/JtComponents/EmployeeSelectForm')
   },
   methods: {
     handleBtnClickModal(val) {
@@ -59,6 +65,11 @@ export default {
           break
         }
       }
+    },
+    handleEmployeeChange(emp,row){
+      console.log(row)
+       this.dataSource[row.key].fWorkerID=emp.id
+       this.dataSource[row.key].worker=emp.fName
     },
     saveData() {
       this.loading = true
@@ -145,6 +156,9 @@ export default {
       this.dataSource = []
       this.DailyData = {}
       this.visible = false
+    },
+    showEmployeeForm(record){
+      this.$refs.EmployeeSelectForm.show(record);
     }
   },
   data() {
@@ -168,14 +182,13 @@ export default {
         const row = this.dataSource[i]
         row.key = index
         index++
-        console.log(row)
-
         result.push(row)
       }
 
       return result
     },
     workers() {
+
       if (this.$store.getters.workers.length === 0) {
         this.$store.dispatch('GetWorkers')
       }
