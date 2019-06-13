@@ -20,7 +20,7 @@
       <!--表格-->
       <div style="padding-top:10px;">
         <!--数据表格-->
-        <a-table id="BJ" bordered :dataSource="dataSource" :columns="columns">
+        <a-table id="BJ" bordered :dataSource="dataSource" :columns="columns" :scroll="{x:3000,y:400}">
           <template slot="name" slot-scope="text, record">
             <editable-cell :text="text" @change="onCellChange(record.key, 'name', $event)"/>
           </template>

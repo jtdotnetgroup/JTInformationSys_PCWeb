@@ -9,7 +9,7 @@
     />
 
     <a-table
-      rowKey="任务单号"
+      rowKey="fmoInterID"
       :dataSource="dataSource"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
       :columns="columns"
@@ -34,6 +34,7 @@
       :columns="detailColumns"
       :pagination="false"
       :loading="detailLoading"
+      :scroll="scroll"
     ></a-table>
 
     <dispatch ref="taskDispatch"/>
@@ -108,7 +109,7 @@ export default {
 
       result.push({
         title: '汇总',
-        children: [{ title: '计划', dataIndex: 'totalPlan' }, { title: '实际', dataIndex: 'totalCommit' }]
+        children: [{ title: '计划', dataIndex: 'totalPlan',width:50 }, { title: '实际', dataIndex: 'totalCommit',width:50 }]
       })
       if (!!this.dailyDataList && !!this.dailyDataList.details) {
         this.dailyDataList.details.forEach(r => {
@@ -119,12 +120,14 @@ export default {
               {
                 title: '计划',
                 dataIndex: date + 'Plan',
-                algin:'center'
+                algin:'center',
+                width:50
               },
               {
                 title: '实际',
                 dataIndex: date + 'Commit',
-                algin:'center'
+                algin:'center',
+                width:50
               }
             ]
           }
@@ -139,7 +142,7 @@ export default {
 
       var _this=this
       var params = {
-        SkipCount: this.pagination.current - 1,
+        SkipCount: (this.pagination.current - 1)*this.pagination.pageSize,
         MaxResultCount: this.pagination.pageSize
       }
       this.taskschedulLoading = true

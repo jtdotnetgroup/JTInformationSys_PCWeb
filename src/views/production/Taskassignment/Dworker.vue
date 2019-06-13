@@ -246,7 +246,6 @@ export default {
         on: {
           //表格行点击事件
           click: () => {
-            console.log(record)
             var params = { fmoBillNos: [record.fmoBillNo], DatelList: [record.fDate]}
             GetDailyDispBillList(params)
               .then(res => {

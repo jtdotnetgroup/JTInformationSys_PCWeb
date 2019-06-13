@@ -1,5 +1,6 @@
 import { GetTreeList, GetAll } from '@/api/Organization'
 import { GetAll as GetAllEmployee, GetAllWorkers } from '@/api/Employee'
+import { resolve } from 'url'
 
 const store = {
   state: {
@@ -49,7 +50,7 @@ const store = {
       })
     },
     GetWorkCenters ({ commit }, params) {
-      // 获取所有车间,车间代码为4
+      // 获取所有车间
       params = {
         isWorkCenter: true
       }
