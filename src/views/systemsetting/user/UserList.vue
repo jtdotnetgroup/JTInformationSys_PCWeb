@@ -230,8 +230,7 @@ export default {
           var i = 0
           res.result.items.forEach(element => {
             element.XH = i + 1
-            element.creationTime = this.$moment(element.creationTime).format('YYYY-MM-DD hh:mm');
-            console.log(element.roleNames.join(","))
+            element.creationTime = this.$moment(element.creationTime).format('YYYY-MM-DD HH:mm'); 
             element.roleName =element.roleNames.join(",");
             
             _this.dataSource.push(element)

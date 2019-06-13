@@ -93,7 +93,6 @@ export default {
     // 确定排班后执行关闭弹出层/窗口
     handleOk() {
       this.onSubmit()
-      this.visible = false
     },
     // 取消操作关闭弹出层/窗口
     handleCancel() {
@@ -216,7 +215,7 @@ export default {
       // 导入成功  执行  this.empty()  清除导入表格
       ImportExcelList(result)
         .then(res => {
-          _this.HideLoad()
+         
           console.log('success:' + res)
           if (res.success) {
             _this.$notification['success']({
@@ -225,6 +224,7 @@ export default {
             })
             //
             _this.empty() // 清除导入表格
+            _this.hide()
           } else {
             const key = `open${Date.now()}`;
             _this.$notification['error']({
@@ -250,12 +250,14 @@ export default {
           }
         })
         .catch(error => {
-          _this.HideLoad()
+          
           _this.$notification['error']({
             message: '系统提示',
             description: '系统忙，导入失败请稍后重试！'
           })
-        })
+        }).finally(()=>{
+
+        }) 
     },
     // 判断是否是有效日期
     IsValidDate(DateStr) {

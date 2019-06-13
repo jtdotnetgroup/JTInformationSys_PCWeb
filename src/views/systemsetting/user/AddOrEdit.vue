@@ -229,6 +229,7 @@ export default {
             _this.hide()
             _this.$emit('addSuccess')
           } else {
+            console.log(res)
             _this.$notification['error']({
               message: res.error.message,
               description: res.error.details
@@ -236,8 +237,8 @@ export default {
           }
           _this.HideLoad()
         })
-        .catch(errer => {
-          _this.HideLoad()
+        .catch(err => {
+          _this.HideLoad() 
         })
       // if (obj.id === 0) {
       //   DataAdd(obj).then(res => {
@@ -291,7 +292,7 @@ export default {
           _this.form.emailAddress = result.emailAddress
           _this.form.isActive = result.isActive
           _this.form.roleNames = result.roleNames
-          _this.form.creationTime = result.creationTime
+          _this.form.creationTime = this.$moment(result.creationTime).format('YYYY-MM-DD HH:mm')
         } else {
           this.$notification['error']({
             message: '系统提示',
@@ -303,5 +304,3 @@ export default {
   }
 }
 </script>
-<style>
-</style>
