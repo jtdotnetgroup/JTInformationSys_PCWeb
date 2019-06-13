@@ -1,12 +1,10 @@
 <template>
   <div>
-    <a-directory-tree
+    <a-tree
       style="overflow-x:auto;overflow-y:hidden;width:100%;height:600px;"
-      :expandedKeys="defaultExpandKeys"
       :treeData="organizations"
       @select="onButtonClick"
-      @expand="onExpand"
-    ></a-directory-tree>
+    ></a-tree>
   </div>
 </template>
 
