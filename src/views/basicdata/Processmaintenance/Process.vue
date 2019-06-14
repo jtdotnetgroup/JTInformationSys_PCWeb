@@ -72,8 +72,8 @@ export default {
       terrData:'',
 
       scroll: {
-        x: 1500,
-        y: 500
+        x: 1000,
+        y: 400
       },
       FOperID: 0
     }
@@ -92,13 +92,17 @@ export default {
     onPaginationChange(page, size) {
       this.pagination.current = page
       this.pagination.pageSize = size
+      this._LoadData();
+
     },
     
     //加载不良项目的方法
     _LoadData() {
       var _this = this
       var params = {
-        FOperID: this.FOperID == 0 ? 0 : this.FOperID
+        FOperID: this.FOperID == 0 ? 0 : this.FOperID,
+        SkipCount:(this.pagination.current-1)*this.pagination.pageSize,
+        MaxResultCount:this.pagination.pageSize
       }
 
       GetAllBadItemRelation(params)
@@ -108,16 +112,14 @@ export default {
 
           if (result) {
             _this.dataTable = result.items
-
-            console.log(result.items)
-
             _this.pagination.total = result.totalCount
-            _this.loading = false
           }
         })
         .catch(err => {
-          _this.loading = false
           console.log(err)
+        })
+        .finally(()=>{
+          _this.loading=false;
         })
     },
 

@@ -63,7 +63,7 @@ columnsMX.push({
   title: '操作',
   scopedSlots: { customRender: 'actions' },
   align: 'center',
-  width: 150
+  width: 200
 })
 
 function GenericColumns (data) {

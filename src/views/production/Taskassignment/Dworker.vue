@@ -45,6 +45,7 @@
       :columns="columnsMX"
       :pagination="false"
       :dataSource="tableDataMX"
+      :scroll="{x:1400,y:400}"
     >
     <template slot="actions" slot-scope="text,record">
       <a-button type="primary">编辑</a-button>
