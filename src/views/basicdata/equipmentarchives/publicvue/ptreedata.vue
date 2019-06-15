@@ -1,6 +1,8 @@
 <template>
   <div>
-    <a-directory-tree :treeData="organizations" :expandedKeys="defaultExpandKeys" @select="onButtonClick" @expand="onExpand"></a-directory-tree>
+    <a-tree :treeData="organizations" 
+    @select="onButtonClick" 
+    @expand="onExpand"></a-tree>
   </div>
 </template>
 
