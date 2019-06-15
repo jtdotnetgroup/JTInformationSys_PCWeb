@@ -135,6 +135,11 @@ export const asyncRouterMap = [
             name: 'taskdispatch',
             meta: { title: '任务调度', keepAlive: true },
             component: () => import('@/views/systemsetting/taskdispatch/Task')
+          },
+          {
+            path: '/systemmanage/logsmanager',
+            name: 'logsmanager',
+            meta: { title: '日志查询', keepAlive: true }
           }
         ]
       },
