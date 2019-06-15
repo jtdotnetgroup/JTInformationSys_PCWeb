@@ -13,9 +13,9 @@
         <a-input @change="OnChange" v-decorator="['UserName',{rules: []} ]" placeholder="请输用户姓名搜索"></a-input>
       </a-form-item>
       <a-form-item label="查看角色成员">
-        <a-select style="width:150px"  v-decorator="['id',{rules: []} ]"
-             @change="SelectClick">
-          <a-select-option
+        <a-select style="width:150px"  v-decorator="['id',{rules: [],initialValue:1}]"
+             @change="SelectClick" >
+          <a-select-option 
             v-for="(item,index) in RoleStaics"
             :key="index"
             :value="item.id"
@@ -70,7 +70,7 @@ export default {
       RoleId: 0,//记录角色的id
       selectedRows: [],
       RoleStaic: 1,//选择器的记录值
-  
+      DataArr:[]//用于记录集合
     }
   },
   mounted() {
@@ -129,6 +129,7 @@ export default {
       this.selectedRows = []
       this.RoleStaic = 1
       this.form.resetFields()
+      this.DataArr=[]
     },
     //复选框选择事件
     onSelectChange(selectedRowKeys, selectedRows) {
@@ -159,17 +160,33 @@ export default {
     },
     //用户名称的搜索事件
     OnChange(e) {
-      //  console.log(e)
+        console.log(e)
+
+     // var  DataArr=this.tableData
+
+    
       var data = this.tableData.filter(es => {
         return es.surname.indexOf(e.data) >= 0
       })
 
-      if (data.length > 0) {
-        this.tableData = data
-      } else {
-         this.loading = true
-        this._LoadData()
+      if(data.length > 0){
+         this.tableData = data
+      }else{
+        this.tableData =[]
       }
+
+      if(e.data===null){
+        this.tableData=this.DataArr
+      }
+
+
+
+      // if (data.length > 0) {
+      //   this.tableData = data
+      // } else {
+      //    this.loading = true
+      //   this._LoadData()
+      // }
     },
 
     //查询全部的方法
@@ -186,6 +203,7 @@ export default {
           _this.tableData = []
           _this.selectedRowKeys=[]
           _this.selectedRows=[]
+          _this.DataArr=[]
           const result = res.result
           if (result) {
               let index=0
@@ -199,6 +217,7 @@ export default {
               }
 
                  _this.tableData.push(e)
+                 _this.DataArr.push(e)
              })
 
             _this.pagination.total = result.totalCount

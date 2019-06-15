@@ -139,7 +139,8 @@ export const asyncRouterMap = [
           {
             path: '/systemmanage/logsmanager',
             name: 'logsmanager',
-            meta: { title: '日志查询', keepAlive: true }
+            meta: { title: '日志查询', keepAlive: true },
+            component: () => import('@/views/systemsetting/logsmanager/logsTable')
           }
         ]
       },
