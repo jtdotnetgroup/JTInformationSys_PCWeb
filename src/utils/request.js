@@ -21,6 +21,7 @@ if (url.indexOf('http://222.72.134.71') >= 0) {
   baseURL = 'http://localhost:21021'
 } else {
   baseURL = 'http://222.72.134.71:8093'
+  // baseURL = 'http://192.168.1.214:21021'
 }
 
 // 创建 axios 实例

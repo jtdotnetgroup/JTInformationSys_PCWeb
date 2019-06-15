@@ -39,7 +39,7 @@ export default {
     },
     pageSizeOptions: {
       type: Array,
-      default: () => ['10', '15', '20', '30','50','80','100']
+      default: () => ['2','10', '15', '20', '30','50','80','100']
     }
   },
   methods: {

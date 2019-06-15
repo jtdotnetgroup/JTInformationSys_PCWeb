@@ -313,6 +313,7 @@ export default {
       this.ParentIdvalue = ''
       this.mdl = {}
       this.form.resetFields()
+      this.Workshoptype=false
     },
     handleFormChange() {},
     onChange(value) {

@@ -6,7 +6,9 @@
       :treeData="organizations"
       @select="onButtonClick"
       @expand="onExpand"
-    ></a-directory-tree>
+    >
+    
+    </a-directory-tree>
   </div>
 </template>
 

@@ -34,8 +34,7 @@
                  columns: columns,
                  selectedRowKeys: [],
                  buttons: buttons.buttons,
-                 tableData: tableData,
-                
+                 tableData: tableData,            
             }
         },
         methods: {
