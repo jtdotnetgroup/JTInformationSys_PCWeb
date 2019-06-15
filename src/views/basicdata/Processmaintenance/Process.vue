@@ -24,18 +24,14 @@
           :scroll="scroll"
           size="small"
         >
-        
-         <template slot="fDeleted" slot-scope="fDeleted">
-           
+          <template slot="fDeleted" slot-scope="fDeleted">
             <div v-if="fDeleted==true" class="tabletd">
-                <a-checkbox :checked="true" ></a-checkbox>
-             </div>
-              <div v-else class="tabletd">
-                  <a-checkbox :checked="false" ></a-checkbox>
-             </div>
-     
-            </template>
-        
+              <a-checkbox :checked="true"></a-checkbox>
+            </div>
+            <div v-else class="tabletd">
+              <a-checkbox :checked="false"></a-checkbox>
+            </div>
+          </template>
         </a-table>
       </a-col>
     </a-row>
@@ -48,7 +44,7 @@
 <script>
 import columns from './js/columns'
 import buttonp from './js/buttonp'
-import { GetAllBadItemRelation,Delete } from '@/api/TB_BadItemRelation'
+import { GetAllBadItemRelation, Delete } from '@/api/TB_BadItemRelation'
 
 export default {
   components: {
@@ -57,7 +53,7 @@ export default {
     TreeForm: () => import('./TreeForm'),
     ProcessModalFrom: () => import('./ProcessModalFrom')
   },
-  data() {
+  data () {
     return {
       pagination: {
         current: 1,
@@ -69,7 +65,7 @@ export default {
       dataTable: [],
       columnsMain: columns,
       selectedRowKeys: [],
-      terrData:'',
+      terrData: '',
 
       scroll: {
         x: 1000,
@@ -92,17 +88,16 @@ export default {
     onPaginationChange(page, size) {
       this.pagination.current = page
       this.pagination.pageSize = size
-      this._LoadData();
-
+      this._LoadData()
     },
-    
+
     //加载不良项目的方法
     _LoadData() {
       var _this = this
       var params = {
         FOperID: this.FOperID == 0 ? 0 : this.FOperID,
-        SkipCount:(this.pagination.current-1)*this.pagination.pageSize,
-        MaxResultCount:this.pagination.pageSize
+        SkipCount: (this.pagination.current - 1) * this.pagination.pageSize,
+        MaxResultCount: this.pagination.pageSize
       }
 
       GetAllBadItemRelation(params)
@@ -118,8 +113,8 @@ export default {
         .catch(err => {
           console.log(err)
         })
-        .finally(()=>{
-          _this.loading=false;
+        .finally(() => {
+          _this.loading = false
         })
     },
 
@@ -127,32 +122,28 @@ export default {
     handleBtnClick(val) {
       switch (val) {
         case '新建':
-           var  fromData = {}
-         if (this.terrData=='') {
+          var fromData = {}
+          if (this.terrData == '') {
             this.$message.error('选择你要新建的工序')
-          }else{           
-            fromData.key=this.terrData.selectedNodes[0].key
-            fromData.fid=''
-   
+          } else {
+            fromData.key = this.terrData.selectedNodes[0].key
+            fromData.fid = ''
+
             this.$refs.ProcessModalFrom.showModal(fromData)
-          }       
+          }
           break
-          case '编辑':
-
-           var  fromData = {}
-         if (this.selectedRowKeys.length==1) {
-
-            fromData=this.selectedRows[0]
+        case '编辑':
+          var fromData = {}
+          if (this.selectedRowKeys.length == 1) {
+            fromData = this.selectedRows[0]
             this.$refs.ProcessModalFrom.showModal(fromData)
-            
-          }else{           
-           this.$message.error('选择你要修改的不良项目')
-          }       
+          } else {
+            this.$message.error('选择你要修改的不良项目')
+          }
 
           break
-          case '删除':
-
-          var _this=this
+        case '删除':
+          var _this = this
 
           if (_this.selectedRows.length !== 1) {
             this.$message.info('请选择需要删除的不良项目')
@@ -162,7 +153,7 @@ export default {
           this.$confirm({
             title: '系统提示！',
             content: '确定要删除选中的吗?',
-            onOk() {
+            onOk () {
               var params = {
                 fid: _this.selectedRows[0].fid
               }
@@ -170,7 +161,7 @@ export default {
               Delete(params)
                 .then(res => {
                   if (res.result > 0) {
-                    _this.$message.success('成功')          
+                    _this.$message.success('成功')
                     _this._LoadData()
                   } else {
                     _this.$message.error('失败')
@@ -181,11 +172,10 @@ export default {
                   _this.$message.error('失败')
                 })
             },
-            onCancel() {
+            onCancel () {
               _this.$message.warning('数据要谨慎删除')
             }
           })
-          
 
           break
 
@@ -194,17 +184,15 @@ export default {
       }
     },
 
-    handelAddSuccess(){
-      this.loading==true
-     this._LoadData(),
-     this.selectedRowKeys = []
-    this.selectedRows = []
-
-
+    handelAddSuccess () {
+      this.loading === true
+      this._LoadData()
+      this.selectedRowKeys = []
+      this.selectedRows = []
     },
 
-    //树形的方法
-    btnTree(e) {
+    // 树形的方法
+    btnTree (e) {
       if (e.selectedNodes.length > 0) {
         this.selectedRowKeys = []
         this.selectedRows = []
@@ -220,12 +208,7 @@ export default {
 </script>
 
 <style scoped>
-
-.tabletd{
-  text-align: center
-  
-
-  
+.tabletd {
+  text-align: center;
 }
-
 </style>
