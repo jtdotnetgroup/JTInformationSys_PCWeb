@@ -164,9 +164,10 @@ export default {
         return es.surname.indexOf(e.data) >= 0
       })
 
-      if (odb.length > 0) {
+      if (data.length > 0) {
         this.tableData = data
       } else {
+         this.loading = true
         this._LoadData()
       }
     },
