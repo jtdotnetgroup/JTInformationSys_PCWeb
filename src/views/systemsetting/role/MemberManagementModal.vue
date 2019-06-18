@@ -11,12 +11,16 @@
     <a-form :form="form" layout="inline">
       <a-form-item label="用户姓名">
         <!-- <a-input @change="OnChange" v-decorator="['UserName',{rules: []} ]" placeholder="请输用户姓名搜索"></a-input> -->
-      <a-input-search
+     
+      <div class="components-input-demo-presuffix">
+      <a-input-search v-model="Surname"
       placeholder="请输用户姓名搜索"
       @search="onSearch"
-      enterButton
-    />
-    
+      enterButton>
+
+      <a-icon v-if="Surname"  slot="suffix" type="close-circle" @click="emitEmpty" />
+      </a-input-search>
+    </div>
       
       </a-form-item>
       <a-form-item label="查看角色成员">
@@ -67,6 +71,7 @@ export default {
         pageSize: 10,
         total: 50
       },
+
       Surname: '',
       selectedRowKeys: [],
       selectedRows: [],
@@ -78,7 +83,7 @@ export default {
       RoleStaics: [{ id: 1, text: '角色成员' }, { id: 2, text: '不是角色成员' }],
       RoleId: 0,//记录角色的id    
       RoleStaic: 1,//选择器的记录值
-      DataArr:[]//用于记录集合
+    
     }
   },
   mounted() {
@@ -93,22 +98,27 @@ export default {
       this._LoadData()
     },
 
+    emitEmpty(){
+
+      this.Surname = ''
+      this.loading = true
+      this._LoadData() 
+
+    },
+
     //提交事件
     handleSubmit() {
 
-     // console.log(this.selectedRows)
-
+      //console.log(this.selectedRows)
 
 
       var _this = this
-
       var userListsId = []
       var tableData = _this.tableData
       for (let index = 0; index < tableData.length; index++) {
         var ss = _this.selectedRows.filter(e => {
           return e.id === tableData[index].id
         })
-
         if (ss.length > 0) {
           userListsId.push({ userID: ss[0].id, UserBool: true })
         } else {
@@ -118,8 +128,6 @@ export default {
 
       var params = { id: this.RoleId, userListsId: [] }
       params.userListsId = userListsId
-
-
 
       Create(params)
         .then(res => {
@@ -137,12 +145,15 @@ export default {
     },
      //窗体关闭事件
     onClose() {
+       this.Surname = ''
       this.visible = false
       this.RoleId = 0
       this.selectedRows = []
       this.RoleStaic = 1
       this.form.resetFields()
-      this.DataArr=[]
+    
+      this.pagination.current=1
+      this.pageSize= 10
     },
     //复选框选择事件
     onSelectChange(selectedRowKeys, selectedRows) {
@@ -162,7 +173,6 @@ export default {
     SelectClick(value) {
      // console.log(value)
       if(value===undefined){
-
         this.RoleStaic=1
       }else{
          this.RoleStaic = value
@@ -173,11 +183,10 @@ export default {
     },
     //用户名称的搜索事件
     onSearch(value) {
-      
+
         this.loading = true
         this.Surname=value
-        this._LoadData()
-      
+        this._LoadData()     
     },
 
     //查询全部的方法
@@ -195,12 +204,11 @@ export default {
           _this.tableData = []
           _this.selectedRowKeys=[]
           _this.selectedRows=[]
-          _this.DataArr=[]
           const result = res.result
           if (result) {
               let index=0
 
-              //  _this.tableData=result.items
+            //    _this.tableData=result.items
               // console.log(result)
 
              result.items.forEach(e=>{
@@ -210,7 +218,6 @@ export default {
                 _this.selectedRows.push(e)
             }           
                  _this.tableData.push(e)
-                 _this.DataArr.push(e)
              })
 
             _this.pagination.total = result.totalCount
@@ -227,5 +234,17 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style  scoped>
+.components-input-demo-presuffix .anticon-close-circle {
+  cursor: pointer;
+  color: #ccc;
+  transition: color 0.3s;
+  font-size: 12px;
+}
+.components-input-demo-presuffix .anticon-close-circle:hover {
+  color: #999;
+}
+.components-input-demo-presuffix .anticon-close-circle:active {
+  color: #666;
+}
 </style>

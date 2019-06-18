@@ -1,18 +1,18 @@
 <template>
   <a-card>
-    <!-- <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons"/> -->
+  
 
     <a-form :form="form" layout="inline">
       <a-form-item label="开始时间">
         <a-date-picker
           format="YYYY-MM-DD HH:mm:ss"
-          v-decorator="['StartTime',{rules: [],initialValue:this.StartTime} ]"
+          v-decorator="['StartTime',{rules: [],initialValue:null} ]"
         ></a-date-picker>
       </a-form-item>
       <a-form-item label="结束时间">
         <a-date-picker
           format="YYYY-MM-DD HH:mm:ss"
-          v-decorator="['EndTime',{rules: [],initialValue: this.EndTime} ]"
+          v-decorator="['EndTime',{rules: [],initialValue: null} ]"
         ></a-date-picker>
       </a-form-item>
 
@@ -20,17 +20,28 @@
         <a-input v-decorator="['Message',{rules: [],initialValue: this.Message} ]"></a-input>
       </a-form-item>
 
-      <a-form-item>
+      <!-- <a-form-item>
         <a-checkbox :value="Hour" @change="onChangeHour">1小时</a-checkbox>
       </a-form-item>
 
       <a-form-item>
         <a-checkbox :value="Today" @change="onChangeToday">今天</a-checkbox>
+      </a-form-item> -->
+
+
+      <a-form-item label="小时和今天">
+        <a-select style="width:150px"    allowClear  v-decorator="['id',{rules: []}]"
+            >
+          <a-select-option :value="1">一小时内</a-select-option>
+          <a-select-option :value="2">今天内</a-select-option>
+        </a-select>
       </a-form-item>
-      
+
+
        <a-form-item>
         <a-checkbox :value="Exception" @change="onChangeException">异常</a-checkbox>
-      </a-form-item>
+      </a-form-item> 
+
 
       <a-form-item>
         <a-button type="default" @click="OnClickSelect">查询</a-button>
@@ -44,8 +55,7 @@
     />
 
     <a-table
-      bordered
-      
+      bordered    
       :dataSource="tableData"
       :columns="columns"
       :pagination="false"
@@ -112,34 +122,34 @@ export default {
       this.loading=true
       this._loadData()
     },
-    handleBtnClick(val) {},
+
+   
 
     
 
-    //小时
-    onChangeHour(e) {
-      if( e.target.checked===false){
-         this.StartTime= null,
-      this.EndTime= null,
-     this. Message= null
+    // //小时
+    // onChangeHour(e) {
+    //   if( e.target.checked===false){
+    //      this.StartTime= null,
+    //   this.EndTime= null,
+    //  this. Message= null
 
-      }
-      this.Hour = e.target.checked
-    },
-    //今天
-    onChangeToday(e) {
-       if( e.target.checked===false){
-        this.StartTime= null,
-        this.EndTime= null,
-        this. Message= null
-      }
-      this.Today = e.target.checked
-    },
+    //   }
+    //   this.Hour = e.target.checked
+    // },
+    // //今天
+    // onChangeToday(e) {
+    //    if( e.target.checked===false){
+    //     this.StartTime= null,
+    //     this.EndTime= null,
+    //     this. Message= null
+    //   }
+    //   this.Today = e.target.checked
+    // },
+
     //异常查询
     onChangeException(e){
       this.Exception=e.target.checked
-
-      
     },
 
 
@@ -147,26 +157,29 @@ export default {
     OnClickSelect() {
       this.form.validateFields((err, values) => {
 
-         this.loading=true
+
+        //console.log(values)
+        //  this.loading=true
 
         this.StartTime =values.StartTime!==null?this.$moment(values.StartTime).format('YYYY-MM-DD HH:mm:ss.sss'):values.StartTime
         this.EndTime =values.EndTime!==null?this.$moment(values.EndTime).format('YYYY-MM-DD HH:mm:ss.sss'):values.EndTime 
         this.Message=values.Message
-        
-        if (this.Hour === true) {
+         
+        if (values.id === 1) {
           var frontOneHour = new Date(new Date().getTime() - 1 * 60 * 60 * 1000)
-
-          this.StartTime = this.$moment(frontOneHour).format('YYYY-MM-DD HH:mm:ss.sss')
-          this.EndTime = new Date(new Date())
-        } else if (this.Today === true) {
+          this.StartTime = this.$moment(frontOneHour).format('YYYY-MM-DD HH:mm:ss.sss')     
+          this.EndTime=new Date()
+        
+        } else if (values.id === 2) {
           var weehours = new Date(new Date().setHours(0, 0, 0, 0))
             // console.log(this.$moment(weehours).format('YYYY-MM-DD HH:mm:ss.sss'))
           this.StartTime= weehours
-          this.EndTime= new Date(new Date())
+          this.EndTime= new Date()
         }
        
-
+      
         if (!err) {
+          this.loading=true
           this._loadData()
         }
       })
