@@ -38,13 +38,13 @@
     />
     <a-table
       bordered
-      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+      :rowSelection="{selectedRowKeys: selectedRowKeys,onChange: onSelectChange}"
       :dataSource="tableData"
       :columns="columns"
       :pagination="false"
       :loading="loading"
       
-      rowKey="key"
+      rowKey="id"
       size="small"
     />
   </a-modal>
@@ -69,14 +69,14 @@ export default {
       },
       Surname: '',
       selectedRowKeys: [],
+      selectedRows: [],
       visible: false,
       tableData: [],
       columns: columns,
       loading: true,
       form: this.$form.createForm(this),
       RoleStaics: [{ id: 1, text: '角色成员' }, { id: 2, text: '不是角色成员' }],
-      RoleId: 0,//记录角色的id
-      selectedRows: [],
+      RoleId: 0,//记录角色的id    
       RoleStaic: 1,//选择器的记录值
       DataArr:[]//用于记录集合
     }
@@ -95,6 +95,11 @@ export default {
 
     //提交事件
     handleSubmit() {
+
+     // console.log(this.selectedRows)
+
+
+
       var _this = this
 
       var userListsId = []
@@ -142,7 +147,7 @@ export default {
     //复选框选择事件
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
+      this.selectedRows=selectedRows
       console.log(selectedRows)
     },
     //分页的方法
@@ -194,19 +199,16 @@ export default {
           const result = res.result
           if (result) {
               let index=0
-              console.log(result)
+
+              //  _this.tableData=result.items
+              // console.log(result)
+
              result.items.forEach(e=>{
-             e.key=index+=1
-
+             //e.key=index+=1
             if (e.roleId !== null&&e.roleId===_this.RoleId) {
-                _this.selectedRowKeys.push(e.key)
+                _this.selectedRowKeys.push(e.id)
                 _this.selectedRows.push(e)
-            }
-              // else{
-              //    _this.selectedRowKeys.push(e.key)
-              //   _this.selectedRows.push(e)
-              // }
-
+            }           
                  _this.tableData.push(e)
                  _this.DataArr.push(e)
              })

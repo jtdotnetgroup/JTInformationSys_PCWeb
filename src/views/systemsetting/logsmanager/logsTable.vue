@@ -21,11 +21,15 @@
       </a-form-item>
 
       <a-form-item>
-        <a-checkbox :value="form.Hour" @change="onChangeHour">1小时</a-checkbox>
+        <a-checkbox :value="Hour" @change="onChangeHour">1小时</a-checkbox>
       </a-form-item>
 
       <a-form-item>
-        <a-checkbox :value="form.Today" @change="onChangeToday">今天</a-checkbox>
+        <a-checkbox :value="Today" @change="onChangeToday">今天</a-checkbox>
+      </a-form-item>
+      
+       <a-form-item>
+        <a-checkbox :value="Exception" @change="onChangeException">异常</a-checkbox>
       </a-form-item>
 
       <a-form-item>
@@ -54,14 +58,14 @@
         <a-button @click="OnClick(id)" icon="search">详情</a-button>
       </template>
 
-      <template slot="serviceName" slot-scope="serviceName">
+      <!-- <template slot="serviceName" slot-scope="serviceName">
           <a-tooltip placement="topLeft"  >
         <template slot="title">
           <span >{{serviceName}}</span>
         </template>
         <span >{{`${serviceName.substring(0,40)}…`}}</span>
         </a-tooltip>
-      </template>
+      </template> -->
     </a-table>
     <LogsModalFrom ref="LogsModalFrom"/>
   </a-card>
@@ -87,6 +91,7 @@ export default {
       form: this.$form.createForm(this),
       Hour: false,
       Today: false,
+      Exception:false,
       StartTime: null,
       EndTime: null,
       Message: null,
@@ -119,17 +124,24 @@ export default {
      this. Message= null
 
       }
-      this.form.Hour = e.target.checked
+      this.Hour = e.target.checked
     },
     //今天
     onChangeToday(e) {
        if( e.target.checked===false){
-   this.StartTime= null,
-      this.EndTime= null,
-     this. Message= null
+        this.StartTime= null,
+        this.EndTime= null,
+        this. Message= null
       }
-      this.form.Today = e.target.checked
+      this.Today = e.target.checked
     },
+    //异常查询
+    onChangeException(e){
+      this.Exception=e.target.checked
+
+      
+    },
+
 
     //查询的方法
     OnClickSelect() {
@@ -140,19 +152,20 @@ export default {
         this.StartTime =values.StartTime!==null?this.$moment(values.StartTime).format('YYYY-MM-DD HH:mm:ss.sss'):values.StartTime
         this.EndTime =values.EndTime!==null?this.$moment(values.EndTime).format('YYYY-MM-DD HH:mm:ss.sss'):values.EndTime 
         this.Message=values.Message
-       
-        if (this.form.Hour === true) {
+        
+        if (this.Hour === true) {
           var frontOneHour = new Date(new Date().getTime() - 1 * 60 * 60 * 1000)
 
           this.StartTime = this.$moment(frontOneHour).format('YYYY-MM-DD HH:mm:ss.sss')
           this.EndTime = new Date(new Date())
-        } else if (this.form.Today === true) {
+        } else if (this.Today === true) {
           var weehours = new Date(new Date().setHours(0, 0, 0, 0))
             // console.log(this.$moment(weehours).format('YYYY-MM-DD HH:mm:ss.sss'))
-
-            this.StartTime= weehours
-            this.EndTime= new Date(new Date())
+          this.StartTime= weehours
+          this.EndTime= new Date(new Date())
         }
+       
+
         if (!err) {
           this._loadData()
         }
@@ -176,6 +189,7 @@ export default {
         StartTime: _this.StartTime,
         EndTime: _this.EndTime,
         Message: _this.Message,
+        Exception:_this.Exception,
         SkipCount: (this.pagination.current - 1) * this.pagination.pageSize,
         MaxResultCount: this.pagination.pageSize
       }
@@ -206,7 +220,7 @@ export default {
 
 <style >
 
-.ant-tooltip-inner {
+  .ant-tooltip-inner {
     padding: 6px 8px;
     color: #fff;
     text-align: left;
