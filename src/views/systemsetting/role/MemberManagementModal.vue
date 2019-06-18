@@ -10,7 +10,14 @@
   >
     <a-form :form="form" layout="inline">
       <a-form-item label="用户姓名">
-        <a-input @change="OnChange" v-decorator="['UserName',{rules: []} ]" placeholder="请输用户姓名搜索"></a-input>
+        <!-- <a-input @change="OnChange" v-decorator="['UserName',{rules: []} ]" placeholder="请输用户姓名搜索"></a-input> -->
+      <a-input-search
+      placeholder="请输用户姓名搜索"
+      @search="onSearch"
+      enterButton
+    />
+    
+      
       </a-form-item>
       <a-form-item label="查看角色成员">
         <a-select style="width:150px"  v-decorator="['id',{rules: [],initialValue:1}]"
@@ -36,6 +43,7 @@
       :columns="columns"
       :pagination="false"
       :loading="loading"
+      
       rowKey="key"
       size="small"
     />
@@ -59,7 +67,7 @@ export default {
         pageSize: 10,
         total: 50
       },
-      UserName: '',
+      Surname: '',
       selectedRowKeys: [],
       visible: false,
       tableData: [],
@@ -74,7 +82,7 @@ export default {
     }
   },
   mounted() {
-    this._LoadData()
+   // this._LoadData()
   },
   computed: {},
   methods: {
@@ -154,39 +162,17 @@ export default {
       }else{
          this.RoleStaic = value
       }
-        
+      this.Surname=''
       this.loading = true
       this._LoadData()
     },
     //用户名称的搜索事件
-    OnChange(e) {
-        console.log(e)
-
-     // var  DataArr=this.tableData
-
-    
-      var data = this.tableData.filter(es => {
-        return es.surname.indexOf(e.data) >= 0
-      })
-
-      if(data.length > 0){
-         this.tableData = data
-      }else{
-        this.tableData =[]
-      }
-
-      if(e.data===null){
-        this.tableData=this.DataArr
-      }
-
-
-
-      // if (data.length > 0) {
-      //   this.tableData = data
-      // } else {
-      //    this.loading = true
-      //   this._LoadData()
-      // }
+    onSearch(value) {
+      
+        this.loading = true
+        this.Surname=value
+        this._LoadData()
+      
     },
 
     //查询全部的方法
@@ -195,6 +181,7 @@ export default {
       var params = {
         RoleStaic: _this.RoleStaic,
         RoleId: _this.RoleId,
+        Surname:_this.Surname,
         SkipCount: (this.pagination.current - 1) * this.pagination.pageSize,
         MaxResultCount: this.pagination.pageSize
       }
@@ -209,12 +196,16 @@ export default {
               let index=0
               console.log(result)
              result.items.forEach(e=>{
-                 e.key=index+=1
+             e.key=index+=1
 
             if (e.roleId !== null&&e.roleId===_this.RoleId) {
                 _this.selectedRowKeys.push(e.key)
                 _this.selectedRows.push(e)
-              }
+            }
+              // else{
+              //    _this.selectedRowKeys.push(e.key)
+              //   _this.selectedRows.push(e)
+              // }
 
                  _this.tableData.push(e)
                  _this.DataArr.push(e)
