@@ -25,7 +25,7 @@
           v-decorator="['FName',{rules:[{required:true,message: '请输入资源名称' }], initialValue: this.formData.fName}]"
         ></a-input>
       </a-form-item></a-col>
-        <a-col :span="8"><a-form-item label="工作中心" class="formmargin-left">
+        <a-col :span="8"><a-form-item label="工作中心" >
         <a-select       
           style="width: 174px"
           @change="handleWorkCenterChange"        
@@ -46,7 +46,7 @@
      
 
       <a-row>
-        <a-col :span="8"> <a-form-item label="资源类型" class="formmargin-left">
+        <a-col :span="8"> <a-form-item label="资源类型" >
         <a-select
           class="selectclass"
           v-decorator="['FType',{rules:[{required:true,message: '请选择资源类型' }], 
@@ -59,8 +59,8 @@
       </a-form-item></a-col>
          <a-col :span="8">   <a-form-item label="产能系数" class="formmargin-left">
         <a-input v-decorator="['fRunsRate',{ initialValue: this.formData.fRunsRate}]"></a-input>
-      </a-form-item></a-col>
-        <a-col :span="8"><a-form-item label="时间单位" >
+      </a-form-item ></a-col>
+        <a-col :span="8"><a-form-item label="时间单位" class="formmargin-left">
         <a-select
           class="selectclass"
           v-decorator="['FTimeUnit',{
