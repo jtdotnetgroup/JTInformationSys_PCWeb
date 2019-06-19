@@ -217,6 +217,7 @@ export default {
     // 提交
     handleSubmit(obj) {
       var _this = this
+      obj.name = obj.surname
       _this.ShowLoad()
       DataAddOrPUT(obj)
         .then(res => {
