@@ -62,9 +62,10 @@ const err = (error) => {
         break
       }
       case 400: {
-        data.details.forEach(e => {
-          message.error(e, 2)
-        })
+        // data.details.forEach(e => {
+        //   message.error(e, 2)
+        // })
+        message.error(data.error.details, 2)
         break
       }
     }
