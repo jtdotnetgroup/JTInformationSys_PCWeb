@@ -310,8 +310,7 @@ export default {
           // {
           //   this.$message.error('手机号码不正确')
           //   return;
-          // }
-      
+          // }     
           // if(!regular.Email.test(values.FEmailAddress))
           // {
           //   this.$message.error('邮箱格式不正确')
