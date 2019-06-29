@@ -30,13 +30,28 @@
             :key="index"
             :value="item.id"
           >{{item.fName}}</a-select-option>
-        </a-select> -->
+        </a-select>-->
         <a-button @click="showEmployeeForm(record)">
           {{text}}
           <a-icon type="search"></a-icon>
         </a-button>
       </template>
+      <!-- 设备 -->
+      <template slot="machine" slot-scope="text,record">
+        <!-- <a-select v-model="record.fWorkerID">
+          <a-select-option
+            v-for="(item,index) in workers"
+            :key="index"
+            :value="item.id"
+          >{{item.fName}}</a-select-option>
+        </a-select>-->
+        <a-button @click="showSelequipment(record)">
+          {{text}}
+          <a-icon type="search"></a-icon>
+        </a-button>
+      </template>
     </a-table>
+    <Selequipment ref="Selequipment" @selectChange="handleequipmentChange"/>
     <EmployeeSelectForm ref="EmployeeSelectForm" @selectChange="handleEmployeeChange"/>
   </a-modal>
 </template>
@@ -52,7 +67,8 @@ export default {
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
     EditableCellSelect: () => import('./pubilcvue/EditableCellSelect'),
     EditableCellInput: () => import('@/JtComponents/JITEditCell'),
-    EmployeeSelectForm:()=>import('@/JtComponents/EmployeeSelectForm')
+    EmployeeSelectForm: () => import('@/JtComponents/EmployeeSelectForm'),
+    Selequipment: () => import('./Selequipment')
   },
   methods: {
     handleBtnClickModal(val) {
@@ -66,10 +82,20 @@ export default {
         }
       }
     },
-    handleEmployeeChange(emp,row){
+    showEmployeeForm(record) {
+      this.$refs.EmployeeSelectForm.show(record)
+    },
+    showSelequipment(record) {
+      this.$refs.Selequipment.show(record)
+    },
+    handleEmployeeChange(emp, row) {
       console.log(row)
-       this.dataSource[row.key].fWorkerID=emp.id
-       this.dataSource[row.key].worker=emp.fName
+      this.dataSource[row.key].fWorkerID = emp.id
+      this.dataSource[row.key].worker = emp.fName
+    },
+    handleequipmentChange(emp, row) {
+      this.dataSource[row.key].fMachineID = emp.fInterID
+      this.dataSource[row.key].machine = emp.fName
     },
     saveData() {
       this.loading = true
@@ -99,8 +125,9 @@ export default {
         })
         .catch(err => {
           console.log(err)
-        }).finally(()=>{
-          this.loading = false
+        })
+        .finally(() => { 
+          this.onClose()
         })
     },
     show(data) {
@@ -142,7 +169,7 @@ export default {
         })
     },
     handleSubmit() {
-      this.onClose()
+        this.saveData()
     },
     onCellChange(rowData, dataIndex, value) {
       const dataSource = [...this.dataSource]
@@ -153,12 +180,10 @@ export default {
       }
     },
     onClose() {
+       this.$emit('selectChange')
       this.dataSource = []
       this.DailyData = {}
       this.visible = false
-    },
-    showEmployeeForm(record){
-      this.$refs.EmployeeSelectForm.show(record);
     }
   },
   data() {
@@ -188,7 +213,6 @@ export default {
       return result
     },
     workers() {
-
       if (this.$store.getters.workers.length === 0) {
         this.$store.dispatch('GetWorkers')
       }

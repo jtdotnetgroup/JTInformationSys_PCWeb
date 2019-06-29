@@ -8,7 +8,8 @@ const buttons = {
   { text: '导出', icon: '', type: 'default' },
   { text: '结转', icon: '', type: 'default' },
   { text: '暂停', icon: '', type: 'default' },
-  { text: '启动', icon: '', type: 'default' }
+  { text: '启动', icon: '', type: 'default' },
+  { text: '增加排产', icon: '', type: 'default' }
   ],
 
   buttonps: [

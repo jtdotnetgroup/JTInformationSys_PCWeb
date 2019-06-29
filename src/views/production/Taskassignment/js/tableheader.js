@@ -42,7 +42,8 @@ const exampleMX = {
   'fShift': '班次',
   'fCommitAuxQty': '派工数量',
   'fBiller': '计划员',
-  'dispFid': 'dispFid'
+  'dispFid': 'dispFid',
+  'fStatus': '状态'
 }
 
 export const columns = GenericColumns(example)

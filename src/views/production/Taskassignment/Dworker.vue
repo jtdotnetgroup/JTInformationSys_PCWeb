@@ -1,7 +1,8 @@
 <template>
   <a-card>
+    <!-- 功能按钮 -->
     <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonp"/>
-
+    <!-- 分页 -->
     <pagination
       :current="pagination.current"
       :pageSizeOptions="pagination.pageSizeOptions"
@@ -9,7 +10,6 @@
       :total="pagination.total"
       @pageChange="pageChangeClick"
     />
-
     <!-- 表格 -->
     <a-table
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
@@ -47,25 +47,25 @@
       :dataSource="tableDataMX"
       :scroll="{x:1400,y:400}"
     >
-    <template slot="actions" slot-scope="text,record">
-      <a-button type="primary">编辑</a-button>
-      <a-button type="danger">关闭</a-button>
-      <a-button  @click="showException(record)">异常</a-button>
-    </template>
+      <template slot="actions" slot-scope="text,record">
+        <a-button @click="BJMX(record)" type="primary">编辑</a-button>
+        <a-button @click="GBMX(record)" type="danger">关闭</a-button>
+        <a-button @click="showException(record)">异常</a-button>
+      </template>
     </a-table>
 
-    <DispatchWorkModalForm ref="DispatchWorkModalForm"/>
+    <DispatchWorkModalForm ref="DispatchWorkModalForm" @selectChange="SXsetRow"/>
 
-    <ExceptionModal ref="ExceptionModal" />
+    <ExceptionModal ref="ExceptionModal"/>
+    <AddScheduling ref="AddScheduling" @addSuccess="SXsetRow"/>
   </a-card>
-  
 </template>
 
 <script>
 import buttons from './js/buttons'
 import { columnsMX, columnsMT, columns as mainColumns } from './js/tableheader'
 import { columns } from './js/tablehhe'
-import { GetAllDispBill,GetDailyDispBillList } from '@/api/DispBill'
+import { GetAllDispBill, GetDailyDispBillList, CloseDispBill } from '@/api/DispBill'
 
 import { getRoleList, getServiceList } from '@/api/manage'
 import { GetDailyAll, GetDispBillAll, CreateAll, GetDaily } from '@/api/test/get'
@@ -81,7 +81,8 @@ export default {
     EditableCell: () => import('./pubilcvue/EditableCellSelect'),
     EditableCellInput: () => import('./pubilcvue/EditableCellInput'),
     DispatchWorkModalForm: () => import('./DispatchWorkModalForm'),
-    ExceptionModal:()=>import('./ICMOException')
+    ExceptionModal: () => import('./ICMOException'),
+    AddScheduling:()=>import('./AddScheduling')
   },
   data() {
     return {
@@ -117,7 +118,8 @@ export default {
       dataSource: [],
       tableDataMX: [],
       dataTableArry: [],
-      dataTableArrget: []
+      dataTableArrget: [],
+      djsetRow: {}
     }
   },
   mounted() {
@@ -126,6 +128,39 @@ export default {
 
   //一开始就执行的方法
   methods: {
+    // 编辑明细
+    BJMX(record) {
+      console.log(record)
+      this.$refs.DispatchWorkModalForm.show([record])
+    },
+    // 关闭明细
+    GBMX(record) {
+      var _this = this
+      console.log(record)
+      this.$confirm({
+        title: '确定要关闭该任务吗?',
+        content: '系统提示',
+        onOk() {
+          var obj = { id: record.dispFid }
+          CloseDispBill(obj)
+            .then(res => {
+              if (res.success) {
+                _this.$message.success('删除成功')
+              } else {
+                _this.$notification['error']({
+                  message: res.error.message,
+                  description: res.error.details
+                })
+              }
+            })
+            .finally(() => {})
+        },
+        onCancel() {
+          console.log('Cancel')
+        },
+        class: 'test'
+      })
+    },
     _LoadMainData() {
       const params = {
         SkipCount: (this.pagination.current - 1) * this.pagination.pageSize,
@@ -155,7 +190,7 @@ export default {
         })
     },
 
-    showException(record){
+    showException(record) {
       console.log(record)
       this.$refs.ExceptionModal.show(record.dispFid)
     },
@@ -210,7 +245,6 @@ export default {
         this.count = count + 1
       } else if (val == '保存') {
         alert('保存')
-
         console.log(this.dataSource)
         var params = {
           details: this.dataSource
@@ -247,41 +281,53 @@ export default {
         this.dataSource = dataSource
       }
     },
-
+    SXsetRow() {
+      console.log(this.djsetRow)
+      this.GetMXGetDailyDispBillList(this.djsetRow)
+    },
     setRow(record) {
       return {
         on: {
           //表格行点击事件
           click: () => {
-            var params = { fmoBillNos: [record.fmoBillNo], DatelList: [record.fDate]}
-            GetDailyDispBillList(params)
-              .then(res => {
-                var result = res.result
-                if (result && result.items.length > 0) {
-                  let index = 0
-                  result.items.forEach(e => {
-                    e.key = index
-                    index++
-                    e.fDate = this.$moment(e.fDate).format('YYYY-MM-D')
-                    e.fBillTime = this.$moment(e.fBillTime).format('YYYY-MM-DD hh:mm:ss')
-                  })
-
-                  this.tableDataMX = result.items
-                }
-              })
-              .catch(err => {})
-              .finally(() => {})
+            this.djsetRow = record
+            this.GetMXGetDailyDispBillList(record)
           }
         }
       }
     },
-
+    GetMXGetDailyDispBillList(record) {
+      var params = { fmoBillNos: [record.fmoBillNo], DatelList: [record.fDate] }
+      GetDailyDispBillList(params)
+        .then(res => {
+          var result = res.result
+          if (result && result.items.length > 0) {
+            let index = 0
+            result.items.forEach(e => {
+              e.key = index
+              index++
+              e.fDate = this.$moment(e.fDate).format('YYYY-MM-D')
+              e.fBillTime = this.$moment(e.fBillTime).format('YYYY-MM-DD hh:mm:ss')
+            })
+            this.tableDataMX = result.items
+          }
+        })
+        .catch(err => {})
+        .finally(() => {})
+    },
     handleBtnClick(val) {
       switch (val) {
         case '派工': {
           if (this.selectedRows.length > 0) {
             var rowSelection = this.selectedRows
             this.$refs.DispatchWorkModalForm.show(rowSelection)
+          }
+        }
+        case '增加排产': {
+          if (this.selectedRows.length > 0) {
+            var rowSelection = this.selectedRows
+            
+            this.$refs.AddScheduling.showModal(rowSelection)
           }
         }
       }

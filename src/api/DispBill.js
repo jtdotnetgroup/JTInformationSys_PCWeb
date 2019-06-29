@@ -23,3 +23,14 @@ export function GetAllDispBill (params) {
     params
   })
 }
+
+export function CloseDispBill (params) {
+  return axios({
+    url: '/api/services/app/ICMODispBill/CloseOrder',
+    method: 'DELETE',
+    params,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
