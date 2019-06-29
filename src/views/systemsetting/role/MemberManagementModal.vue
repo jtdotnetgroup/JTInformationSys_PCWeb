@@ -23,7 +23,7 @@
     </div>
       
       </a-form-item>
-      <a-form-item label="查看角色成员">
+      <a-form-item  label="查看角色成员">
         <a-select style="width:150px"  v-decorator="['id',{rules: [],initialValue:1}]"
              @change="SelectClick" >
           <a-select-option 

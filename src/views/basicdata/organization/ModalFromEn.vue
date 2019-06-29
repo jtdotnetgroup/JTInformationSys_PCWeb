@@ -79,13 +79,13 @@
         <a-input v-decorator="['UserName',{rules: []} ]"  :disabled="IsEdit&&!!this.mdl.UserName"></a-input>
       </a-form-item>
       <a-form-item label="员工密码">
-        <a-input v-decorator="['Password',{rules: [{ required: false, message: '请输入员工密码' }]}  ]" :disabled="IsEdit&&!!this.mdl.Password" ></a-input>
+        <a-input type="Password" v-decorator="['Password',{rules: [{ required: false, message: '请输入员工密码' }]}  ]" :disabled="IsEdit&&!!this.mdl.Password" ></a-input>
       </a-form-item>
   </a-col>
 </a-row>
   <a-row>
     <a-col :span="12"><a-form-item label="手机号码">
-          <a-input v-decorator="['FPhone',{rules: [{ required: false, message: '请输入手机号码' }]} ]"></a-input>
+          <a-input autocomplete="off" v-decorator="['FPhone',{rules: [{ required: false, message: '请输入手机号码' }]} ]"></a-input>
         </a-form-item></a-col>
     <a-col :span="12"> <a-form-item label="入职日期">
           <a-date-picker
@@ -94,7 +94,7 @@
         </a-form-item></a-col>
   </a-row>
       <a-form-item label="邮件地址">
-        <a-input
+        <a-input autocomplete="off"
           v-decorator="['FEmailAddress',{rules: [{ required: false, message: '请输入正确邮件地址'}]} ]"
         ></a-input>
       </a-form-item>
@@ -300,6 +300,7 @@ export default {
              values.fDepartment=this.formData.fDepartment     
           }         
           values.fUserId=this.formData.fUserId
+           values.FHiredate=this.$moment(values.FHiredate).format('YYYY-MM-DD')
 
           values.user={
             UserName:values.UserName,
@@ -310,8 +311,7 @@ export default {
           // {
           //   this.$message.error('手机号码不正确')
           //   return;
-          // }
-      
+          // }     
           // if(!regular.Email.test(values.FEmailAddress))
           // {
           //   this.$message.error('邮箱格式不正确')
