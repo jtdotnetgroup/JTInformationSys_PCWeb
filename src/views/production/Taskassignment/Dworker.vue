@@ -145,7 +145,8 @@ export default {
           CloseDispBill(obj)
             .then(res => {
               if (res.success) {
-                _this.$message.success('删除成功')
+                _this.$message.success('关闭成功')
+                _this.SXsetRow()
               } else {
                 _this.$notification['error']({
                   message: res.error.message,
