@@ -3,6 +3,9 @@
     <a-tree
       style="overflow-x:auto;overflow-y:hidden;width:100%;height:600px;"
       :treeData="organizations"
+
+       v-if="organizations.length"
+         :defaultExpandedKeys="['001']"
       @select="onButtonClick"
     ></a-tree>
   </div>
@@ -12,6 +15,7 @@
 import { GetTreeList } from '@/api/Organization'
 import store from '@/store'
 export default {
+  name:"outree",
   data() {
     return {
       // organizations:store.getters.organizations
@@ -51,7 +55,7 @@ export default {
     organizations() {
       return store.getters.organizations
     },
-    
+  
     defaultExpandKeys(){
       const keys=[]
       store.getters.organizations.forEach(e => {

@@ -3,7 +3,7 @@
     <a-row>
       <a-col :span="21" :push="3" style="padding-left:10px;">
         <!--功能按钮-->
-        <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons" :search="true"/>
+        <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons" :search="true" />
         <!--表格-->
         <a-table
           size="small"
@@ -12,35 +12,37 @@
           :columns="columns"
           :loading="loading"
           :pagination="false"
-          rowKey="id"
-          :rowSelection="{onChange: onSelectChange}"
+          rowKey="basicInfoId"
+          :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         >
           <template
             v-for="col in ['BICode', 'BIName', 'BIType','BIDescribe','BIOrder','BIJson']"
             :slot="col"
-            slot-scope="text"
+            slot-scope="text,record,index"
           >
             <div :key="col">
               <a-input
-              class="NewInput"
+                class="NewInput"
                 v-if="true"
                 style="margin: -5px 0"
-                :value="text" 
-              /> 
+                :value="text"
+                @change="e => handleChange(e.target.value, index, col)"
+              />
             </div>
           </template>
         </a-table>
         <!--其他页面模板-->
-        <AddOrEdit ref="AddOrEdit" @addSuccess="Refresh"/>
+        <AddOrEdit ref="AddOrEdit" @addSuccess="Refresh" />
       </a-col>
       <a-col :span="3" :pull="21" style="border-right: 1px solid #e2e2e2;">
         <a-tree
           showLine
-          defaultExpandAll
+         
+         v-if="treeData.length"
+         :defaultExpandedKeys="['0']"
           v-model="checkedKeys"
           :treeData="treeData"
           @select="onSelect"
-          :defaultSelectedKeys="SelId"
         ></a-tree>
       </a-col>
     </a-row>
@@ -105,7 +107,7 @@ const columns = [
 ]
 
 // 获取数据
-import { GetAll, GetAll3 } from '@/api/basicinfo'
+import { GetAll, GetAll3, Create, Delete } from '@/api/basicinfo'
 export default {
   // 组件
   components: {
@@ -132,11 +134,22 @@ export default {
       treeData: [],
       checkedKeys: ['0-0'],
       SelId: null,
-      selectedRowKeys: [],
-      selectedRows: []
+      selectedRowKeys: []
     }
   },
   methods: {
+
+    //行编辑的方法
+    handleChange(value, key, column) {
+    
+      const newData = [...this.dataSource]
+      const target = newData[key]
+      if (target) {
+        target[column] = value
+        this.dataSource = newData
+      }
+    },
+
     // 选项卡切换时
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
@@ -167,7 +180,17 @@ export default {
     GettTreeData() {
       GetAll3().then(res => {
         if (res.success) {
-          this.treeData = res.result
+          var obj = [
+            {
+              title: '系统信息',
+              key: '0',
+              basicInfoId: null,
+              biurl: '',
+              children: res.result
+            }
+          ]
+          this.treeData = obj
+
           this.GetData()
         }
       })
@@ -180,6 +203,8 @@ export default {
       GetAll(obj)
         .then(res => {
           if (res.success) {
+            _this.selectedRowKeys = []
+            _this.selectedRows=[]
             var i = 0
             res.result.forEach(item => {
               i++
@@ -206,33 +231,86 @@ export default {
         .finally(() => {
           _this.HideLoad()
         })
-
     },
-    YesBJ(){
-       const newData = [...this.dataSource]
-       newData.forEach(element => {
-         element.editable =true;
-       });
+    YesBJ() {
+      const newData = [...this.dataSource]
+      newData.forEach(element => {
+        element.editable = true
+      })
     },
     // 刷新
     Refresh() {
       this.GettTreeData()
     },
-    //
+
+    //移除行的公共方法
+    DeleteRowData() {
+        this.selectedRowKeys = []
+       this.selectedRows.forEach(e => {
+        const dataSource = [...this.dataSource]
+        this.dataSource = dataSource.filter(item => item.XH !== e.XH)
+        
+
+      })
+    },
+
+    //移除数据库的数据
+    DeleteData(){
+
+      var _this=this;
+
+       // 提示是否执行删除，是则继续，否则温馨提示
+              _this.$confirm({
+                title: '系统提示！',
+                content: '确定要删除选中的吗?',
+                onOk() {
+                  _this.ShowLoad()
+
+                  Delete(_this.selectedRows)
+                    .then(res => {
+                      if (res.result > 0) {
+                        _this.$message.success('成功')
+
+                        _this.DeleteRowData()
+
+                        _this.selectedRows = []
+                      } else {
+                        _this.$message.error('失败')
+                      }
+                    })
+                    .catch(err => {
+                      console.log(err)
+                    })
+                    .finally(() => {
+                      _this.HideLoad()
+                    })
+                },
+                onCancel() {
+                  _this.loading = false
+                  _this.$notification['warning']({
+                    message: '系统提示',
+                    description: '数据要谨慎删除！'
+                  })
+                }
+              })
+
+    },
+
     // 功能按钮点击事件
     handleBtnClick(val) {
       var _this = this
       switch (val) {
         case '刷新': {
-          alert(JSON.stringify(_this.dataSource))
           _this.GetData()
           break
         }
         case '新增': {
+          var Time = this.$moment().format('YYYY-MM-DD HH:mm:ss.sss')
+
           const { count, dataSource } = this
           const obj = {}
           obj.XH = this.dataSource.length + 1
-          obj.BasicInfoId = ''
+          obj.BasicInfoId = 0
           obj.BICode = ''
           obj.BIName = ''
           obj.BIType = ''
@@ -241,60 +319,49 @@ export default {
           obj.BIJson = ''
           obj.BIURL = ''
           obj.BIState = ''
-          obj.IsDeleted = ''
-          obj.ParentId = ''
-          obj.CreateTime = ''
-          obj.CreateUserId = ''
+          obj.IsDeleted = false
+          obj.ParentId = this.SelId
+          obj.CreateTime = Time
+          obj.CreateUserId = 0
           obj.Remark = ''
           _this.dataSource = [...dataSource, obj]
           _this.count = count + 1
           break
         }
         case '保存': {
+        
+          if (!(_this.dataSource.filter(item => item.BICode.length===0).length===0)) {
+            _this.$message.warning('唯一标识不能为空')
+            return
+          }
+
+           _this.ShowLoad()
+
+          Create(_this.dataSource)
+            .then(res => {
+              if (res.result > 0) {
+                _this.$message.success('成功')
+                this.Refresh()
+              } else {
+                _this.$message.error('失败')
+              }
+            })
+            .catch(err => {
+              console.log(err)
+            })
+            .finally(() => {
+              _this.HideLoad()
+            })
           break
         }
         case '删除': {
-          if (_this.selectedRows.length !== 1) {
-            _this.$notification['warning']({
-              message: '系统提示',
-              // description: '请选择一个或一个以上'
-              description: '请选择一个'
-            })
-            return
+         
+          if (_this.selectedRows.filter(item => item.BasicInfoId>0).length>0) {
+            _this.DeleteData()
+          }else{
+             _this.DeleteRowData()
           }
-          // 提示是否执行删除，是则继续，否则温馨提示
-          _this.$confirm({
-            title: '系统提示！',
-            content: '确定要删除选中的吗?',
-            onOk() {
-              _this.ShowLoad()
-              DataDel(_this.selectedRows[0])
-                .then(res => {
-                  if (res.success) {
-                    _this.$notification['success']({
-                      message: '系统提示',
-                      description: '删除成功'
-                    })
-                    _this.loadTable()
-                  } else {
-                    _this.$notification['error']({
-                      message: res.error.message,
-                      description: res.error.details
-                    })
-                  }
-                  _this.HideLoad()
-                })
-                .catch(function() {
-                  _this.HideLoad()
-                })
-            },
-            onCancel() {
-              _this.$notification['warning']({
-                message: '系统提示',
-                description: '数据要谨慎删除！'
-              })
-            }
-          })
+
           break
         }
         default: {
@@ -314,8 +381,8 @@ export default {
 }
 </script>
 <style>
-.NewInput{
+.NewInput {
   border: 0px;
-  border-radius:0px; 
+  border-radius: 0px;
 }
 </style>
