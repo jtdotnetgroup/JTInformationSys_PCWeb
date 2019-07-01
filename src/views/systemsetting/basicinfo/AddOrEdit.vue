@@ -11,7 +11,7 @@
     >
       <a-form :form="form" @submit="handleSubmit" :layout="formLayout">
         <a-form-item
-          v-show="fasle"
+          v-show="false"
           label="id"
           :label-col="formItemLayout.labelCol"
           :wrapper-col="formItemLayout.wrapperCol"

@@ -14,3 +14,19 @@ export function GetAll3 (params) {
     params: params
   })
 }
+
+export function Create (params) {
+  return axios({
+    url: '/api/services/app/Sys_BasicInfo/Create',
+    method: 'post',
+    data: params
+  })
+}
+
+export function Delete (params) {
+  return axios({
+    url: '/api/services/app/Sys_BasicInfo/Delete',
+    method: 'post',
+    data: params
+  })
+}

@@ -1,6 +1,8 @@
 <template>
   <div>
     <a-tree :treeData="organizations" 
+     v-if="organizations.length"
+         :defaultExpandedKeys="['001']"
     @select="onButtonClick" 
     @expand="onExpand"></a-tree>
   </div>
