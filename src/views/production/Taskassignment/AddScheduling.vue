@@ -11,34 +11,34 @@
   >
     <a-form :form="form">
       <a-form-item label="任务单号" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
-        <a-input v-model="ParentRow.fmoBillNo" placeholder="请输入任任务单号" disabled="disabled"/>
+        <a-input v-model="ParentRow.fmoBillNo" placeholder="请输入任任务单号" disabled="disabled" />
       </a-form-item>
       <a-form-item label="任务日期" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
-        <a-input v-model="ParentRow.fDate" placeholder="请输入任日期" disabled="disabled"/>
-      </a-form-item>
-      <a-form-item label="任务设备" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
-        <a-input-search :placeholder="form.sb" disabled="disabled" @search="onSelequipment">
-          <a-button slot="enterButton">选择设备</a-button>
-        </a-input-search>
+        <a-input v-model="ParentRow.fDate" placeholder="请输入任日期" disabled="disabled" />
       </a-form-item>
       <a-form-item label="任务员工" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
         <a-input-search :placeholder="form.yg" disabled="disabled" @search="onEmployeeForm">
           <a-button slot="enterButton">选择员工</a-button>
         </a-input-search>
       </a-form-item>
+      <a-form-item label="任务设备" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
+        <a-input-search :placeholder="form.sb" disabled="disabled" @search="onSelequipment">
+          <a-button slot="enterButton">选择设备</a-button>
+        </a-input-search>
+      </a-form-item>
       <a-form-item label="派 工 数" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
-        <a-input v-model="form.fCommitAuxQty" placeholder="请输入派工数"/>
+        <a-input v-model="form.fCommitAuxQty" placeholder="请输入派工数" />
       </a-form-item>
     </a-form>
     <!-- 选择员工和选择设备 -->
-    <Selequipment ref="Selequipment" @selectChange="handleequipmentChange"/>
-    <EmployeeSelectForm ref="EmployeeSelectForm" @selectChange="handleEmployeeChange"/>
+    <Selequipment ref="Selequipment" @selectChange="handleequipmentChange" />
+    <EmployeeSelectForm ref="EmployeeSelectForm" @selectChange="handleEmployeeChange" />
   </a-modal>
 </template>
 <!-- 脚本 -->
 <script>
 // 处理数据
-import { CreateAll } from '@/api/test/get'
+import { SaveDispBillList } from '@/api/DispBill'
 export default {
   //
   components: {
@@ -121,21 +121,22 @@ export default {
         return
       }
       _this.ShowLoad()
-      var obj = {
-        details: [
-          {
-            fSrcID: ParentRow.id, //任务单ID
-            fShift: 0, //班次
-            fMachineID: _this.form.fMachineID, //设备
-            fWorkCenterID: _this.form.fWorkCenterID, //车间
-            fCommitAuxQty: _this.form.fCommitAuxQty * 1, //派工数量
-            fmoInterID: ParentRow.id, //任务单ID
-            fWorker: _this.form.fWorker // 员工
-          }
-        ],
-        id: ''
-      }
-      CreateAll(obj)
+      var obj = { details: [] }
+      obj.details.push({
+        fid: _this.ParentRow.fId,
+        fmoBillNo: _this.ParentRow.fmoBillNo,
+        fSrcID: _this.ParentRow.fId, //任务单ID
+        fShift: 0, //班次
+        fMachineID: _this.form.fMachineID, //设备
+        fWorkCenterID: _this.form.fWorkCenterID, //车间
+        fCommitAuxQty: _this.form.fCommitAuxQty * 1, //派工数量
+        fmoInterID: 0, //任务单ID
+        fWorker: _this.form.fWorker, // 员工
+        ICMODispBillId: 0
+      })
+      console.log(_this.ParentRow)
+      console.log(obj)
+      SaveDispBillList(obj)
         .then(res => {
           if (res.success) {
             this.onClose()

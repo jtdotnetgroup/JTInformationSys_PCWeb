@@ -249,6 +249,7 @@ export default {
         var params = {
           details: this.dataSource
         }
+         console.log(params)
         CreateAll(params)
           .then(res => {
             console.log(res)

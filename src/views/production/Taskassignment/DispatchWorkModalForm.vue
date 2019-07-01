@@ -110,7 +110,8 @@ export default {
           fCommitAuxQty: row.fCommitAuxQty,
           fWorker: row.fWorkerID,
           fmoBillNo: row.fmoBillNo,
-          fmoInterID: row.fmoInterID
+          fmoInterID: row.fmoInterID,
+          ICMODispBillId:row.dispFid
         })
       })
 
