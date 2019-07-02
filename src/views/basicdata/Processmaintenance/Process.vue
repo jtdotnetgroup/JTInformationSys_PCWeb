@@ -90,7 +90,6 @@ export default {
       this.pagination.pageSize = size
       this._LoadData()
     },
-
     //加载不良项目的方法
     _LoadData() {
       var _this = this
