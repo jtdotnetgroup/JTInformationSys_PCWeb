@@ -141,7 +141,7 @@ export default {
         pageSize: 10,
         total: 50
       },
-      rowvalue: 0,
+      rowvalue: 1,
       loading: false,
       columns,
       treeData: [],
@@ -200,11 +200,11 @@ export default {
             }
           ]
           this.treeData = obj
-
           this.GetData()
         }
       })
     },
+    // 获取表格数据
     GetData() {
       var _this = this
       _this.dataSource = []
@@ -274,10 +274,9 @@ export default {
             .then(res => {
               if (res.result > 0) {
                 _this.$message.success('成功')
-
                 _this.DeleteRowData()
-
                 _this.selectedRows = []
+                _this.GettTreeData()
               } else {
                 _this.$message.error('失败')
               }
@@ -322,7 +321,6 @@ export default {
       this.dataSource = [...dataSource, obj]
       this.count = count + 1
     },
-
     // 功能按钮点击事件
     handleBtnClick(val) {
       var _this = this
@@ -332,14 +330,9 @@ export default {
           break
         }
         case '新增': {
-          if (_this.rowvalue > 0) {
-            for (let index = 0; index < _this.rowvalue; index++) {
-              _this.addRow()
-            }
-          }else{
+          for (let index = 0; index < _this.rowvalue; index++) {
             _this.addRow()
           }
-
           break
         }
         case '保存': {
@@ -347,9 +340,7 @@ export default {
             _this.$message.warning('唯一标识不能为空')
             return
           }
-
           _this.ShowLoad()
-
           Create(_this.dataSource)
             .then(res => {
               if (res.result > 0) {
