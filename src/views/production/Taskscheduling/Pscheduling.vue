@@ -149,6 +149,7 @@ export default {
       GetTaskSchedulData(params)
         .then(res => {
           const result = res.result
+          this.dataSource=[];
           if (result) {
 
             result.items.forEach(e=>{

@@ -45,9 +45,8 @@
       <a-col :span="3" :pull="21" style="border-right: 1px solid #e2e2e2;">
         <a-tree
           showLine
-         
-         v-if="treeData.length"
-         :defaultExpandedKeys="['0']"
+          v-if="treeData.length"
+          :defaultExpandedKeys="['0']"
           v-model="checkedKeys"
           :treeData="treeData"
           @select="onSelect"
@@ -146,10 +145,8 @@ export default {
     }
   },
   methods: {
-
     //行编辑的方法
     handleChange(value, key, column) {
-    
       const newData = [...this.dataSource]
       const target = newData[key]
       if (target) {
@@ -157,7 +154,6 @@ export default {
         this.dataSource = newData
       }
     },
-
     // 选项卡切换时
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
@@ -212,7 +208,7 @@ export default {
         .then(res => {
           if (res.success) {
             _this.selectedRowKeys = []
-            _this.selectedRows=[]
+            _this.selectedRows = []
             var i = 0
             res.result.forEach(item => {
               i++
@@ -250,60 +246,52 @@ export default {
     Refresh() {
       this.GettTreeData()
     },
-
     //移除行的公共方法
     DeleteRowData() {
-        this.selectedRowKeys = []
-       this.selectedRows.forEach(e => {
+      this.selectedRowKeys = []
+      this.selectedRows.forEach(e => {
         const dataSource = [...this.dataSource]
         this.dataSource = dataSource.filter(item => item.XH !== e.XH)
-        
-
       })
     },
-
     //移除数据库的数据
-    DeleteData(){
+    DeleteData() {
+      var _this = this
 
-      var _this=this;
+      // 提示是否执行删除，是则继续，否则温馨提示
+      _this.$confirm({
+        title: '系统提示！',
+        content: '确定要删除选中的吗?',
+        onOk() {
+          _this.ShowLoad()
+          Delete(_this.selectedRows.filter(item => item.BasicInfoId !== 0))
+            .then(res => {
+              if (res.result > 0) {
+                _this.$message.success('成功')
 
-       // 提示是否执行删除，是则继续，否则温馨提示
-              _this.$confirm({
-                title: '系统提示！',
-                content: '确定要删除选中的吗?',
-                onOk() {
-                  _this.ShowLoad()
+                _this.DeleteRowData()
 
-                  Delete(_this.selectedRows)
-                    .then(res => {
-                      if (res.result > 0) {
-                        _this.$message.success('成功')
-
-                        _this.DeleteRowData()
-
-                        _this.selectedRows = []
-                      } else {
-                        _this.$message.error('失败')
-                      }
-                    })
-                    .catch(err => {
-                      console.log(err)
-                    })
-                    .finally(() => {
-                      _this.HideLoad()
-                    })
-                },
-                onCancel() {
-                  _this.loading = false
-                  _this.$notification['warning']({
-                    message: '系统提示',
-                    description: '数据要谨慎删除！'
-                  })
-                }
-              })
-
+                _this.selectedRows = []
+              } else {
+                _this.$message.error('失败')
+              }
+            })
+            .catch(err => {
+              console.log(err)
+            })
+            .finally(() => {
+              _this.HideLoad()
+            })
+        },
+        onCancel() {
+          _this.loading = false
+          _this.$notification['warning']({
+            message: '系统提示',
+            description: '数据要谨慎删除！'
+          })
+        }
+      })
     },
-
     // 功能按钮点击事件
     handleBtnClick(val) {
       var _this = this
@@ -337,13 +325,12 @@ export default {
           break
         }
         case '保存': {
-        
-          if (!(_this.dataSource.filter(item => item.BICode.length===0).length===0)) {
+          if (!(_this.dataSource.filter(item => item.BICode.length === 0).length === 0)) {
             _this.$message.warning('唯一标识不能为空')
             return
           }
 
-           _this.ShowLoad()
+          _this.ShowLoad()
 
           Create(_this.dataSource)
             .then(res => {
@@ -363,13 +350,11 @@ export default {
           break
         }
         case '删除': {
-         
-          if (_this.selectedRows.filter(item => item.BasicInfoId>0).length>0) {
+          if (_this.selectedRows.filter(item => item.BasicInfoId > 0).length > 0) {
             _this.DeleteData()
-          }else{
-             _this.DeleteRowData()
+          } else {
+            _this.DeleteRowData()
           }
-
           break
         }
         default: {

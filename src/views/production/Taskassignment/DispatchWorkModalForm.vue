@@ -94,6 +94,7 @@ export default {
       this.dataSource[row.key].worker = emp.fName
     },
     handleequipmentChange(emp, row) {
+      console.log(emp)
       this.dataSource[row.key].fMachineID = emp.fInterID
       this.dataSource[row.key].machine = emp.fName
     },
@@ -110,7 +111,8 @@ export default {
           fCommitAuxQty: row.fCommitAuxQty,
           fWorker: row.fWorkerID,
           fmoBillNo: row.fmoBillNo,
-          fmoInterID: row.fmoInterID
+          fmoInterID: row.fmoInterID,
+          ICMODispBillId:row.dispFid
         })
       })
 
