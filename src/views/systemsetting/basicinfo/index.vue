@@ -4,6 +4,13 @@
       <a-col :span="21" :push="3" style="padding-left:10px;">
         <!--功能按钮-->
         <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons" :search="true" />
+
+        <!-- <a-col :span=""></a-col>
+        <a-input addonBefore="增加行数"></a-input> -->
+
+
+
+
         <!--表格-->
         <a-table
           size="small"
@@ -12,7 +19,8 @@
           :columns="columns"
           :loading="loading"
           :pagination="false"
-          rowKey="basicInfoId"
+          rowKey="BasicInfoId"
+          
           :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         >
           <template
