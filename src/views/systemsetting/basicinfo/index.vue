@@ -3,13 +3,19 @@
     <a-row>
       <a-col :span="21" :push="3" style="padding-left:10px;">
         <!--功能按钮-->
-        <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons" :search="true" />
 
-        <!-- <a-col :span=""></a-col>
-        <a-input addonBefore="增加行数"></a-input> -->
+        <div class="container">
+          <div>
+            <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons" :search="true" />
+          </div>
+          <div>
+            <!-- <a-input addonBefore="增加行数"></a-input> -->
+            增加行数：
+            <a-input-number :min="1" v-model="rowvalue" />
+          </div>
+        </div>
 
-
-
+        <!-- <a-col :span=""></a-col>-->
 
         <!--表格-->
         <a-table
@@ -19,8 +25,7 @@
           :columns="columns"
           :loading="loading"
           :pagination="false"
-          rowKey="BasicInfoId"
-          
+          rowKey="XH"
           :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         >
           <template
@@ -136,6 +141,7 @@ export default {
         pageSize: 10,
         total: 50
       },
+      rowvalue: 0,
       loading: false,
       columns,
       treeData: [],
@@ -292,6 +298,31 @@ export default {
         }
       })
     },
+
+    //生成行的方法
+    addRow() {
+      var Time = this.$moment().format('YYYY-MM-DD HH:mm:ss.sss')
+      const { count, dataSource } = this
+      const obj = {}
+      obj.XH = this.dataSource.length + 1
+      obj.BasicInfoId = 0
+      obj.BICode = ''
+      obj.BIName = ''
+      obj.BIType = ''
+      obj.BIDescribe = ''
+      obj.BIOrder = ''
+      obj.BIJson = ''
+      obj.BIURL = ''
+      obj.BIState = ''
+      obj.IsDeleted = false
+      obj.ParentId = this.SelId
+      obj.CreateTime = Time
+      obj.CreateUserId = 0
+      obj.Remark = ''
+      this.dataSource = [...dataSource, obj]
+      this.count = count + 1
+    },
+
     // 功能按钮点击事件
     handleBtnClick(val) {
       var _this = this
@@ -301,27 +332,14 @@ export default {
           break
         }
         case '新增': {
-          var Time = this.$moment().format('YYYY-MM-DD HH:mm:ss.sss')
+          if (_this.rowvalue > 0) {
+            for (let index = 0; index < _this.rowvalue; index++) {
+              _this.addRow()
+            }
+          }else{
+            _this.addRow()
+          }
 
-          const { count, dataSource } = this
-          const obj = {}
-          obj.XH = this.dataSource.length + 1
-          obj.BasicInfoId = 0
-          obj.BICode = ''
-          obj.BIName = ''
-          obj.BIType = ''
-          obj.BIDescribe = ''
-          obj.BIOrder = ''
-          obj.BIJson = ''
-          obj.BIURL = ''
-          obj.BIState = ''
-          obj.IsDeleted = false
-          obj.ParentId = this.SelId
-          obj.CreateTime = Time
-          obj.CreateUserId = 0
-          obj.Remark = ''
-          _this.dataSource = [...dataSource, obj]
-          _this.count = count + 1
           break
         }
         case '保存': {
@@ -377,5 +395,10 @@ export default {
 .NewInput {
   border: 0px;
   border-radius: 0px;
+}
+.container {
+  display: grid;
+  grid-template-columns: 400px 300px;
+  grid-column-gap: 20px;
 }
 </style>
