@@ -34,6 +34,7 @@
     </a-table>
     <!--其他页面模板-->
     <AddOrEdit ref="AddOrEdit" @addSuccess="loadTable" />
+    <SearchForm ref="SearchForm" @addSuccess="loadTable" /> 
   </a-card>
 </template>
 <!--JS脚本-->
@@ -89,6 +90,7 @@ export default {
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
     editCell: () => import('@/JtComponents/JITEditCell'),
     pagination: () => import('@/JtComponents/Pagination'),
+    SearchForm: () => import('@/JtComponents/SearchForm'),
     AddOrEdit: () => import('./AddOrEdit')
   },
   // 所有数据
@@ -136,6 +138,10 @@ export default {
     handleBtnClick(val) {
       var _this = this
       switch (val) {
+        case '搜索': { 
+           _this.$refs.SearchForm.show({ id: 0 })
+          break
+        }
         case '刷新': {
           _this.loadTable()
           break

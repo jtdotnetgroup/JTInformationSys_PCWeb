@@ -65,18 +65,18 @@ export const asyncRouterMap = [
         name: 'Report',
         component: RouteView,
         hideChildrenInMenu: false,
-        meta: { title: '报表管理', keepAlive: true, icon: 'bar-chart' },
+        meta: { title: '报表管理', keepAlive: true, icon: 'bar-chart', permission: ['user'] },
         children: [
           {
             path: '/Report/DataSource',
             name: 'DataSource',
-            meta: { title: '数据源管理', keepAlive: true },
+            meta: { title: '数据源管理', keepAlive: true, permission: ['user'] },
             component: () => import('@/views/Report/DataSource/index')
           },
           {
             path: '/Report/Setting',
             name: 'Setting',
-            meta: { title: '报表设置', keepAlive: true },
+            meta: { title: '报表设置', keepAlive: true, permission: ['user'] },
             component: () => import('@/views/Report/Setting/index')
           }
         ]
@@ -89,23 +89,23 @@ export const asyncRouterMap = [
         name: 'basicdata',
         component: RouteView,
         hideChildrenInMenu: false,
-        meta: { title: '基础资料', keepAlive: true, icon: 'codepen' },
+        meta: { title: '基础资料', keepAlive: true, icon: 'codepen', permission: ['user'] },
         children: [
           {
             path: '/basicdata/organization',
             name: 'organization',
-            meta: { title: '组织架构', keepAlive: true },
+            meta: { title: '组织架构', keepAlive: true, permission: ['user'] },
             component: () => import('@/views/basicdata/organization/Organization')
           }, {
             path: '/basicdata/equipmentarchives',
             name: 'equipmentarchives',
-            meta: { title: '设备档案', keepAlive: true },
+            meta: { title: '设备档案', keepAlive: true, permission: ['user'] },
             component: () => import('@/views/basicdata/equipmentarchives/EquipmentArchives')
           },
           {
             path: '/basicdata/Processmaintenance',
             name: 'Processmaintenance',
-            meta: { title: '不良项目维护', keepAlive: true },
+            meta: { title: '不良项目维护', keepAlive: true, permission: ['user'] },
             component: () => import('@/views/basicdata/Processmaintenance/Process')
           }
         ]
@@ -129,7 +129,7 @@ export const asyncRouterMap = [
             path: '/systemmanage/rolemanage',
             name: 'rolemanage',
             component: () => import('@/views/systemsetting/role/RoleTable'),
-            meta: { title: '角色管理', keepAlive: true }
+            meta: { title: '角色管理', keepAlive: true, permission: ['Admin'] }
           }, {
             path: '/systemmanage/taskdispatch',
             name: 'taskdispatch',
@@ -139,13 +139,13 @@ export const asyncRouterMap = [
           {
             path: '/systemmanage/logsmanager',
             name: 'logsmanager',
-            meta: { title: '日志查询', keepAlive: true },
+            meta: { title: '日志查询', keepAlive: true, permission: ['Admin'] },
             component: () => import('@/views/systemsetting/logsmanager/logsTable')
           },
           {
             path: '/systemmanage/basicinfo',
             name: 'basicinfo',
-            meta: { title: '基本信息', keepAlive: true },
+            meta: { title: '基本信息', keepAlive: true, permission: ['Admin'] },
             component: () => import('@/views/systemsetting/basicinfo/index')
           }
         ]
