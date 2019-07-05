@@ -1,7 +1,7 @@
 <template>
   <a-card>
     <!-- 功能按钮 -->
-    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonp"/>
+    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonp" :reflash="reflash"/>
     <!-- 分页 -->
     <pagination
       :current="pagination.current"
@@ -119,10 +119,15 @@ export default {
       tableDataMX: [],
       dataTableArry: [],
       dataTableArrget: [],
-      djsetRow: {}
+      djsetRow: {},
+      reflash:{
+        click(){
+          
+        }
+      }
     }
   },
-  mounted() {
+  created() {
     this._LoadMainData()
   },
 
