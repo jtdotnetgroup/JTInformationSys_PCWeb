@@ -2,7 +2,7 @@
 <template>
   <a-card style="min-height:100%;">
     <!--功能按钮-->
-    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons" :search="true"/>
+    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons" :search="true" />
     <!-- 分页 -->
     <pagination
       :current="pagination.current"
@@ -11,6 +11,7 @@
     />
     <!--表格-->
     <a-table
+      size="small"
       bordered
       :dataSource="dataSource"
       :columns="columns"
@@ -20,7 +21,7 @@
       rowKey="id"
     >
       <template slot="name" slot-scope="text, record">
-        <editable-cell :text="text" @change="onCellChange(record.key, 'name', $event)"/>
+        <editable-cell :text="text" @change="onCellChange(record.key, 'name', $event)" />
       </template>
       <span slot="isActive" slot-scope="isActive">
         <div v-if="isActive">
@@ -32,7 +33,8 @@
       </span>
     </a-table>
     <!--其他页面模板-->
-    <AddOrEdit ref="AddOrEdit" @addSuccess="loadTable"/>
+    <AddOrEdit ref="AddOrEdit" @addSuccess="loadTable" />
+    <SearchForm ref="SearchForm" @addSuccess="loadTable" /> 
   </a-card>
 </template>
 <!--JS脚本-->
@@ -88,6 +90,7 @@ export default {
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
     editCell: () => import('@/JtComponents/JITEditCell'),
     pagination: () => import('@/JtComponents/Pagination'),
+    SearchForm: () => import('@/JtComponents/SearchForm'),
     AddOrEdit: () => import('./AddOrEdit')
   },
   // 所有数据
@@ -135,6 +138,10 @@ export default {
     handleBtnClick(val) {
       var _this = this
       switch (val) {
+        case '搜索': { 
+           _this.$refs.SearchForm.show({ id: 0 })
+          break
+        }
         case '刷新': {
           _this.loadTable()
           break
@@ -162,7 +169,6 @@ export default {
               description: '请选择一个'
             })
             return
-
           }
           // 提示是否执行删除，是则继续，否则温馨提示
           _this.$confirm({
@@ -230,9 +236,9 @@ export default {
           var i = 0
           res.result.items.forEach(element => {
             element.XH = i + 1
-            element.creationTime = this.$moment(element.creationTime).format('YYYY-MM-DD HH:mm'); 
-            element.roleName =element.roleNames.join(",");
-            
+            element.creationTime = this.$moment(element.creationTime).format('YYYY-MM-DD HH:mm')
+            element.roleName = element.roleNames.join(',')
+
             _this.dataSource.push(element)
             i++
           })

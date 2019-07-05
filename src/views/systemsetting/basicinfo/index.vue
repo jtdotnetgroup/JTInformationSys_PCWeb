@@ -1,16 +1,18 @@
 <template>
   <a-card style="min-height:100%;">
     <a-row>
-      <a-col :span="21" :push="3" style="padding-left:10px;">
-        <!--功能按钮-->
-        <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons" :search="true" />
-
-        <!-- <a-col :span=""></a-col>
-        <a-input addonBefore="增加行数"></a-input> -->
-
-
-
-
+      <a-col :span="21" :push="3" style="padding-left:10px;"> 
+        <div class="container">
+          <!-- 功能按钮 -->
+          <div>
+            <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons" :search="false" />
+          </div>
+          <div>
+            <!-- <a-input addonBefore="增加行数"></a-input> -->
+            增加行数：
+            <a-input-number :min="1" v-model="rowvalue" />
+          </div>
+        </div> 
         <!--表格-->
         <a-table
           size="small"
@@ -19,10 +21,10 @@
           :columns="columns"
           :loading="loading"
           :pagination="false"
-          rowKey="BasicInfoId"
-          
+          rowKey="XH"
           :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         >
+        <!-- 列 -->
           <template
             v-for="col in ['BICode', 'BIName', 'BIType','BIDescribe','BIOrder','BIJson']"
             :slot="col"
@@ -38,10 +40,9 @@
               />
             </div>
           </template>
-        </a-table>
-        <!--其他页面模板-->
-        <AddOrEdit ref="AddOrEdit" @addSuccess="Refresh" />
+        </a-table> 
       </a-col>
+      <!-- 树形菜单 -->
       <a-col :span="3" :pull="21" style="border-right: 1px solid #e2e2e2;">
         <a-tree
           showLine
@@ -55,7 +56,7 @@
     </a-row>
   </a-card>
 </template>
-
+<!-- 脚本js -->
 <script>
 // 列名
 const columns = [
@@ -112,19 +113,19 @@ const columns = [
   //     width: 150
   //   }
 ]
-
 // 获取数据
 import { GetAll, GetAll3, Create, Delete } from '@/api/basicinfo'
 export default {
   // 组件
   components: {
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
-    pagination: () => import('@/JtComponents/Pagination'),
-    AddOrEdit: () => import('./AddOrEdit')
+    pagination: () => import('@/JtComponents/Pagination')
   },
   data() {
     return {
+      loading: false,
       dataSource: [],
+      columns,
       buttons: [
         { text: '刷新', icon: '', type: 'default' },
         { text: '新增', icon: '', type: 'default' },
@@ -134,10 +135,9 @@ export default {
       pagination: {
         current: 1,
         pageSize: 10,
-        total: 50
+        total: 0
       },
-      loading: false,
-      columns,
+      rowvalue: 1, 
       treeData: [],
       checkedKeys: ['0-0'],
       SelId: null,
@@ -159,7 +159,7 @@ export default {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
-    //
+    // 树形菜单选中时
     onSelect(selectedKeys, e) {
       console.log(selectedKeys[0], e.selectedNodes[0].data.props)
       this.SelId = e.selectedNodes[0].data.props.basicInfoId
@@ -194,11 +194,11 @@ export default {
             }
           ]
           this.treeData = obj
-
           this.GetData()
         }
       })
     },
+    // 获取表格数据
     GetData() {
       var _this = this
       _this.dataSource = []
@@ -236,12 +236,6 @@ export default {
           _this.HideLoad()
         })
     },
-    YesBJ() {
-      const newData = [...this.dataSource]
-      newData.forEach(element => {
-        element.editable = true
-      })
-    },
     // 刷新
     Refresh() {
       this.GettTreeData()
@@ -257,7 +251,6 @@ export default {
     //移除数据库的数据
     DeleteData() {
       var _this = this
-
       // 提示是否执行删除，是则继续，否则温馨提示
       _this.$confirm({
         title: '系统提示！',
@@ -268,10 +261,9 @@ export default {
             .then(res => {
               if (res.result > 0) {
                 _this.$message.success('成功')
-
                 _this.DeleteRowData()
-
                 _this.selectedRows = []
+                _this.GettTreeData()
               } else {
                 _this.$message.error('失败')
               }
@@ -292,6 +284,29 @@ export default {
         }
       })
     },
+    //生成行的方法
+    addRow() {
+      var Time = this.$moment().format('YYYY-MM-DD HH:mm:ss.sss')
+      const { count, dataSource } = this
+      const obj = {}
+      obj.XH = this.dataSource.length + 1
+      obj.BasicInfoId = 0
+      obj.BICode = ''
+      obj.BIName = ''
+      obj.BIType = ''
+      obj.BIDescribe = ''
+      obj.BIOrder = ''
+      obj.BIJson = ''
+      obj.BIURL = ''
+      obj.BIState = ''
+      obj.IsDeleted = false
+      obj.ParentId = this.SelId
+      obj.CreateTime = Time
+      obj.CreateUserId = 0
+      obj.Remark = ''
+      this.dataSource = [...dataSource, obj]
+      this.count = count + 1
+    },
     // 功能按钮点击事件
     handleBtnClick(val) {
       var _this = this
@@ -301,27 +316,9 @@ export default {
           break
         }
         case '新增': {
-          var Time = this.$moment().format('YYYY-MM-DD HH:mm:ss.sss')
-
-          const { count, dataSource } = this
-          const obj = {}
-          obj.XH = this.dataSource.length + 1
-          obj.BasicInfoId = 0
-          obj.BICode = ''
-          obj.BIName = ''
-          obj.BIType = ''
-          obj.BIDescribe = ''
-          obj.BIOrder = ''
-          obj.BIJson = ''
-          obj.BIURL = ''
-          obj.BIState = ''
-          obj.IsDeleted = false
-          obj.ParentId = this.SelId
-          obj.CreateTime = Time
-          obj.CreateUserId = 0
-          obj.Remark = ''
-          _this.dataSource = [...dataSource, obj]
-          _this.count = count + 1
+          for (let index = 0; index < _this.rowvalue; index++) {
+            _this.addRow()
+          }
           break
         }
         case '保存': {
@@ -329,9 +326,7 @@ export default {
             _this.$message.warning('唯一标识不能为空')
             return
           }
-
           _this.ShowLoad()
-
           Create(_this.dataSource)
             .then(res => {
               if (res.result > 0) {
@@ -373,9 +368,15 @@ export default {
   }
 }
 </script>
+<!-- CSS样式 -->
 <style>
 .NewInput {
   border: 0px;
   border-radius: 0px;
+}
+.container {
+  display: grid;
+  grid-template-columns: 400px 300px;
+  grid-column-gap: 20px;
 }
 </style>
