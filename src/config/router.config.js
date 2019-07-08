@@ -89,23 +89,23 @@ export const asyncRouterMap = [
         name: 'basicdata',
         component: RouteView,
         hideChildrenInMenu: false,
-        meta: { title: '基础资料', keepAlive: true, icon: 'codepen', permission: ['user'] },
+        meta: { title: '基础资料', keepAlive: true, icon: 'codepen' },
         children: [
           {
             path: '/basicdata/organization',
             name: 'organization',
-            meta: { title: '组织架构', keepAlive: true, permission: ['user'] },
+            meta: { title: '组织架构', keepAlive: true },
             component: () => import('@/views/basicdata/organization/Organization')
           }, {
             path: '/basicdata/equipmentarchives',
             name: 'equipmentarchives',
-            meta: { title: '设备档案', keepAlive: true, permission: ['user'] },
+            meta: { title: '设备档案', keepAlive: true },
             component: () => import('@/views/basicdata/equipmentarchives/EquipmentArchives')
           },
           {
             path: '/basicdata/Processmaintenance',
             name: 'Processmaintenance',
-            meta: { title: '不良项目维护', keepAlive: true, permission: ['user'] },
+            meta: { title: '不良项目维护', keepAlive: true },
             component: () => import('@/views/basicdata/Processmaintenance/Process')
           }
         ]
@@ -139,7 +139,7 @@ export const asyncRouterMap = [
           {
             path: '/systemmanage/logsmanager',
             name: 'logsmanager',
-            meta: { title: '日志查询', keepAlive: true, permission: ['Admin'] },
+            meta: { title: '日志查询', keepAlive: true },
             component: () => import('@/views/systemsetting/logsmanager/logsTable')
           },
           {
