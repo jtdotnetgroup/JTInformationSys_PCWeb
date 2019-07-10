@@ -1,15 +1,17 @@
 <template>
   <a-card>
-    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons"/>
+    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons" />
     <a-table
       :dataSource="tableData"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
       :columns="columns"
       :pagination="false"
       :loading="loading"
+       size="small"
     ></a-table>
     <!-- 公共组件 模态框 -->
-    <TaskEdit ref="TaskEdit" @addSuccess="loadTable"/>
+    <TaskEdit ref="TaskEdit" @addSuccess="loadTable" />
+    <SearchForm ref="SearchForm" @addSuccess="Search" />
   </a-card>
 </template>
 
@@ -22,10 +24,12 @@ import { GetAllList } from '@/api/Sys_Task'
 export default {
   components: {
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
-    TaskEdit: () => import('./TaskEdit')
+    TaskEdit: () => import('./TaskEdit'),
+    SearchForm: () => import('@/JtComponents/SearchForm')
   },
   data() {
     return {
+      StrWhere:'',
       columns,
       selectedRowKeys: [],
       buttons: buttons.buttons,
@@ -52,22 +56,31 @@ export default {
       var _this = this
       var obj = {}
       switch (val) {
+        case '搜索': {
+          _this.$refs.SearchForm.show({ id: 0 })
+          break
+        }
         case '新增':
           _this.$refs.TaskEdit.showModal(obj)
           break
         case '编辑':
-          if (_this.selectedRows.length === 1) { 
+          if (_this.selectedRows.length === 1) {
             _this.$refs.TaskEdit.showModal(_this.selectedRows[0])
           } else {
             _this.$notification['error']({
               message: '系统提示',
               description: '编辑时只能选择一个！'
             })
-          } 
+          }
           break
         default:
           break
       }
+    },
+    // 搜索
+    Search(where){
+      this.StrWhere = where
+      this.loadTable()
     },
     // 获取列表
     loadTable() {
@@ -81,7 +94,8 @@ export default {
         TaskType: '',
         TaskBz: '',
         TaskState: 0,
-        TaskCorn: ''
+        TaskCorn: '',
+        where:_this.StrWhere
       })
         .then(res => {
           if (res.success) {

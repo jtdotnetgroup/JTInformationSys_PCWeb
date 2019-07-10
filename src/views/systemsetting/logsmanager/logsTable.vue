@@ -4,7 +4,6 @@
     <a-form :form="form" layout="inline">
       <a-form-item label="开始时间">
         <a-date-picker
-          v-model="StartTime"
           format="YYYY-MM-DD HH:mm:ss"
           v-decorator="['StartTime',{rules: [],initialValue:null} ]"
         ></a-date-picker>
@@ -12,7 +11,6 @@
 
       <a-form-item label="结束时间">
         <a-date-picker
-          v-model="EndTime"
           format="YYYY-MM-DD HH:mm:ss"
           v-decorator="['EndTime',{rules: [],initialValue: null} ]"
         ></a-date-picker>
@@ -163,6 +161,7 @@ export default {
     //查询的方法
     OnClickSelect() {
       this.form.validateFields((err, values) => {
+         var CurrentTime = this.$moment().format('YYYY-MM-DD HH:mm:ss.sss')
         //console.log(values)
         //  this.loading=true
         this.StartTime =
@@ -177,16 +176,14 @@ export default {
         if (values.id === 0) {
           this.StartTime = null
           this.EndTime = null
-        } else if (values.id === 1) {
-          var frontOneHour = new Date(new Date().getTime() - 1 * 60 * 60 * 1000)
-          this.StartTime = this.$moment(frontOneHour).format('YYYY-MM-DD HH:mm:ss.sss')
-          this.EndTime = new Date()
-        } else if (values.id === 2) {
-          var weehours = new Date(new Date().setHours(0, 0, 0, 0))
-          this.StartTime = weehours
-          this.EndTime = new Date()
+        } else if (values.id === 1) { 
+          this.StartTime = this.$moment(CurrentTime).add(-1,'hours').format('YYYY-MM-DD HH:mm:ss.sss')
+          this.EndTime = CurrentTime
+        } else if (values.id === 2) { 
+          this.StartTime = this.$moment().format('YYYY-MM-DD 00:00:00.000')
+          this.EndTime = this.$moment(this.StartTime).add(1,'day').format('YYYY-MM-DD HH:mm:ss.sss')
         }
-
+        console.log(values.id+'__'+this.StartTime+'__'+this.EndTime)
         if (!err) {
           this.loading = true
           this.pagination.current = 1

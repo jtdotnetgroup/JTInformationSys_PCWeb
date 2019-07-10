@@ -324,6 +324,7 @@ export default {
             var rowSelection = this.selectedRows
             this.$refs.DispatchWorkModalForm.show(rowSelection)
           }
+          break;
         }
         case '增加排产': {
           if (this.selectedRows.length > 0) {
@@ -331,6 +332,7 @@ export default {
             
             this.$refs.AddScheduling.showModal(rowSelection)
           }
+          break;
         }
       }
     },
