@@ -103,11 +103,7 @@
                 </div>
                 <!-- 日期 -->
                 <div v-else-if="GetStyle(record.Field)==='date'">
-                  <a-date-picker
-                    format="YYYY-MM-DD"
-                    v-model="record.CompareVal"
-                    class="w100"
-                  >
+                  <a-date-picker format="YYYY-MM-DD" v-model="record.CompareVal" class="w100">
                     <a-icon slot="suffixIcon" type="smile" />
                   </a-date-picker>
                 </div>
@@ -130,8 +126,13 @@
                   />
                 </div>
                 <!-- 下拉选择 -->
-                <div v-else-if="GetStyle(record.Field)==='enum'">
-                  <a-select :defaultValue="record.CompareVal" class="w100" @change="CreateWhere">
+                <div v-else-if="GetStyle(record.Field)==='select'">
+                  <a-select
+                    v-model="record.CompareVal"
+                    :defaultValue="record.CompareVal"
+                    class="w100"
+                    @change="CreateWhere"
+                  >
                     <a-select-option
                       v-for="item in GetColVal(record.Field)"
                       :key="item"
@@ -141,7 +142,11 @@
                 </div>
                 <!-- 单选 -->
                 <div v-else-if="GetStyle(record.Field)==='radioGroup'">
-                  <a-radio-group name="radioGroup" :defaultValue="1">
+                  <a-radio-group
+                    name="radioGroup"
+                    :defaultValue="record.CompareVal"
+                    v-model="record.CompareVal"
+                  >
                     <a-radio
                       v-for="item in GetColVal(record.Field)"
                       :key="item"
@@ -150,16 +155,16 @@
                   </a-radio-group>
                 </div>
                 <!-- 多选 -->
-                <div v-else-if="GetStyle(record.Field)==='Checkbox'">
+                <div v-else-if="GetStyle(record.Field)==='checkbox'">
                   <a-checkbox
                     v-for="item in GetColVal(record.Field)"
                     :key="item"
                     :value="item.value"
                   >{{item.title}}</a-checkbox>
                 </div>
-                <!-- Class -->
+                <!-- Class 选择器-->
                 <div v-else-if="YesSelect.indexOf(GetStyle(record.Field))>=0">
-                  <a-button @click="ShowSelect(record)">
+                  <a-button @click="ShowSelect(record,GetStyle(record.Field))">
                     {{text}}
                     <a-icon type="search"></a-icon>
                   </a-button>
@@ -354,10 +359,10 @@ export default {
       spinning: false, // 加载框
       visible: false, // 是否显示模态框
       loading: false, // 是否加载
-      WhereData: [],  //
-      WhereColumns,   //
+      WhereData: [], //
+      WhereColumns, //
       // 是选择器的
-      YesSelect:['EmployeeSelectForm','Selequipment'],
+      YesSelect: ['EmployeeSelectForm', 'Selequipment'],
       // 操作符
       operateList: {
         string: [
@@ -443,14 +448,16 @@ export default {
       // 生成的Where
       var where = ''
       this.WhereData.forEach(item => {
+        // 值类型
+        var fieldType = _this.AllCol.filter(e => e.name === item.Field)[0].fieldType
+        // 
         if (item.LeftUBB.length > 0) {
           where += item.LeftUBB
         }
+        // 字段
         if (item.Field.length > 0) {
           where += item.Field
         }
-        // 值类型
-        var fieldType = _this.AllCol.filter(e => e.name === item.Field)[0].fieldType
         // 如果是时间类型
         if (fieldType === 'datetime') {
           if (item.CompareVal.length === 0) {
@@ -460,26 +467,31 @@ export default {
           }
         }
         // 如果是日期格式
-        if(fieldType === 'date'){
+        if (fieldType === 'date') {
           if (item.CompareVal.length === 0) {
             item.CompareVal = _this.$moment().format('YYYY-MM-DD')
           } else {
             item.CompareVal = _this.$moment(item.CompareVal).format('YYYY-MM-DD')
           }
         }
-        //
+        // 值
         if (item.Compare.length > 0) {
-          where += item.Compare.replace('{0}', item.CompareVal)
+          // 如果是class 则取隐藏的值
+          if (YesSelect.indexOf(fieldType) >= 0) {
+            where += '.ToString().'+item.Compare.replace('{0}', item.HideCompareVal)
+          } else {
+            where += item.Compare.replace('{0}', item.CompareVal)
+          }
         }
-        // if(item.CompareVal.length>0){
-        //    where += item.CompareVal
-        // }
+        // 右括号
         if (item.RightUBB.length > 0) {
           where += item.RightUBB
         }
+        // 逻辑关系
         if (item.Logic.length > 0) {
           where += item.Logic
         }
+        // 
       })
       _this.EndWhere = where
     },
@@ -504,14 +516,19 @@ export default {
     },
     // 获取操作符
     GetCol(value) {
-      return this.AllCol.filter(e => e.name === value)[0].operateList
+      var operate = this.AllCol.filter(e => e.name === value);
+      if(operateList.length>0){
+        return operate[0].operateList
+      }else{
+        return this.AllCol.filter(e => e.name === 'select')[0].operateList
+      }
     },
     // 获取类型
-    GetStyle(value) {
+    GetStyle(value) { 
       return this.AllCol.filter(e => e.name === value)[0].fieldType
     },
     // 获取枚举值
-    GetColVal() {
+    GetColVal(value) {
       return this.AllCol.filter(e => e.name === value)[0].values
     },
     // 字段选择
@@ -565,23 +582,27 @@ export default {
       this.hide()
     },
     // 显示选择器
-    ShowSelect(record) {
+    ShowSelect(record, type) {
       var _this = this
-      switch (record) {
+      switch (type) {
         case 'EmployeeSelectForm': {
-           _this.$refs.EmployeeSelectForm.show(record)
+          _this.$refs.EmployeeSelectForm.show(record)
+          break
+        }
+        case 'Selequipment': {
+          _this.$refs.Selequipment.show(record)
           break
         }
       }
     },
     // 选择器回调
-    SelectChange(record,id,name){
-
+    SelectChange(SelectRow,record, id, name) {
+      this.WhereData.filter(e => e === record).HideCompareVal = id
+      this.WhereData.filter(e => e === record).CompareVal = name
     },
     // 获取字段
     GetQueryFields(obj) {
       var _this = this
-      console.log(this.operateList['string'])
       GetAll({ methodFullName: 'JIT.DIME2Barcode#Sys_TaskAppService#Sys_TaskList' }).then(res => {
         if (res.success) {
           _this.AllCol = []
@@ -605,6 +626,7 @@ export default {
             Field: res.result[0].name,
             Compare: '',
             CompareVal: '',
+            HideCompareVal: '', // 选择器选择ID
             RightUBB: '',
             Logic: '',
             Operation: ''
