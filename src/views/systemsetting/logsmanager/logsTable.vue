@@ -1,7 +1,6 @@
 <template>
   <a-card>
-  
-
+    <!-- 条件 -->
     <a-form :form="form" layout="inline">
       <a-form-item label="开始时间">
         <a-date-picker
@@ -9,6 +8,7 @@
           v-decorator="['StartTime',{rules: [],initialValue:null} ]"
         ></a-date-picker>
       </a-form-item>
+
       <a-form-item label="结束时间">
         <a-date-picker
           format="YYYY-MM-DD HH:mm:ss"
@@ -20,42 +20,36 @@
         <a-input v-decorator="['Message',{rules: [],initialValue: this.Message} ]"></a-input>
       </a-form-item>
 
-      <!-- <a-form-item>
-        <a-checkbox :value="Hour" @change="onChangeHour">1小时</a-checkbox>
-      </a-form-item>
-
-      <a-form-item>
-        <a-checkbox :value="Today" @change="onChangeToday">今天</a-checkbox>
-      </a-form-item> -->
-
-
-      <a-form-item label="小时和今天">
-        <a-select style="width:150px"    allowClear  v-decorator="['id',{rules: []}]"
-            >
+      <a-form-item label="常用时间">
+        <a-select
+          style="width:150px"
+          allowClear
+          v-decorator="['id',{rules: []}]"
+          @change="handleChange"
+        >
+          <a-select-option :value="0">全部</a-select-option>
           <a-select-option :value="1">一小时内</a-select-option>
           <a-select-option :value="2">今天内</a-select-option>
         </a-select>
       </a-form-item>
 
-
-       <a-form-item>
+      <a-form-item>
         <a-checkbox :value="Exception" @change="onChangeException">异常</a-checkbox>
-      </a-form-item> 
-
+      </a-form-item>
 
       <a-form-item>
         <a-button type="default" @click="OnClickSelect">查询</a-button>
       </a-form-item>
     </a-form>
-
+    <!-- 分页 -->
     <pagination
       :current="pagination.current"
       :total="pagination.total"
       @pageChange="onPaginationChange"
     />
-
+    <!-- 表格 -->
     <a-table
-      bordered    
+      bordered
       :dataSource="tableData"
       :columns="columns"
       :pagination="false"
@@ -75,9 +69,10 @@
         </template>
         <span >{{`${serviceName.substring(0,40)}…`}}</span>
         </a-tooltip>
-      </template> -->
+      </template>-->
     </a-table>
-    <LogsModalFrom ref="LogsModalFrom"/>
+    <!-- 详情 -->
+    <LogsModalFrom ref="LogsModalFrom" />
   </a-card>
 </template>
 
@@ -101,7 +96,7 @@ export default {
       form: this.$form.createForm(this),
       Hour: false,
       Today: false,
-      Exception:false,
+      Exception: false,
       StartTime: null,
       EndTime: null,
       Message: null,
@@ -119,13 +114,9 @@ export default {
     onPaginationChange(page, size) {
       this.pagination.current = page
       this.pagination.pageSize = size
-      this.loading=true
+      this.loading = true
       this._loadData()
     },
-
-   
-
-    
 
     // //小时
     // onChangeHour(e) {
@@ -148,38 +139,54 @@ export default {
     // },
 
     //异常查询
-    onChangeException(e){
-      this.Exception=e.target.checked
+    onChangeException(e) {
+      this.Exception = e.target.checked
     },
-
-
+    handleChange(value) {
+      return
+      var CurrentTime = this.$moment().format('YYYY-MM-DD HH:mm:ss.sss')
+      console.log(this.$moment(CurrentTime).format('YYYY-MM-DD 00:00:00.000'))
+      //
+      if (value === 0) {
+        this.StartTime = null
+        this.EndTime = null
+      } else if (value === 1) { 
+        this.StartTime = this.$moment(CurrentTime).add(-1,'hours').format('YYYY-MM-DD HH:mm:ss.sss')
+        this.EndTime = CurrentTime
+      } else if (value === 2) { 
+        this.StartTime =  this.$moment().format('YYYY-MM-DD 00:00:00.000')
+        this.EndTime = this.$moment(this.StartTime).add(1,'day').format('YYYY-MM-DD HH:mm:ss.sss')
+      }
+    },
     //查询的方法
     OnClickSelect() {
       this.form.validateFields((err, values) => {
-
-
+         var CurrentTime = this.$moment().format('YYYY-MM-DD HH:mm:ss.sss')
         //console.log(values)
         //  this.loading=true
+        this.StartTime =
+          values.StartTime !== null
+            ? this.$moment(values.StartTime).format('YYYY-MM-DD HH:mm:ss.sss')
+            : values.StartTime
+        this.EndTime =
+          values.EndTime !== null ? this.$moment(values.EndTime).format('YYYY-MM-DD HH:mm:ss.sss') : values.EndTime
+        this.Message = values.Message
 
-        this.StartTime =values.StartTime!==null?this.$moment(values.StartTime).format('YYYY-MM-DD HH:mm:ss.sss'):values.StartTime
-        this.EndTime =values.EndTime!==null?this.$moment(values.EndTime).format('YYYY-MM-DD HH:mm:ss.sss'):values.EndTime 
-        this.Message=values.Message
-         
-        if (values.id === 1) {
-          var frontOneHour = new Date(new Date().getTime() - 1 * 60 * 60 * 1000)
-          this.StartTime = this.$moment(frontOneHour).format('YYYY-MM-DD HH:mm:ss.sss')     
-          this.EndTime=new Date()
-        
-        } else if (values.id === 2) {
-          var weehours = new Date(new Date().setHours(0, 0, 0, 0))
-            // console.log(this.$moment(weehours).format('YYYY-MM-DD HH:mm:ss.sss'))
-          this.StartTime= weehours
-          this.EndTime= new Date()
+        //
+        if (values.id === 0) {
+          this.StartTime = null
+          this.EndTime = null
+        } else if (values.id === 1) { 
+          this.StartTime = this.$moment(CurrentTime).add(-1,'hours').format('YYYY-MM-DD HH:mm:ss.sss')
+          this.EndTime = CurrentTime
+        } else if (values.id === 2) { 
+          this.StartTime = this.$moment().format('YYYY-MM-DD 00:00:00.000')
+          this.EndTime = this.$moment(this.StartTime).add(1,'day').format('YYYY-MM-DD HH:mm:ss.sss')
         }
-       
-      
+        console.log(values.id+'__'+this.StartTime+'__'+this.EndTime)
         if (!err) {
-          this.loading=true
+          this.loading = true
+          this.pagination.current = 1
           this._loadData()
         }
       })
@@ -187,10 +194,9 @@ export default {
 
     //单击详情显示模态框显示的方法
     OnClick(id) {
-
       var data = this.tableData.filter(e => {
-          return e.id ===id
-        })
+        return e.id === id
+      })
 
       this.$refs.LogsModalFrom.show(data)
     },
@@ -202,7 +208,7 @@ export default {
         StartTime: _this.StartTime,
         EndTime: _this.EndTime,
         Message: _this.Message,
-        Exception:_this.Exception,
+        Exception: _this.Exception,
         SkipCount: (this.pagination.current - 1) * this.pagination.pageSize,
         MaxResultCount: this.pagination.pageSize
       }
@@ -212,8 +218,7 @@ export default {
           _this.tableData = []
           const result = res.result
           if (result) {
-          
-              result.items.forEach(e => {
+            result.items.forEach(e => {
               e.executionTime = this.$moment(e.executionTime).format('YYYY-MM-DD HH:mm:ss.sss')
               _this.tableData.push(e)
             })
@@ -232,18 +237,17 @@ export default {
 </script>
 
 <style >
-
-  .ant-tooltip-inner {
-    padding: 6px 8px;
-    color: #fff;
-    text-align: left;
-    text-decoration: none;
-    background-color: rgba(0, 0, 0, 0.75);
-    border-radius: 4px;
-    -webkit-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    min-height: 32px;
-    word-wrap: break-word;
-    width: 350px
-    }
+.ant-tooltip-inner {
+  padding: 6px 8px;
+  color: #fff;
+  text-align: left;
+  text-decoration: none;
+  background-color: rgba(0, 0, 0, 0.75);
+  border-radius: 4px;
+  -webkit-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  min-height: 32px;
+  word-wrap: break-word;
+  width: 350px;
+}
 </style>

@@ -53,7 +53,7 @@
               <!-- 字段 -->
               <span slot="Field" slot-scope="text, record, index">
                 <a-select
-                  style="width: 100%"
+                  class="w100"
                   :value="record.Field+'_'+index"
                   :defaultValue="record.Field+'_'+index"
                   @change="handleChangeField"
@@ -62,7 +62,7 @@
                     v-for="item in AllCol"
                     :key="item"
                     :value="item.name+'_'+index"
-                  >{{item.disName}}</a-select-option>
+                  >{{item.dispName}}</a-select-option>
                 </a-select>
               </span>
               <!-- 比较 -->
@@ -70,7 +70,7 @@
                 <a-select
                   v-model="record.Compare"
                   defaultValue="="
-                  style="width: 100%"
+                  class="w100"
                   @change="CreateWhere"
                 >
                   <a-select-option
@@ -83,57 +83,86 @@
               <!-- 比较值 -->
               <span slot="CompareVal" slot-scope="text, record">
                 <!-- 文本 -->
-                <div v-if="GetStyle(record.Field)==='text'">
+                <div v-if="GetStyle(record.Field)==='string'">
                   <a-input
                     type="text"
-                    style="width: 100%"
+                    class="w100"
                     v-model="record.CompareVal"
                     @change="CreateWhere"
-                  />
+                  ></a-input>
                 </div>
                 <!-- 时间 -->
-                <div v-else-if="GetStyle(record.Field)==='date'">
+                <div v-else-if="GetStyle(record.Field)==='datetime'">
                   <a-date-picker
                     format="YYYY-MM-DD HH:mm:ss"
                     v-model="record.CompareVal"
-                    style="width: 100%"
+                    class="w100"
                   >
                     <a-icon slot="suffixIcon" type="smile" />
                   </a-date-picker>
                 </div>
-                <!-- 下拉选择 -->
-                <div v-else-if="GetStyle(record.Field)==='select'">
-                  <a-select
-                    :defaultValue="record.CompareVal"
-                    style="width: 100%"
-                    @change="CreateWhere"
+                <!-- 日期 -->
+                <div v-else-if="GetStyle(record.Field)==='date'">
+                  <a-date-picker
+                    format="YYYY-MM-DD"
+                    v-model="record.CompareVal"
+                    class="w100"
                   >
-                    <a-select-option value="0">&nbsp;</a-select-option>
-                    <a-select-option value="1">小陈</a-select-option>
-                    <a-select-option value="2">小邓</a-select-option>
-                    <a-select-option value="3">小卓</a-select-option>
-                  </a-select>
+                    <a-icon slot="suffixIcon" type="smile" />
+                  </a-date-picker>
                 </div>
                 <!-- 数字 -->
-                <div v-else-if="GetStyle(record.Field)==='number'">
+                <div v-else-if="GetStyle(record.Field)==='int'">
                   <a-input-number
-                    style="width: 100%"
+                    class="w100"
                     v-model="record.CompareVal"
                     @change="CreateWhere"
+                    :step="0"
                   />
+                </div>
+                <!-- 浮点型数字 -->
+                <div v-else-if="GetStyle(record.Field)==='double'">
+                  <a-input-number
+                    class="w100"
+                    v-model="record.CompareVal"
+                    @change="CreateWhere"
+                    :step="2"
+                  />
+                </div>
+                <!-- 下拉选择 -->
+                <div v-else-if="GetStyle(record.Field)==='enum'">
+                  <a-select :defaultValue="record.CompareVal" class="w100" @change="CreateWhere">
+                    <a-select-option
+                      v-for="item in GetColVal(record.Field)"
+                      :key="item"
+                      :value="item.value"
+                    >{{item.title}}</a-select-option>
+                  </a-select>
                 </div>
                 <!-- 单选 -->
                 <div v-else-if="GetStyle(record.Field)==='radioGroup'">
                   <a-radio-group name="radioGroup" :defaultValue="1">
-                    <a-radio :value="1">A</a-radio>
-                    <a-radio :value="2">B</a-radio>
-                    <a-radio :value="3">C</a-radio>
-                    <a-radio :value="4">D</a-radio>
+                    <a-radio
+                      v-for="item in GetColVal(record.Field)"
+                      :key="item"
+                      :value="item.value"
+                    >{{item.title}}</a-radio>
                   </a-radio-group>
                 </div>
                 <!-- 多选 -->
                 <div v-else-if="GetStyle(record.Field)==='Checkbox'">
-                  <a-checkbox :value="0">Checkbox</a-checkbox>
+                  <a-checkbox
+                    v-for="item in GetColVal(record.Field)"
+                    :key="item"
+                    :value="item.value"
+                  >{{item.title}}</a-checkbox>
+                </div>
+                <!-- Class -->
+                <div v-else-if="YesSelect.indexOf(GetStyle(record.Field))>=0">
+                  <a-button @click="ShowSelect(record)">
+                    {{text}}
+                    <a-icon type="search"></a-icon>
+                  </a-button>
                 </div>
                 <!-- 未定义 -->
                 <div v-else>
@@ -146,7 +175,7 @@
                 <a-select
                   v-model="record.Logic"
                   :defaultValue="record.Logic"
-                  style="width: 100%"
+                  class="w100"
                   @change="CreateWhere"
                 >
                   <a-select-option value>&nbsp;</a-select-option>
@@ -168,8 +197,7 @@
             </a-table>
           </div>
           <!-- 查询语句 -->
-          <a-input addonBefore="最终条件：" disabled="disabled" v-model="EndWhereCN" />
-          <a-input v-show="false" addonBefore="最终条件(传入数据库的)：" v-model="EndWhere" />
+          <a-input addonBefore="最终条件(传入数据库的)：" disabled="disabled" v-model="EndWhere" />
         </a-tab-pane>
         <!-- tabs 2 -->
         <a-tab-pane key="2">
@@ -187,16 +215,12 @@
             >
               <!-- 字段 -->
               <span slot="OrderField" slot-scope="text, record">
-                <a-select
-                  style="width: 100%"
-                  :value="record.OrderField"
-                  :defaultValue="record.OrderField"
-                >
+                <a-select class="w100" :value="record.OrderField" :defaultValue="record.OrderField">
                   <a-select-option
                     v-for="item in AllCol"
                     :key="item"
                     :value="item.name"
-                  >{{item.disName}}</a-select-option>
+                  >{{item.dispName}}</a-select-option>
                 </a-select>
               </span>
               <!-- 类型 -->
@@ -204,7 +228,7 @@
                 <a-select
                   v-model="record.CompareVal"
                   :defaultValue="record.CompareVal"
-                  style="width: 100%"
+                  class="w100"
                 >
                   <a-select-option value>不排序</a-select-option>
                   <a-select-option value="&&">升序</a-select-option>
@@ -236,11 +260,16 @@
           <a-input v-show="false" addonBefore="最终方式(传入数据库的)：" />
         </a-tab-pane>
       </a-tabs>
+      <!-- 选择器 -->
+      <Selequipment ref="Selequipment" @selectChange="SelectChange" />
+      <EmployeeSelectForm ref="EmployeeSelectForm" @selectChange="SelectChange" />
     </a-modal>
   </a-spin>
 </template>
 <!--脚本文件-->
 <script>
+// 获取数据
+import { GetAll } from '@/api/SearchForm'
 // 列名
 const WhereColumns = [
   {
@@ -314,82 +343,73 @@ const OrderColumns = [
 ]
 //
 export default {
+  components: {
+    EmployeeSelectForm: () => import('@/JtComponents/EmployeeSelectForm'),
+    Selequipment: () => import('@/views/production/Taskassignment/Selequipment')
+  },
+  // 所有数据
   data() {
     return {
       title: '过滤', // 标题
       spinning: false, // 加载框
       visible: false, // 是否显示模态框
       loading: false, // 是否加载
-      WhereData: [
-        {
-          key: new Date(),
-          LeftUBB: '',
-          Field: 'Date',
-          Compare: '=',
-          CompareVal: '',
-          RightUBB: '',
-          Logic: '',
-          Operation: ''
-        }
-      ],
-      WhereColumns,
-      AllCol: [
-        {
-          name: 'Name',
-          disName: '名称',
-          operateList: [
-            { value: '="{0}"', title: '等于' },
-            { value: '!="{0}"', title: '不等于' },
-            { value: '.StartsWith("{0}")', title: '开头是' },
-            { value: '.EndsWith("{0}")', title: '结尾是' },
-            { value: '.Contains("{0}")', title: '包含' },
-            { value: '.Contains("{0}")==false', title: '不包含' }
-          ],
-          values: [],
-          fieldType: 'text'
-        },
-        {
-          name: 'Date',
-          disName: '日期',
-          operateList: [
-            { value: '<Convert.ToDateTime("{0}")', title: '小于' },
-            { value: '=Convert.ToDateTime("{0}")', title: '等于' },
-            { value: '>Convert.ToDateTime("{0}")', title: '大于' },
-            { value: '!=Convert.ToDateTime("{0}")', title: '不等于' },
-            { value: '<=Convert.ToDateTime("{0}")', title: '小于等于' },
-            { value: '>=Convert.ToDateTime("{0}")', title: '大于等于' }
-          ],
-          values: [],
-          fieldType: 'date'
-        },
-        {
-          name: 'ZSZL',
-          disName: '重量',
-          operateList: [
-            { value: '<{0}', title: '小于' },
-            { value: '={0}', title: '等于' },
-            { value: '>{0}', title: '大于' },
-            { value: '!={0}', title: '不等于' },
-            { value: '<={0}', title: '小于等于' },
-            { value: '>={0}', title: '大于等于' }
-          ],
-          values: [],
-          fieldType: 'number'
-        },
-        {
-          name: 'XZRY',
-          disName: '人员',
-          operateList: [{ value: '!={0}', title: '不等于' }, { value: '={0}', title: '等于' }],
-          values: [],
-          fieldType: 'select'
-        }
-      ],
-      EndWhereCN: '',
+      WhereData: [],  //
+      WhereColumns,   //
+      // 是选择器的
+      YesSelect:['EmployeeSelectForm','Selequipment'],
+      // 操作符
+      operateList: {
+        string: [
+          { value: '="{0}"', title: '等于' },
+          { value: '!="{0}"', title: '不等于' },
+          { value: '.Contains("{0}")', title: '包含' },
+          { value: '.Contains("{0}")==false', title: '不包含' },
+          { value: '.StartsWith("{0}")', title: '开头是' },
+          { value: '.EndsWith("{0}")', title: '结尾是' }
+        ],
+        bool: [{ value: '!={0}', title: '不等于' }, { value: '={0}', title: '等于' }],
+        select: [{ value: '!={0}', title: '不等于' }, { value: '={0}', title: '等于' }],
+        date: [
+          { value: '<Convert.ToDateTime("{0}")', title: '小于' },
+          { value: '=Convert.ToDateTime("{0}")', title: '等于' },
+          { value: '>Convert.ToDateTime("{0}")', title: '大于' },
+          { value: '!=Convert.ToDateTime("{0}")', title: '不等于' },
+          { value: '<=Convert.ToDateTime("{0}")', title: '小于等于' },
+          { value: '>=Convert.ToDateTime("{0}")', title: '大于等于' }
+        ],
+        datetime: [
+          { value: '<Convert.ToDateTime("{0}")', title: '小于' },
+          { value: '=Convert.ToDateTime("{0}")', title: '等于' },
+          { value: '>Convert.ToDateTime("{0}")', title: '大于' },
+          { value: '!=Convert.ToDateTime("{0}")', title: '不等于' },
+          { value: '<=Convert.ToDateTime("{0}")', title: '小于等于' },
+          { value: '>=Convert.ToDateTime("{0}")', title: '大于等于' }
+        ],
+        int: [
+          { value: '<{0}', title: '小于' },
+          { value: '={0}', title: '等于' },
+          { value: '>{0}', title: '大于' },
+          { value: '!={0}', title: '不等于' },
+          { value: '<={0}', title: '小于等于' },
+          { value: '>={0}', title: '大于等于' }
+        ],
+        double: [
+          { value: '<{0}', title: '小于' },
+          { value: '={0}', title: '等于' },
+          { value: '>{0}', title: '大于' },
+          { value: '!={0}', title: '不等于' },
+          { value: '<={0}', title: '小于等于' },
+          { value: '>={0}', title: '大于等于' }
+        ]
+      },
+      // 所有选择字段以及他的类型
+      AllCol: [],
       EndWhere: '',
       OrderData: [
         {
           key: new Date(),
-          Field: 'Date',
+          Field: '',
           CompareVal: '',
           Operation: ''
         }
@@ -398,16 +418,17 @@ export default {
     }
   },
   computed: {},
-  //
+  // 创建后
   created() {},
+  // 载入后
   mounted() {},
-  //
+  // 所有方法
   methods: {
-    // 删除排序
+    // 删除排序行
     DelOrderRow(key) {
       this.OrderData = this.OrderData.filter(e => e.key !== key)
     },
-    // 增加排序
+    // 增加排序行
     AddOrderRow(index) {
       this.OrderData.splice(index + 1, 0, {
         key: new Date(),
@@ -431,11 +452,19 @@ export default {
         // 值类型
         var fieldType = _this.AllCol.filter(e => e.name === item.Field)[0].fieldType
         // 如果是时间类型
-        if (fieldType === 'date') {
+        if (fieldType === 'datetime') {
           if (item.CompareVal.length === 0) {
             item.CompareVal = _this.$moment().format('YYYY-MM-DD HH:mm:ss.sss')
           } else {
             item.CompareVal = _this.$moment(item.CompareVal).format('YYYY-MM-DD HH:mm:ss.sss')
+          }
+        }
+        // 如果是日期格式
+        if(fieldType === 'date'){
+          if (item.CompareVal.length === 0) {
+            item.CompareVal = _this.$moment().format('YYYY-MM-DD')
+          } else {
+            item.CompareVal = _this.$moment(item.CompareVal).format('YYYY-MM-DD')
           }
         }
         //
@@ -452,14 +481,14 @@ export default {
           where += item.Logic
         }
       })
-      _this.EndWhereCN = where
+      _this.EndWhere = where
     },
-    // 删除行
+    // 删除条件行
     DelRow(key) {
       this.WhereData = this.WhereData.filter(e => e.key !== key)
       this.CreateWhere()
     },
-    // 增加行
+    // 增加条件行
     AddRow(index) {
       this.WhereData.splice(index + 1, 0, {
         key: new Date(),
@@ -481,7 +510,11 @@ export default {
     GetStyle(value) {
       return this.AllCol.filter(e => e.name === value)[0].fieldType
     },
-    // 字段素选择
+    // 获取枚举值
+    GetColVal() {
+      return this.AllCol.filter(e => e.name === value)[0].values
+    },
+    // 字段选择
     handleChangeField(value) {
       var name = (value + '').split('_')[0] // name
       var index = (value + '').split('_')[1] // index
@@ -513,6 +546,9 @@ export default {
     // 显示
     show(obj) {
       this.showModal()
+      if (this.AllCol.length === 0) {
+        this.GetQueryFields(obj)
+      }
     },
     // 隐藏
     hide() {
@@ -521,13 +557,67 @@ export default {
     // 确定后执行关闭弹出层/窗口
     handleOk() {
       this.CreateWhere()
-      var Where = this.EndWhere
+      this.$emit('addSuccess', this.EndWhere)
       this.hide()
     },
     // 取消操作关闭弹出层/窗口
     handleCancel() {
       this.hide()
+    },
+    // 显示选择器
+    ShowSelect(record) {
+      var _this = this
+      switch (record) {
+        case 'EmployeeSelectForm': {
+           _this.$refs.EmployeeSelectForm.show(record)
+          break
+        }
+      }
+    },
+    // 选择器回调
+    SelectChange(record,id,name){
+
+    },
+    // 获取字段
+    GetQueryFields(obj) {
+      var _this = this
+      console.log(this.operateList['string'])
+      GetAll({ methodFullName: 'JIT.DIME2Barcode#Sys_TaskAppService#Sys_TaskList' }).then(res => {
+        if (res.success) {
+          _this.AllCol = []
+          res.result.forEach(item => {
+            var obj = {}
+            obj.name = item.name
+            obj.dispName = item.dispName
+            obj.operateList = _this.operateList[item.fieldType]
+
+            obj.fieldType = item.fieldType
+            if (obj.fieldType === 'select') {
+              obj.values = item.values
+            }
+            _this.AllCol.push(obj)
+          })
+
+          // 默认添加第一个
+          _this.WhereData.push({
+            key: new Date(),
+            LeftUBB: '',
+            Field: res.result[0].name,
+            Compare: '',
+            CompareVal: '',
+            RightUBB: '',
+            Logic: '',
+            Operation: ''
+          })
+        }
+      })
     }
   }
 }
 </script>
+<!-- CSS样式 -->
+<style>
+.w100 {
+  width: 100%;
+}
+</style>

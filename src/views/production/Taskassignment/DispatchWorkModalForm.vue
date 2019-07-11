@@ -182,7 +182,7 @@ export default {
       }
     },
     onClose() {
-       this.$emit('selectChange')
+      //  this.$emit('selectChange')
       this.dataSource = []
       this.DailyData = {}
       this.visible = false
