@@ -3,6 +3,7 @@
         <template v-for="(item,index) in buttons" >
             <a-button   :icon="item.icon" :type="item.type" :key="index" @click="onButtonClick(item.text)">{{item.text}}</a-button>
         </template>
+        <a-button type="default" @click="reflashClick">刷新</a-button>
         <template v-if="search">
             <div class="searchBtn">
                 <a-button icon="search" type="primary" @click="onButtonClick('搜索')">搜索</a-button>
@@ -24,16 +25,25 @@
                     },
                     {text:'编辑',icon:'edit',type:'primary'},
                     {text:'删除',icon:'delete',type:'danger'}
+                   
                 ]
             },
             search:{
                 type:Boolean,
                 default:true
+            },
+            reflash:{
+                type:Object,
             }
         },
         methods: {
             onButtonClick(val) {
                 this.$emit('btnClick',val);
+            },
+            reflashClick(){
+                if(!!this.reflash&&this.reflash.click){
+                    this.reflash.click();
+                }
             }
         },
     }

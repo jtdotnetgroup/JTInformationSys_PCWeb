@@ -109,20 +109,20 @@
                 </div>
                 <!-- 数字 -->
                 <div v-else-if="GetStyle(record.Field)==='int'">
-                  <a-input-number
+                  <a-input
                     class="w100"
                     v-model="record.CompareVal"
                     @change="CreateWhere"
-                    :step="0"
+                    type="number"
                   />
                 </div>
                 <!-- 浮点型数字 -->
                 <div v-else-if="GetStyle(record.Field)==='double'">
-                  <a-input-number
+                  <a-input
                     class="w100"
                     v-model="record.CompareVal"
                     @change="CreateWhere"
-                    :step="2"
+                    type="number"
                   />
                 </div>
                 <!-- 下拉选择 -->
@@ -574,7 +574,7 @@ export default {
     // 确定后执行关闭弹出层/窗口
     handleOk() {
       this.CreateWhere()
-      this.$emit('addSuccess', this.EndWhere)
+      this.$emit('input', this.EndWhere)
       this.hide()
     },
     // 取消操作关闭弹出层/窗口
@@ -602,8 +602,8 @@ export default {
     },
     // 获取字段
     GetQueryFields(obj) {
-      var _this = this
-      GetAll({ methodFullName: 'JIT.DIME2Barcode#Sys_TaskAppService#Sys_TaskList' }).then(res => {
+      var _this = this 
+      GetAll({ methodFullName: this.methodName }).then(res => {
         if (res.success) {
           _this.AllCol = []
           res.result.forEach(item => {
@@ -633,6 +633,15 @@ export default {
           })
         }
       })
+    }
+  },
+  props:{
+    methodName:{
+      type:String,
+      required:true
+    },
+    value:{
+      type:String
     }
   }
 }
