@@ -69,7 +69,7 @@
               <span slot="Compare" slot-scope="text, record">
                 <a-select
                   v-model="record.Compare"
-                  defaultValue="="
+                  :defaultValue="GetDefault(record.Field)"
                   class="w100"
                   @change="CreateWhere"
                 >
@@ -368,16 +368,16 @@ export default {
         string: [
           { value: '="{0}"', title: '等于' },
           { value: '!="{0}"', title: '不等于' },
-          { value: '.Contains("{0}")', title: '包含' },
+          { value: '.Contains("{0}")', title: '包含', default: true },
           { value: '.Contains("{0}")==false', title: '不包含' },
           { value: '.StartsWith("{0}")', title: '开头是' },
           { value: '.EndsWith("{0}")', title: '结尾是' }
         ],
-        bool: [{ value: '!={0}', title: '不等于' }, { value: '={0}', title: '等于' }],
-        select: [{ value: '!={0}', title: '不等于' }, { value: '={0}', title: '等于' }],
+        bool: [{ value: '!={0}', title: '不等于' }, { value: '={0}', title: '等于', default: true }],
+        select: [{ value: '!={0}', title: '不等于' }, { value: '={0}', title: '等于', default: true }],
         date: [
           { value: '<Convert.ToDateTime("{0}")', title: '小于' },
-          { value: '=Convert.ToDateTime("{0}")', title: '等于' },
+          { value: '=Convert.ToDateTime("{0}")', title: '等于', default: true },
           { value: '>Convert.ToDateTime("{0}")', title: '大于' },
           { value: '!=Convert.ToDateTime("{0}")', title: '不等于' },
           { value: '<=Convert.ToDateTime("{0}")', title: '小于等于' },
@@ -385,7 +385,7 @@ export default {
         ],
         datetime: [
           { value: '<Convert.ToDateTime("{0}")', title: '小于' },
-          { value: '=Convert.ToDateTime("{0}")', title: '等于' },
+          { value: '=Convert.ToDateTime("{0}")', title: '等于', default: true },
           { value: '>Convert.ToDateTime("{0}")', title: '大于' },
           { value: '!=Convert.ToDateTime("{0}")', title: '不等于' },
           { value: '<=Convert.ToDateTime("{0}")', title: '小于等于' },
@@ -393,7 +393,7 @@ export default {
         ],
         int: [
           { value: '<{0}', title: '小于' },
-          { value: '={0}', title: '等于' },
+          { value: '={0}', title: '等于', default: true },
           { value: '>{0}', title: '大于' },
           { value: '!={0}', title: '不等于' },
           { value: '<={0}', title: '小于等于' },
@@ -401,7 +401,7 @@ export default {
         ],
         double: [
           { value: '<{0}', title: '小于' },
-          { value: '={0}', title: '等于' },
+          { value: '={0}', title: '等于', default: true },
           { value: '>{0}', title: '大于' },
           { value: '!={0}', title: '不等于' },
           { value: '<={0}', title: '小于等于' },
@@ -450,7 +450,7 @@ export default {
       this.WhereData.forEach(item => {
         // 值类型
         var fieldType = _this.AllCol.filter(e => e.name === item.Field)[0].fieldType
-        // 
+        //
         if (item.LeftUBB.length > 0) {
           where += item.LeftUBB
         }
@@ -477,8 +477,8 @@ export default {
         // 值
         if (item.Compare.length > 0) {
           // 如果是class 则取隐藏的值
-          if (YesSelect.indexOf(fieldType) >= 0) {
-            where += '.ToString().'+item.Compare.replace('{0}', item.HideCompareVal)
+          if (this.YesSelect.indexOf(fieldType) >= 0) {
+            where += '.ToString().' + item.Compare.replace('{0}', item.HideCompareVal)
           } else {
             where += item.Compare.replace('{0}', item.CompareVal)
           }
@@ -491,7 +491,7 @@ export default {
         if (item.Logic.length > 0) {
           where += item.Logic
         }
-        // 
+        //
       })
       _this.EndWhere = where
     },
@@ -502,11 +502,14 @@ export default {
     },
     // 增加条件行
     AddRow(index) {
+      if (this.WhereData[index].Logic === '') {
+        this.WhereData[index].Logic = '&&'
+      }
       this.WhereData.splice(index + 1, 0, {
         key: new Date(),
         LeftUBB: '',
         Field: this.WhereData[index].Field,
-        Compare: '',
+        Compare: this.WhereData[index].Compare,
         CompareVal: '',
         RightUBB: '',
         Logic: '',
@@ -516,15 +519,20 @@ export default {
     },
     // 获取操作符
     GetCol(value) {
-      var operate = this.AllCol.filter(e => e.name === value);
-      if(operateList.length>0){
+      var operate = this.AllCol.filter(e => e.name === value)
+      if (operate.length > 0) {
         return operate[0].operateList
-      }else{
+      } else {
         return this.AllCol.filter(e => e.name === 'select')[0].operateList
       }
     },
+    // 获取默认操作符
+    GetDefault(value) {
+      var operateList = this.GetCol(value)
+      return operateList.filter(e => e.default === true)[0].value
+    },
     // 获取类型
-    GetStyle(value) { 
+    GetStyle(value) {
       return this.AllCol.filter(e => e.name === value)[0].fieldType
     },
     // 获取枚举值
@@ -540,8 +548,8 @@ export default {
       var obj2 = this.WhereData[index]
       //
       obj2.Field = name
-      obj2.Compare = ''
-      obj2.CompareVal = ''
+      obj2.Compare = this.GetDefault(name)
+      obj2.CompareVal = obj.fieldType === 'int' || obj.fieldType === 'double' ? '0' : ''
       this.CreateWhere()
     },
     // 选项卡回调
@@ -573,6 +581,14 @@ export default {
     },
     // 确定后执行关闭弹出层/窗口
     handleOk() {
+      if (this.AllCol.filter(e => e.LeftUBB === '(').length !== this.AllCol.filter(e => e.RightUBB === ')').length) {
+        this.$message.warning('左右括号数量不相等，无法搜索')
+        return
+      }
+      if (this.AllCol[this.AllCol.length-1].Logic !== undefined) {
+        this.$message.warning('并且或者后面必须加条件才能搜索')
+        return
+      }
       this.CreateWhere()
       this.$emit('input', this.EndWhere)
       this.hide()
@@ -596,13 +612,13 @@ export default {
       }
     },
     // 选择器回调
-    SelectChange(SelectRow,record, id, name) {
+    SelectChange(SelectRow, record, id, name) {
       this.WhereData.filter(e => e === record).HideCompareVal = id
       this.WhereData.filter(e => e === record).CompareVal = name
     },
     // 获取字段
     GetQueryFields(obj) {
-      var _this = this 
+      var _this = this
       GetAll({ methodFullName: this.methodName }).then(res => {
         if (res.success) {
           _this.AllCol = []
@@ -624,7 +640,7 @@ export default {
             key: new Date(),
             LeftUBB: '',
             Field: res.result[0].name,
-            Compare: '',
+            Compare: _this.GetDefault(res.result[0].name),
             CompareVal: '',
             HideCompareVal: '', // 选择器选择ID
             RightUBB: '',
@@ -635,13 +651,13 @@ export default {
       })
     }
   },
-  props:{
-    methodName:{
-      type:String,
-      required:true
+  props: {
+    methodName: {
+      type: String,
+      required: true
     },
-    value:{
-      type:String
+    value: {
+      type: String
     }
   }
 }
