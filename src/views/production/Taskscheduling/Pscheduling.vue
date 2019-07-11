@@ -39,6 +39,7 @@
 
     <dispatch ref="taskDispatch"/>
     <ImportExcel ref="ImportExcel"/>
+    <searchForm v-model="where" methodName="JIT.DIME2Barcode#TaskSchedulingAppService#GetAll" ref="searchForm" @input="_loadData"/>
   </a-card>
 </template>
 
@@ -54,7 +55,8 @@ export default {
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
     pagination: () => import('@/JtComponents/Pagination'),
     dispatch: () => import('./Dispatch'),
-    ImportExcel: () => import('./ImportExcel')
+    ImportExcel: () => import('./ImportExcel'),
+    searchForm:()=>import('@/JtComponents/SearchForm')
   },
   data() {
     return {
@@ -63,6 +65,7 @@ export default {
         total: 50,
         pageSize: 10
       },
+      where:'',
       buttonp: buttons.buttonp,
       selectedRowKeys: [],
       selectedRows: [],
@@ -143,7 +146,8 @@ export default {
       var _this=this
       var params = {
         SkipCount: (this.pagination.current - 1)*this.pagination.pageSize,
-        MaxResultCount: this.pagination.pageSize
+        MaxResultCount: this.pagination.pageSize,
+        Where:this.where
       }
       this.taskschedulLoading = true
       GetTaskSchedulData(params)
@@ -178,14 +182,28 @@ export default {
     },
 
     handleBtnClick(val) {
-      if (val == '查询') {
-        this.visible = true
-      } else if (val == '排产') {
-        if (this.selectedRowKeys.length === 1) this.$refs.taskDispatch.show(this.selectedRows[0])
-      } else if (val == '导入') {
-        console.log(val)
-        this.$refs.ImportExcel.show()
+
+      switch(val){
+        case '查询':{
+          this.visible = true
+          break;
+        }
+        case '排产':{
+           if (this.selectedRowKeys.length === 1) this.$refs.taskDispatch.show(this.selectedRows[0])
+          break;
+        }
+        case '导入':{
+          this.$refs.ImportExcel.show()
+          break;
+        }
+        case '搜索':{
+          this.$refs.searchForm.show();
+          break;
+        }
       }
+
+      
+      
     },
     onPaginationChange(page, size) {
       this.pagination.current = page
