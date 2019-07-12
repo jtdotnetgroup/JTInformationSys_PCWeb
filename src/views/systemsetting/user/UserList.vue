@@ -34,7 +34,7 @@
     </a-table>
     <!--其他页面模板-->
     <AddOrEdit ref="AddOrEdit" @addSuccess="loadTable" />
-    <SearchForm ref="SearchForm" @addSuccess="loadTable" /> 
+     <SearchForm v-model="StrWhere" methodName="JIT.InformationSystem.Application#UserAppService#GetAll2" ref="SearchForm" @input="loadTable"/>
   </a-card>
 </template>
 <!--JS脚本-->
@@ -101,6 +101,7 @@ export default {
         pageSize: 10,
         total: 50
       },
+      StrWhere:'',
       loading: false,
       columns,
       dataSource: [],
@@ -139,7 +140,7 @@ export default {
       var _this = this
       switch (val) {
         case '搜索': { 
-           _this.$refs.SearchForm.show({ id: 0 })
+           _this.$refs.SearchForm.show()
           break
         }
         case '刷新': {
@@ -225,7 +226,8 @@ export default {
       _this.dataSource = []
       var obj = {
         SkipCount: (_this.pagination.current - 1) * _this.pagination.pageSize,
-        MaxResultCount: _this.pagination.pageSize
+        MaxResultCount: _this.pagination.pageSize,
+        where:_this.StrWhere
       }
 
       _this.ShowLoad()

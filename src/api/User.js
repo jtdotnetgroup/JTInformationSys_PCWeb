@@ -2,7 +2,7 @@ import { axios } from '@/utils/request'
 
 export function GetAll (params) {
   return axios({
-    url: '/api/services/app/User/GetAll',
+    url: '/api/services/app/User/GetAll2',
     method: 'get',
     params: params
   })

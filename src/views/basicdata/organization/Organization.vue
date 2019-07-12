@@ -1,13 +1,11 @@
 <template>
   <a-card>
-    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons"/>
+    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons" />
 
     <div>
       <a-row :gutter="10">
-        <a-col :span="4" >
-
-          <treeData @btnClick="btnTree"  />
-
+        <a-col :span="4">
+          <treeData @btnClick="btnTree" />
         </a-col>
         <a-col :span="20">
           <pagination
@@ -16,35 +14,30 @@
             @pageChange="onPaginationChange"
           />
           <a-table
-             :loading="loading"
+            :loading="loading"
             :dataSource="tableData"
             :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
             :columns="columns"
             :pagination="false"
-             rowKey="id"
-             :bordered="true"
-             :scroll="{x: 1500,y: 500}"
-             size="small"
+            rowKey="id"
+            :bordered="true"
+            :scroll="{x: 1500,y: 500}"
+            size="small"
           >
-         
-
             <template slot="fSex" slot-scope="fSex">
-              <span >{{fSex==1?"男":"女"}}</span>
+              <span>{{fSex==1?"男":"女"}}</span>
             </template>
             <template slot="fWorkingState" slot-scope="fWorkingState">
-              <span >{{fWorkingState==1?"在职":"离职"}}</span>
+              <span>{{fWorkingState==1?"在职":"离职"}}</span>
             </template>
 
             <template slot="fSystemUser" slot-scope="fSystemUser">
-           
-            <div v-if="fSystemUser==1" class="tabletd">
-                <a-checkbox :checked="true" ></a-checkbox>
-
-             </div>
+              <div v-if="fSystemUser==1" class="tabletd">
+                <a-checkbox :checked="true"></a-checkbox>
+              </div>
               <div v-else class="tabletd">
-                  <a-checkbox :checked="false" ></a-checkbox>
-             </div>
-     
+                <a-checkbox :checked="false"></a-checkbox>
+              </div>
             </template>
           </a-table>
         </a-col>
@@ -52,17 +45,24 @@
 
       <!-- 新增组织弹框 -->
       <!-- <ModalFromOr ref="ModalFromOr" @Eidt="OUEidt"/> -->
-      <ModalFromOr ref="ModalFromOr" @updateOrg="LoadDataGetOUByID"/>
+      <ModalFromOr ref="ModalFromOr" @updateOrg="LoadDataGetOUByID" />
 
       <!-- 新增员工弹框 -->
-      <ModalFromEn ref="ModalFromEn"   @addSuccess="handelAddSuccess"/>
+      <ModalFromEn ref="ModalFromEn" @addSuccess="handelAddSuccess" />
+      <!-- 高级搜索 -->
+      <SearchForm
+        v-model="StrWhere"
+        methodName="JIT.DIME2Barcode#EmployeeAppService#GetAllVW"
+        ref="SearchForm"
+        @input="_LoadData"
+      />
     </div>
   </a-card>
 </template>
 
 <script>
-import { GetAll, DeleteOu,GetOuByID } from '@/api/Organization'
-import{GetAll as GetAllEmployee}from '@/api/Employee'
+import { GetAll, DeleteOu, GetOuByID } from '@/api/Organization'
+import { GetAll as GetAllEmployee } from '@/api/Employee'
 import { GetFMpno } from '@/api/Employee'
 import { Delete } from '@/api/Employee'
 
@@ -76,7 +76,8 @@ export default {
     pagination: () => import('@/JtComponents/Pagination'),
     treeData: () => import('./ptreedata'),
     ModalFromOr: () => import('./ModalFromOr'),
-    ModalFromEn: () => import('./ModalFromEn')
+    ModalFromEn: () => import('./ModalFromEn'),
+    SearchForm: () => import('@/JtComponents/SearchForm')
   },
   data() {
     return {
@@ -85,36 +86,38 @@ export default {
         pageSize: 10,
         total: 50
       },
-      loading:true,
-      tableData:[],
+      StrWhere:'',
+      loading: true,
+      tableData: [],
       columns: columns,
       selectedRowKeys: [],
       buttons: buttons,
       treevaule: '',
       treeId: '', //用于记录树形的ID
       isEdit: false,
-      EditArr:{}
+      EditArr: {}
     }
   },
 
   mounted() {
-  this._LoadData()
+    this._LoadData()
   },
- 
+
   methods: {
     //查询员工信息表
     _LoadData() {
-      var _this=this;
-      
+      var _this = this
+
       var params = {
         Id: this.treeId == '' ? 0 : this.treeId,
         SkipCount: this.pagination.current - 1,
-        MaxResultCount: this.pagination.pageSize
+        MaxResultCount: this.pagination.pageSize,
+        where:this.StrWhere
       }
       GetAllEmployee(params)
         .then(res => {
           _this.tableData = []
-          const result = res.result  
+          const result = res.result
           if (result) {
             _this.tableData = result.items
             _this.pagination.total = result.totalCount
@@ -122,7 +125,7 @@ export default {
           }
         })
         .catch(err => {
-           this.loading = false
+          this.loading = false
           console.log(err)
         })
     },
@@ -143,27 +146,26 @@ export default {
         case '新建组织': {
           this.isEdit = false
           var formData = {}
-          if (!(!!this.treevaule)) {
+          if (!!!this.treevaule) {
             formData.Code = '00' + (store.getters.organizations.length + 1)
           } else {
             formData = this.treevaule
           }
-          this.$refs.ModalFromOr.showModal(formData,this.isEdit)
+          this.$refs.ModalFromOr.showModal(formData, this.isEdit)
           break
         }
 
         case '编辑组织': {
           this.isEdit = true
           var formData = {}
-          if (this.treevaule=="") {
+          if (this.treevaule == '') {
             this.$message.error('选择你要编辑的组织')
-          }else{           
-            formData=this.EditArr
-            this.$refs.ModalFromOr.showModal(formData,this.isEdit)
-          }       
+          } else {
+            formData = this.EditArr
+            this.$refs.ModalFromOr.showModal(formData, this.isEdit)
+          }
           break
         }
-
 
         case '新建员工': {
           this.isEdit = false
@@ -220,7 +222,8 @@ export default {
                 .catch(err => {
                   console.log(err)
                   _this.$message.error('失败')
-                }).finally(()=>{
+                })
+                .finally(() => {
                   this.LoadDataGetOUByID()
                 })
             },
@@ -248,7 +251,7 @@ export default {
               Delete(params)
                 .then(res => {
                   if (res.result > 0) {
-                    _this.$message.success('成功')          
+                    _this.$message.success('成功')
                     _this._LoadData()
                     //_this.$store.dispatch('GetEmployees', params)
                   } else {
@@ -267,67 +270,66 @@ export default {
 
           break
         }
+        case '搜索': {
+           this.$refs.SearchForm.show()
+        }
         default:
           break
       }
     },
 
-      //通过ID去查询组织的信息
-    LoadDataGetOUByID(){    
-      var _this=this   
-      var params={
-        id:this.treeId==''?0:this.treeId
+    //通过ID去查询组织的信息
+    LoadDataGetOUByID() {
+      var _this = this
+      var params = {
+        id: this.treeId == '' ? 0 : this.treeId
       }
-      GetOuByID(params).then(res=>{
-        const result=res.result
-        if(result){
-               
-          _this.EditArr=result
-        }
-      }).catch(err=>{
-        console.log(err)
-      })
+      GetOuByID(params)
+        .then(res => {
+          const result = res.result
+          if (result) {
+            _this.EditArr = result
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
 
-
-   // 组织模态款修改回调刷新编辑之后的数据
-   OUEidt(){
-    this.LoadDataGetOUByID()
-   },
+    // 组织模态款修改回调刷新编辑之后的数据
+    OUEidt() {
+      this.LoadDataGetOUByID()
+    },
     //点击树形的办法
     btnTree(obj) {
       console.log(obj)
       if (obj.selectedNodes.length > 0) {
-         
         this.selectedRowKeys = []
-        this.selectedRows = []     
-        this.loading=true    
+        this.selectedRows = []
+        this.loading = true
         this.treevaule = obj
         this.treeId = obj.selectedNodes[0].componentOptions.propsData.dataRef.id
         this.LoadDataGetOUByID()
-        this._LoadData()    
+        this._LoadData()
       } else {
         this.treevaule = ''
       }
     },
     //员工模态宽执行回掉的方法
-    handelAddSuccess(){
-      this.loading=true
-      this.selectedRowKeys=[];
-      this._LoadData();
-      this.treevaule=''   
+    handelAddSuccess() {
+      this.loading = true
+      this.selectedRowKeys = []
+      this._LoadData()
+      this.treevaule = ''
     }
   }
 }
 </script>
 
 <style scoped>
-
-.tabletd{
-  text-align: center
+.tabletd {
+  text-align: center;
 }
-
-
 </style>
 
 

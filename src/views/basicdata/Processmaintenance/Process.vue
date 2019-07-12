@@ -2,11 +2,11 @@
   <a-card>
     <a-row :gutter="10">
       <a-col :span="4">
-        <TreeForm @btnClick="btnTree"/>
+        <TreeForm @btnClick="btnTree" />
       </a-col>
 
       <a-col :span="20">
-        <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonp"/>
+        <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonp" />
         <pagination
           :current="pagination.current"
           :total="pagination.total"
@@ -37,7 +37,14 @@
     </a-row>
 
     <!-- 不良项目模态框 -->
-    <ProcessModalFrom ref="ProcessModalFrom" @addSuccess="handelAddSuccess"/>
+    <ProcessModalFrom ref="ProcessModalFrom" @addSuccess="handelAddSuccess" />
+    <!-- 高级搜索 -->
+    <SearchForm
+      v-model="StrWhere"
+      methodName="JIT.DIME2Barcode#TB_BadItemRelationAppService#GetAllBadItemRelation"
+      ref="SearchForm"
+      @input="_LoadData"
+    />
   </a-card>
 </template>
 
@@ -51,15 +58,17 @@ export default {
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
     pagination: () => import('@/JtComponents/Pagination'),
     TreeForm: () => import('./TreeForm'),
-    ProcessModalFrom: () => import('./ProcessModalFrom')
+    ProcessModalFrom: () => import('./ProcessModalFrom'),
+     SearchForm: () => import('@/JtComponents/SearchForm')
   },
-  data () {
+  data() {
     return {
       pagination: {
         current: 1,
         pageSize: 10,
         total: 50
       },
+      StrWhere: '',
       buttonp: buttonp,
       loading: true,
       dataTable: [],
@@ -96,7 +105,8 @@ export default {
       var params = {
         FOperID: this.FOperID == 0 ? 0 : this.FOperID,
         SkipCount: (this.pagination.current - 1) * this.pagination.pageSize,
-        MaxResultCount: this.pagination.pageSize
+        MaxResultCount: this.pagination.pageSize,
+        where: this.StrWhere
       }
 
       GetAllBadItemRelation(params)
@@ -152,7 +162,7 @@ export default {
           this.$confirm({
             title: '系统提示！',
             content: '确定要删除选中的吗?',
-            onOk () {
+            onOk() {
               var params = {
                 fid: _this.selectedRows[0].fid
               }
@@ -171,19 +181,22 @@ export default {
                   _this.$message.error('失败')
                 })
             },
-            onCancel () {
+            onCancel() {
               _this.$message.warning('数据要谨慎删除')
             }
           })
 
           break
-
+        case '搜索': {
+          this.$refs.SearchForm.show()
+          break
+        }
         default:
           break
       }
     },
 
-    handelAddSuccess () {
+    handelAddSuccess() {
       this.loading === true
       this._LoadData()
       this.selectedRowKeys = []
@@ -191,7 +204,7 @@ export default {
     },
 
     // 树形的方法
-    btnTree (e) {
+    btnTree(e) {
       if (e.selectedNodes.length > 0) {
         this.selectedRowKeys = []
         this.selectedRows = []

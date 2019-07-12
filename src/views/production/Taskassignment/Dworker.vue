@@ -58,6 +58,7 @@
 
     <ExceptionModal ref="ExceptionModal"/>
     <AddScheduling ref="AddScheduling" @addSuccess="SXsetRow"/>
+    <SearchForm v-model="StrWhere" methodName="JIT.DIME2Barcode#ICMODailyAppService#GetGroupDailyList" ref="SearchForm" @input="_LoadMainData"/>
   </a-card>
 </template>
 
@@ -82,7 +83,8 @@ export default {
     EditableCellInput: () => import('./pubilcvue/EditableCellInput'),
     DispatchWorkModalForm: () => import('./DispatchWorkModalForm'),
     ExceptionModal: () => import('./ICMOException'),
-    AddScheduling:()=>import('./AddScheduling')
+    AddScheduling:()=>import('./AddScheduling'),
+    SearchForm:()=>import('@/JtComponents/SearchForm')
   },
   data() {
     return {
@@ -93,6 +95,7 @@ export default {
         pageSizeOptions: ['10', '50', '100'],
         defaultPageSize: 100
       },
+      StrWhere:'',
       buttonp: buttons.buttonp,
       buttonps: buttons.buttonps,
       columnsMT: columnsMT,
@@ -170,7 +173,8 @@ export default {
     _LoadMainData() {
       const params = {
         SkipCount: (this.pagination.current - 1) * this.pagination.pageSize,
-        MaxResultCount: this.pagination.pageSize
+        MaxResultCount: this.pagination.pageSize,
+        where:this.StrWhere
       }
       this.taskschedulLoading = true
       //后端获取数据
@@ -337,6 +341,10 @@ export default {
             
             this.$refs.AddScheduling.showModal(rowSelection)
           }
+          break;
+        }
+        case '搜索':{
+          this.$refs.SearchForm.show();
           break;
         }
       }

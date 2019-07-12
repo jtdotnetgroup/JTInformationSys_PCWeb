@@ -39,7 +39,7 @@
 
     <dispatch ref="taskDispatch"/>
     <ImportExcel ref="ImportExcel"/>
-    <searchForm v-model="where" methodName="JIT.DIME2Barcode#TaskSchedulingAppService#GetAll" ref="searchForm" @input="_loadData"/>
+    <SearchForm v-model="where" methodName="JIT.DIME2Barcode#TaskSchedulingAppService#GetAll" ref="SearchForm" @input="_loadData"/>
   </a-card>
 </template>
 
@@ -56,7 +56,7 @@ export default {
     pagination: () => import('@/JtComponents/Pagination'),
     dispatch: () => import('./Dispatch'),
     ImportExcel: () => import('./ImportExcel'),
-    searchForm:()=>import('@/JtComponents/SearchForm')
+    SearchForm:()=>import('@/JtComponents/SearchForm')
   },
   data() {
     return {
@@ -180,7 +180,6 @@ export default {
     toggleAdvanced() {
       this.advanced = !this.advanced
     },
-
     handleBtnClick(val) {
 
       switch(val){
@@ -197,13 +196,10 @@ export default {
           break;
         }
         case '搜索':{
-          this.$refs.searchForm.show();
+          this.$refs.SearchForm.show();
           break;
         }
       }
-
-      
-      
     },
     onPaginationChange(page, size) {
       this.pagination.current = page

@@ -140,6 +140,17 @@
                     >{{item.title}}</a-select-option>
                   </a-select>
                 </div>
+                <!-- bool -->
+                <div v-else-if="GetStyle(record.Field)==='bool'">
+                  <a-radio-group
+                    name="bool"
+                    :defaultValue="record.CompareVal"
+                    v-model="record.CompareVal"
+                  >
+                    <a-radio :value="true">真</a-radio>
+                    <a-radio :value="false">假</a-radio>
+                  </a-radio-group>
+                </div>
                 <!-- 单选 -->
                 <div v-else-if="GetStyle(record.Field)==='radioGroup'">
                   <a-radio-group
@@ -549,7 +560,15 @@ export default {
       //
       obj2.Field = name
       obj2.Compare = this.GetDefault(name)
-      obj2.CompareVal = obj.fieldType === 'int' || obj.fieldType === 'double' ? '0' : ''
+      // 设置默认值
+      if (obj.fieldType === 'int' || obj.fieldType === 'double') {
+        obj2.CompareVal = 0
+      } else if (obj.fieldType === 'bool') {
+        obj2.CompareVal = true
+      } else {
+        obj2.CompareVal = ''
+      }
+
       this.CreateWhere()
     },
     // 选项卡回调
@@ -585,9 +604,11 @@ export default {
         this.$message.warning('左右括号数量不相等，无法搜索')
         return
       }
-      if (this.AllCol[this.AllCol.length-1].Logic !== undefined) {
+      if(this.AllCol.length>0){
+      if (this.AllCol[this.AllCol.length - 1].Logic !== undefined) {
         this.$message.warning('并且或者后面必须加条件才能搜索')
         return
+      }
       }
       this.CreateWhere()
       this.$emit('input', this.EndWhere)
