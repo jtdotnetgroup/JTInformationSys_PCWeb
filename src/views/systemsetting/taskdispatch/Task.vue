@@ -10,8 +10,8 @@
        size="small"
     ></a-table>
     <!-- 公共组件 模态框 -->
-    <TaskEdit ref="TaskEdit" @addSuccess="loadTable" />
-    <SearchForm ref="SearchForm" @addSuccess="Search" />
+    <TaskEdit ref="TaskEdit" @addSuccess="loadTable" /> 
+      <searchForm v-model="StrWhere" methodName="JIT.DIME2Barcode#Sys_TaskAppService#Sys_TaskList" ref="SearchForm" @input="loadTable"/>
   </a-card>
 </template>
 
@@ -57,7 +57,7 @@ export default {
       var obj = {}
       switch (val) {
         case '搜索': {
-          _this.$refs.SearchForm.show({ id: 0 })
+          _this.$refs.SearchForm.show()
           break
         }
         case '新增':
