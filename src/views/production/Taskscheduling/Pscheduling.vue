@@ -49,6 +49,8 @@ import tableheader from './tableheader'
 import { GetTaskSchedulData, GetAllDailyByFMOInterID } from '@/api/TaskScheduling'
 import columns from './columns'
 
+import {aoa2Excel} from '@/utils/helper/Export2Excel'
+
 export default {
   components: {
     // @是根目录 。。是上一级 。是当前目录
@@ -200,10 +202,33 @@ export default {
           this.$refs.searchForm.show();
           break;
         }
+        case '导出':{
+          this.export();
+          break;
+        }
       }
 
       
       
+    },
+    export(){
+      if(this.selectedRowKeys.length===0){
+        return;
+      }
+
+      const today=this.$moment().format('YYYY/MM/DD');
+
+      const arr=[
+        ['序号','车间','机台号','任务单号','产品名称','工序名','班次',today]
+      ]
+      for (let index = 0; index < this.selectedRows.length; index++) {
+        const row=this.selectedRows[index];
+        const temp=[index+1,row.车间,'',row.任务单号,row.产品名称,'',''];
+        arr.push(temp);
+      }
+
+      aoa2Excel(arr,'排产模板.xlsx')
+
     },
     onPaginationChange(page, size) {
       this.pagination.current = page
