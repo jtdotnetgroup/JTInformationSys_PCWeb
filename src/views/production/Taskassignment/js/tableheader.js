@@ -1,13 +1,13 @@
-
 const example = {
   'Id': 'Id',
   'fDate': '日期',
   'fmoBillNo': '任务单号',
-  'DisplayName': '车间',
+  'displayName': '车间',
   'fItemID': '产品编码',
   'fItemName': '产品名称',
   'fItemModel': '产品规格',
-  'totalPlanAuxQty': '计划数量'
+  'totalPlanAuxQty': '计划数量',
+  'fCommitAuxQty': '派工数量'
 }
 
 const exampleMT = {
@@ -24,6 +24,8 @@ const exampleMT = {
   'fWorkerID': '',
   'fShift': '班次',
   'fCommitAuxQty': '派工数量',
+  'fFinishAuxQty': '汇报数量',
+  'fPassAuxQty': '合格数量',
   'fBiller': '计划员'
 }
 
@@ -41,6 +43,8 @@ const exampleMX = {
   'fWorkerID': '',
   'fShift': '班次',
   'fCommitAuxQty': '派工数量',
+  'fFinishAuxQty': '汇报数量',
+  'fPassAuxQty': '合格数量',
   'fBiller': '计划员',
   'dispFid': 'dispFid',
   'fStatus': '状态'
@@ -50,19 +54,21 @@ export const columns = GenericColumns(example)
 export const columnsMT = GenericColumns(exampleMT)
 export const columnsMX = GenericColumns(exampleMX)
 
-columns.push(
-  {
-    title: '序号',
-    key: 'index',
-    scopedSlots: { customRender: 'serial' },
-    width: 60,
-    align: 'center'
-  }
-)
+columns.push({
+  title: '序号',
+  key: 'index',
+  scopedSlots: {
+    customRender: 'serial'
+  },
+  width: 60,
+  align: 'center'
+})
 
 columnsMX.push({
   title: '操作',
-  scopedSlots: { customRender: 'actions' },
+  scopedSlots: {
+    customRender: 'actions'
+  },
   align: 'center',
   width: 200
 })
@@ -78,7 +84,9 @@ function GenericColumns (data) {
         key: key,
         align: 'center',
         width: 130,
-        scopedSlots: { customRender: key }
+        scopedSlots: {
+          customRender: key
+        }
       }
 
       // if (editColumns.includes(key)) {

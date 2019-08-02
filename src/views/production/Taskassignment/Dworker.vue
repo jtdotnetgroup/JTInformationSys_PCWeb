@@ -1,65 +1,39 @@
 <template>
-  <a-card>
-    <!-- 功能按钮 -->
-    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonp" :reflash="reflash"/>
-    <!-- 分页 -->
-    <pagination
-      :current="pagination.current"
-      :pageSizeOptions="pagination.pageSizeOptions"
-      :defaultPageSize="pagination.defaultPageSize"
-      :total="pagination.total"
-      @pageChange="pageChangeClick"
-    />
-    <!-- 表格 -->
-    <a-table
-      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-      :dataSource="dataTable"
-      :columns="columnsMain"
-      :loading="taskschedulLoading"
-      bordered
-      onRow="{this.onClickRow}"
-      :pagination="false"
-      rowKey="Id"
-      :scroll="scroll"
-      size="small"
-      :customRow="setRow"
-    >
-      <template slot="serial" slot-scope="text">
-        <span>{{dataTable.indexOf(text)+1}}</span>
-      </template>
-      <!-- <template slot="serial" slot-scope="indexname">
+    <a-card>
+        <!-- 功能按钮 -->
+        <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonp" :reflash="reflash" />
+        <!-- 分页 -->
+        <pagination :current="pagination.current" :pageSizeOptions="pagination.pageSizeOptions" :defaultPageSize="pagination.defaultPageSize" :total="pagination.total" @pageChange="pageChangeClick" />
+        <!-- 表格 -->
+        <a-table :rowClassName="setRowClassName" :rowSelection=" {selectedRowKeys: selectedRowKeys, onChange: onSelectChange} " :dataSource="dataTable " :columns="columnsMain " :loading="taskschedulLoading " bordered onRow="{this.onClickRow} " :pagination="false " rowKey="Id " :scroll="scroll " size="small " :customRow="setRow ">
+            <template slot="serial " slot-scope="text ">
+                <span>{{dataTable.indexOf(text)+1}}</span>
+            </template>
+            <!-- <template slot="serial " slot-scope="indexname ">
      <span  >{{dataTable.indexOf(indexname)+1}}</span>
       </template>-->
-    </a-table>
+        </a-table>
 
-    <div id="button">
-      <a-button style="background-color: #E6F7FF;border-color:#E6F7FF">
-        <a-icon type="schedule"/>排产明细
-      </a-button>
-    </div>
+        <div id="button ">
+            <a-button style="background-color: #E6F7FF;border-color:#E6F7FF ">
+                <a-icon type="schedule " />排产明细
+            </a-button>
+        </div>
 
-    <a-table
-      id="cardd"
-      size="small"
-      bordered
-      :columns="columnsMX"
-      :pagination="false"
-      :dataSource="tableDataMX"
-      :scroll="{x:1400,y:400}"
-    >
-      <template slot="actions" slot-scope="text,record">
-        <a-button @click="BJMX(record)" type="primary">编辑</a-button>
-        <a-button @click="GBMX(record)" type="danger">关闭</a-button>
-        <a-button @click="showException(record)">异常</a-button>
-      </template>
-    </a-table>
+        <a-table id="cardd" size="small " bordered :columns="columnsMX " :pagination="false " :dataSource="tableDataMX " :scroll="{x:1400,y:400} ">
+            <template slot="actions" slot-scope="text,record ">
+                <a-button @click="BJMX(record) " type="primary">编辑</a-button>
+                <a-button @click="GBMX(record) " type="danger">关闭</a-button>
+                <a-button @click="showException(record) ">异常</a-button>
+            </template>
+        </a-table>
 
-    <DispatchWorkModalForm ref="DispatchWorkModalForm" @selectChange="SXsetRow"/>
+        <DispatchWorkModalForm ref="DispatchWorkModalForm " @selectChange="SXsetRow " />
 
-    <ExceptionModal ref="ExceptionModal"/>
-    <AddScheduling ref="AddScheduling" @addSuccess="SXsetRow"/>
-    <SearchForm v-model="StrWhere" methodName="JIT.DIME2Barcode#ICMODailyAppService#GetGroupDailyList" ref="SearchForm" @input="_LoadMainData"/>
-  </a-card>
+        <ExceptionModal ref="ExceptionModal " />
+        <AddScheduling ref="AddScheduling " @addSuccess="SXsetRow " />
+        <SearchForm v-model="StrWhere " methodName="JIT.DIME2Barcode#ICMODailyAppService#GetGroupDailyList " ref="SearchForm " @input="_LoadMainData " />
+    </a-card>
 </template>
 
 <script>
@@ -83,8 +57,8 @@ export default {
     EditableCellInput: () => import('./pubilcvue/EditableCellInput'),
     DispatchWorkModalForm: () => import('./DispatchWorkModalForm'),
     ExceptionModal: () => import('./ICMOException'),
-    AddScheduling:()=>import('./AddScheduling'),
-    SearchForm:()=>import('@/JtComponents/SearchForm')
+    AddScheduling: () => import('./AddScheduling'),
+    SearchForm: () => import('@/JtComponents/SearchForm')
   },
   data() {
     return {
@@ -95,7 +69,7 @@ export default {
         pageSizeOptions: ['10', '50', '100'],
         defaultPageSize: 100
       },
-      StrWhere:'',
+      StrWhere: '',
       buttonp: buttons.buttonp,
       buttonps: buttons.buttonps,
       columnsMT: columnsMT,
@@ -123,10 +97,8 @@ export default {
       dataTableArry: [],
       dataTableArrget: [],
       djsetRow: {},
-      reflash:{
-        click(){
-          
-        }
+      reflash: {
+        click() {}
       }
     }
   },
@@ -136,6 +108,14 @@ export default {
 
   //一开始就执行的方法
   methods: {
+    setRowClassName(record) {
+      if (record.fCommitAuxQty === record.totalPlanAuxQty && record.isICException !== 1) {
+        return 'RowGreen'
+      }
+      if (record.isICException === 1) {
+        return 'RowRed'
+      }
+    },
     // 编辑明细
     BJMX(record) {
       console.log(record)
@@ -174,7 +154,7 @@ export default {
       const params = {
         SkipCount: (this.pagination.current - 1) * this.pagination.pageSize,
         MaxResultCount: this.pagination.pageSize,
-        where:this.StrWhere
+        where: this.StrWhere
       }
       this.taskschedulLoading = true
       //后端获取数据
@@ -259,7 +239,7 @@ export default {
         var params = {
           details: this.dataSource
         }
-         console.log(params)
+        console.log(params)
         CreateAll(params)
           .then(res => {
             console.log(res)
@@ -333,19 +313,19 @@ export default {
             var rowSelection = this.selectedRows
             this.$refs.DispatchWorkModalForm.show(rowSelection)
           }
-          break;
+          break
         }
         case '增加排产': {
           if (this.selectedRows.length > 0) {
             var rowSelection = this.selectedRows
-            
+
             this.$refs.AddScheduling.showModal(rowSelection)
           }
-          break;
+          break
         }
-        case '搜索':{
-          this.$refs.SearchForm.show();
-          break;
+        case '搜索': {
+          this.$refs.SearchForm.show()
+          break
         }
       }
     },
@@ -379,4 +359,12 @@ export default {
 /* #btn:hover {
     background:url(@/public/Thetopup)  no-repeat  left -40px;
 } */
+</style>
+<style>
+.RowRed {
+  background-color: red !important;
+}
+.RowGreen {
+  background-color: #90d090 !important;
+}
 </style>
