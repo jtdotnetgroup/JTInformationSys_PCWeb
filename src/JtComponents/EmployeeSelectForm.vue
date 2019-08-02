@@ -53,6 +53,11 @@ export default {
       rowData: {}
     }
   },
+  props:{
+    value:{
+      type:String|Number
+    }
+  },
   computed: {
     workcenters() {
       if (this.$store.getters.workcenters.length === 0) {
@@ -111,6 +116,7 @@ export default {
       }
 
       this.$emit('selectChange', this.selectedRows[0], this.rowData)
+      this.$emit('input',this.selectedRows[0].id)
       this.onClose()
     },
     onSelectChange(selectedRowKeys, selectedRows) {
@@ -121,7 +127,6 @@ export default {
       return {
         on: {
           click: () => {
-            console.log(record)
             // this.selectedRowKeys=[]
             // this.selectedRowKeys=[]
             // this.selectedRowKeys.push(record.id)
@@ -129,7 +134,8 @@ export default {
           }
         }
       }
-    }
+    },
+    
   }
 }
 </script>

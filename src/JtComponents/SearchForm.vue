@@ -7,7 +7,7 @@
       :maskClosable="false"
       @ok="handleOk"
       @cancel="handleCancel"
-      width="50%"
+      width="70%"
       okText="搜索"
     >
       <!-- tabs -->

@@ -12,6 +12,7 @@
             :current="pagination.current"
             :total="pagination.total"
             @pageChange="onPaginationChange"
+            v-model="pagination"
           />
           <a-table
             :loading="loading"
