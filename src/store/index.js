@@ -19,10 +19,12 @@ export default new Vuex.Store({
     organizations
   },
   state: {
-
+    loading: false
   },
   mutations: {
-
+    SET_LOADING: (state, payload) => {
+      state.loading = payload
+    }
   },
   actions: {
 

@@ -3,11 +3,12 @@ const example = {
   'fDate': '日期',
   'fmoBillNo': '任务单号',
   'displayName': '车间',
-  'fItemID': '产品编码',
   'fItemName': '产品名称',
-  'fItemModel': '产品规格',
   'totalPlanAuxQty': '计划数量',
-  'fCommitAuxQty': '派工数量'
+  'fCommitAuxQty': '派工数量',
+  'fItemID': '产品编码',
+  'fItemModel': '产品规格'
+
 }
 
 const exampleMT = {
@@ -23,6 +24,7 @@ const exampleMT = {
   'worker': '员工',
   'fWorkerID': '',
   'fShift': '班次',
+  'fPackQty': '打包数量',
   'fCommitAuxQty': '派工数量',
   'fFinishAuxQty': '汇报数量',
   'fPassAuxQty': '合格数量',

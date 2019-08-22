@@ -21,13 +21,14 @@ export default {
         fmoInterID: '',
         fBillNo: '派工单号',
         fBillTime: '派工日期',
-        "equipment.fName": '设备',
+        machine: '设备',
         fMachineID: 'fMachineID',
-        "employee.fName": '员工',
+        worker: '员工',
         fWorkerID: '',
-        "eqiupmentShift.fShift": '班次',
+        fShift: '班次',
         fCommitAuxQty: '派工数量',
         dispFid: 'dispFid',
+        fStatus:'状态'
       }
     }
   },

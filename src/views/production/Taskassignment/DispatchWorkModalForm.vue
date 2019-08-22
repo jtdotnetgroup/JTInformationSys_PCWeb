@@ -2,13 +2,18 @@
   <a-modal
     title="新增/维护"
     :visible="visible"
-    width="1000px"
+    width="75vw"
     style="left:80px"
     :maskClosable="true"
     @ok="handleSubmit"
     @cancel="onClose"
   >
-    <tableOperatorBtn @btnClick="handleBtnClickModal" :buttons="buttonp" :search="false"/>
+    <tableOperatorBtn
+      @btnClick="handleBtnClickModal"
+      :buttons="buttonp"
+      :search="false"
+      :reflash="reflash"
+    />
 
     <a-table
       id="cards"
@@ -19,18 +24,15 @@
       :loading="loading"
       rowKey="key"
       size="small"
+      :rowSelection="rowSelection"
     >
       <template slot="fCommitAuxQty" slot-scope="text, record">
         <a-input-number v-model="record.fCommitAuxQty"></a-input-number>
       </template>
+      <template slot="fPackQty" slot-scope="text,record">
+        <a-input-number v-model="record.fPackQty"></a-input-number>
+      </template>
       <template slot="worker" slot-scope="text,record">
-        <!-- <a-select v-model="record.fWorkerID">
-          <a-select-option
-            v-for="(item,index) in workers"
-            :key="index"
-            :value="item.id"
-          >{{item.fName}}</a-select-option>
-        </a-select>-->
         <a-button @click="showEmployeeForm(record)">
           {{text}}
           <a-icon type="search"></a-icon>
@@ -38,21 +40,14 @@
       </template>
       <!-- 设备 -->
       <template slot="machine" slot-scope="text,record">
-        <!-- <a-select v-model="record.fWorkerID">
-          <a-select-option
-            v-for="(item,index) in workers"
-            :key="index"
-            :value="item.id"
-          >{{item.fName}}</a-select-option>
-        </a-select>-->
         <a-button @click="showSelequipment(record)">
           {{text}}
           <a-icon type="search"></a-icon>
         </a-button>
       </template>
     </a-table>
-    <Selequipment ref="Selequipment" @selectChange="handleequipmentChange"/>
-    <EmployeeSelectForm ref="EmployeeSelectForm" @selectChange="handleEmployeeChange"/>
+    <Selequipment ref="Selequipment" @selectChange="handleequipmentChange" />
+    <EmployeeSelectForm ref="EmployeeSelectForm" @selectChange="handleEmployeeChange" />
   </a-modal>
 </template>
 
@@ -76,7 +71,7 @@ export default {
         case '新增': {
           break
         }
-        case '保存': {
+        case '派工': {
           this.saveData()
           break
         }
@@ -101,7 +96,7 @@ export default {
     saveData() {
       this.loading = true
       const data = []
-      this.dataSource.forEach(row => {
+      this.rowSelection.selectedRows.forEach(row => {
         data.push({
           fid: row.fid,
           fSrcID: '',
@@ -112,7 +107,8 @@ export default {
           fWorker: row.fWorkerID,
           fmoBillNo: row.fmoBillNo,
           fmoInterID: row.fmoInterID,
-          ICMODispBillId:row.dispFid
+          ICMODispBillId: row.dispFid,
+          fPackQty: row.fPackQty
         })
       })
 
@@ -128,18 +124,19 @@ export default {
         .catch(err => {
           console.log(err)
         })
-        .finally(() => { 
+        .finally(() => {
           this.onClose()
+          this.rowSelection.selectedRows=[];
+          this.rowSelection.selectedRowKeys=[];
         })
     },
     show(data) {
       this.visible = true
       this.DailyData = data
-      this.loading = true
       this._LoadData()
     },
     _LoadData() {
-      console.log(this.DailyData)
+      this.loading = true
       var params = { fmoBillNos: [], DatelList: [] }
 
       this.DailyData.forEach(row => {
@@ -147,11 +144,8 @@ export default {
         params.DatelList.push(row.fDate)
       })
 
-      console.log(params)
-
       GetDailyDispBillList(params)
         .then(res => {
-          console.log(res)
           this.loading = false
           var result = res.result
           if (result && result.items.length > 0) {
@@ -167,11 +161,14 @@ export default {
           }
         })
         .catch(error => {
+          console.log(error)
+        })
+        .finally(() => {
           this.loading = false
         })
     },
     handleSubmit() {
-        this.saveData()
+      this.saveData()
     },
     onCellChange(rowData, dataIndex, value) {
       const dataSource = [...this.dataSource]
@@ -197,7 +194,23 @@ export default {
       loading: false,
       columnsMT: columnsMT,
       editColumns: ['fCommitAuxQty'],
-      selectColumns: []
+      selectColumns: [],
+      rowSelection: {
+        columnWidth: '50px',
+        fixed: true,
+        selectedRowKeys: [],
+        selectedRows: [],
+        onChange: (keys, rows) => {
+          this.rowSelection.selectedRowKeys = keys
+          this.rowSelection.selectedRows = rows
+        }
+      },
+      reflash: {
+        _this: this,
+        click() {
+          this._this._LoadData()
+        }
+      }
     }
   },
   computed: {

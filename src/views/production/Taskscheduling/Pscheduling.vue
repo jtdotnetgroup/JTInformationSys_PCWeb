@@ -1,6 +1,6 @@
 <template>
   <a-card>
-    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonp"/>
+    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonp" :reflash="reflash"/>
 
     <pagination
       :current="pagination.current"
@@ -64,6 +64,13 @@ export default {
         current: 1,
         total: 50,
         pageSize: 10
+      },
+      reflash:{
+        _this:this,
+        click:()=>{
+          this._loadData();
+          this.dataSourceMX=[]
+        }
       },
       where:'',
       buttonp: buttons.buttonp,

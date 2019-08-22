@@ -1,7 +1,8 @@
 <!--页面代码-->
 <template>
-  <a-spin tip="导入中，请稍等..." :spinning="spinning">
+  
     <a-modal title="导入排产数据" :visible="visible" @ok="handleOk" @cancel="handleCancel" width="80%">
+      <a-spin tip="导入中，请稍等..." :spinning="spinning">
       <a-button type="primary" icon="upload"  @click="upload">点击选择文件</a-button>
       <a-input
         v-model="uploadPath"
@@ -28,8 +29,9 @@
         <!--校验表格-->
         <!--处理结果表格-->
       </div>
+       </a-spin>
     </a-modal>
-  </a-spin>
+ 
 </template>
 <!--脚本文件-->
 <script>

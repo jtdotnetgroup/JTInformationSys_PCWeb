@@ -47,14 +47,13 @@ export const asyncRouterMap = [
             name: 'Dworker',
             component: () => import('@/views/production/Taskassignment/Dworker'),
             meta: { title: '任务派工', keepAlive: true }
+          },
+          {
+            path: '/production/icmodispbill',
+            name: 'icmodispbill',
+            component: () => import('@/views/icmodispbill/icmodispbill'),
+            meta: { title: '派工单列表', keepAlive: true }
           }
-          // ,
-          // {
-          //   path: '/form/base-form',
-          //   name: 'BaseForm',
-          //   component: () => import('@/views/form/BasicForm'),
-          //   meta: { title: '基础表单', keepAlive: true, permission: [ 'form' ] }
-          // }
         ]
 
       },

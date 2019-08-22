@@ -472,9 +472,9 @@ export default {
         // 如果是时间类型
         if (fieldType === 'datetime') {
           if (item.CompareVal.length === 0) {
-            item.CompareVal = _this.$moment().format('YYYY-MM-DD HH:mm:ss.sss')
+            item.CompareVal = _this.$moment().format('YYYY-MM-DD')
           } else {
-            item.CompareVal = _this.$moment(item.CompareVal).format('YYYY-MM-DD HH:mm:ss.sss')
+            item.CompareVal = _this.$moment(item.CompareVal).format('YYYY-MM-DD')
           }
         }
         // 如果是日期格式

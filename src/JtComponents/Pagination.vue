@@ -40,11 +40,18 @@ export default {
     pageSizeOptions: {
       type: Array,
       default: () => ['2','10', '15', '20', '30','50','80','100']
+    },
+    value:{
+      type:Object,
+      default:()=>{
+        return {current:1,pageSize:20}
+      }
     }
   },
   methods: {
     onChange(page, pageSize) {
       this.$emit('pageChange', page, pageSize)
+      this.$emit('input',{current:page,pageSize:pageSize})
     }
   }
 }

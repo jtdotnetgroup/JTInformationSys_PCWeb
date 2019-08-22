@@ -1,6 +1,6 @@
 <template>
-  <a-modal :visible="visible" title="选择员工" :width="800" @ok="handleSubmit" @cancel="onClose">
-    <a-form :form="form" layout="inline">
+  <a-modal :visible="visible" title="选择员工" :width="800" @ok="handleSubmit" @cancel="onClose" :maskClosable="false">
+    <a-form :loading="loading" :form="form" layout="inline">
       <a-form-item label="员工姓名">
         <a-input v-model="empName" placeholder="请输入员工姓名搜索"></a-input>
       </a-form-item>
@@ -60,16 +60,16 @@ export default {
   },
   computed: {
     workcenters() {
-      if (this.$store.getters.workcenters.length === 0) {
-        this.$store
-          .dispatch('GetWorkCenters')
-          .then(() => {
-            return this.$store.getters.workcenters
-          })
-          .catch(err => {
-            console.log(err)
-          })
-      }
+      // if (this.$store.getters.workcenters.length === 0) {
+      //   this.$store
+      //     .dispatch('GetWorkCenters')
+      //     .then(() => {
+      //       return this.$store.getters.workcenters
+      //     })
+      //     .catch(err => {
+      //       console.log(err)
+      //     })
+      // }
 
       return this.$store.getters.workcenters
     },
@@ -96,9 +96,27 @@ export default {
     },
     columns() {
       return GenericColumns(this.cols)
+    },
+    loading(){
+      return this.$store.state.loading
     }
   },
+  created () {
+    this._getData();
+  },
   methods: {
+    _getData(){
+       if (this.$store.getters.workcenters.length === 0) {
+        this.$store
+          .dispatch('GetWorkCenters')
+          .then(() => {
+            return this.$store.getters.workcenters
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      }
+    },
     show(record) {
       this.rowData = record
       this.visible = true
