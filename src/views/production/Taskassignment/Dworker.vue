@@ -25,6 +25,9 @@
       size="small"
       :customRow="setRow"
     >
+    <template slot="index" slot-scope="text">
+      <span>{{text}}</span>
+    </template>
       <!-- <template slot="serial" slot-scope="text">
         <span>{{dataTable.indexOf(text)+1}}</span>
       </template> -->

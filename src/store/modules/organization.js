@@ -64,7 +64,7 @@ const store = {
         })
     },
     GetWorkers ({ commit }, params) {
-      GetAllWorkers()
+      GetAllWorkers(params)
         .then(res => {
           var result = res.result
           commit('SET_WORKERS', result.items)

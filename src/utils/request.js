@@ -12,17 +12,16 @@ import {
 } from '@/store/mutation-types'
 
 var url = window.location.host
-var baseURL = ''
-if (url.indexOf('http://222.72.134.71') >= 0) {
-  baseURL = 'http://222.72.134.71:8093'
-} else if (url.indexOf('localhost') >= 0) {
+var baseURL = 'http://116.236.156.186:8093'
+if (url.indexOf('localhost') >= 0) {
   // 开发环境
-  // baseURL = 'http://localhost:21021/'
+  console.log('开发')
   baseURL = 'http://localhost:21021'
 } else {
-  baseURL = 'http://222.72.134.71:8093'
-  // baseURL = 'http://192.168.1.214:21021'
+  // baseURL = url.replace('8094', '8093')
 }
+
+console.log(baseURL)
 
 // 创建 axios 实例
 const service = axios.create({

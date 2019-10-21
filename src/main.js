@@ -23,6 +23,9 @@ import moment from 'moment'
 Vue.config.productionTip = false
 Vue.prototype.$moment = moment
 Vue.prototype.$Localiztion = Localization
+
+require('@/config/componentsRegister')
+
 // Vue.prototype.$message = message
 
 // mount axios Vue.$http and this.$http

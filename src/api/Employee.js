@@ -58,9 +58,10 @@ export function GetTreeListEn (params) {
 }
 
 // 查找所有车间员工
-export function GetAllWorkers () {
+export function GetAllWorkers (params) {
   return axios({
     url: '/api/services/app/Employee/GetAllWorkers',
-    method: 'get'
+    method: 'get',
+    params
   })
 }

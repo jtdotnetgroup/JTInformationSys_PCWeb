@@ -4,7 +4,7 @@
     :visible="visible"
     width="75vw"
     style="left:80px"
-    :maskClosable="true"
+    :maskClosable="false"
     @ok="handleSubmit"
     @cancel="onClose"
   >
@@ -19,13 +19,16 @@
       id="cards"
       bordered
       :dataSource="tableData"
-      :columns="columnsMT"
+      :columns="tablecolumns"
       :pagination="false"
       :loading="loading"
       rowKey="key"
       size="small"
       :rowSelection="rowSelection"
     >
+      <template slot="fShift">
+
+      </template>
       <template slot="fCommitAuxQty" slot-scope="text, record">
         <a-input-number v-model="record.fCommitAuxQty"></a-input-number>
       </template>
@@ -126,14 +129,31 @@ export default {
         })
         .finally(() => {
           this.onClose()
-          this.rowSelection.selectedRows=[];
-          this.rowSelection.selectedRowKeys=[];
+          this.rowSelection.selectedRows = []
+          this.rowSelection.selectedRowKeys = []
         })
     },
     show(data) {
       this.visible = true
       this.DailyData = data
       this._LoadData()
+    },
+    setFilters(){
+      columnsMT.forEach(e=>{
+        if(e.dataIndex==='fShift'){
+          e.filters=[];
+          this.dataSource.forEach(row => {
+            e.filters.push({text:row.fShift,value:row.fShift})
+          });
+
+
+          console.log(e.filters)
+
+          e.onFilter=(value, record)=>{
+            record.fShift.includes(value)
+          }
+        }
+      })
     },
     _LoadData() {
       this.loading = true
@@ -157,7 +177,10 @@ export default {
               e.fBillTime = this.$moment(e.fBillTime).format('YYYY-MM-DD hh:mm:ss')
             })
 
+              
+
             this.dataSource = result.items
+            this.setFilters()
           }
         })
         .catch(error => {
@@ -195,6 +218,8 @@ export default {
       columnsMT: columnsMT,
       editColumns: ['fCommitAuxQty'],
       selectColumns: [],
+      filteredInfo:null,
+      
       rowSelection: {
         columnWidth: '50px',
         fixed: true,
@@ -233,6 +258,31 @@ export default {
       }
 
       return this.$store.getters.workers
+    },
+      tablecolumns() {
+
+      columnsMT.forEach(col => {
+        if(col.dataIndex==='fShift'){
+          let filterSet=new Set();
+
+          this.dataSource.forEach(row=>{
+            filterSet.add(row.fShift);
+          })
+          
+          col.filters=[];
+
+          filterSet.forEach(s => {
+            col.filters.push({text:s,value:s})
+          });
+
+          col.onFilter=(value,record)=>{
+            return record.fShift.indexOf(value)!==-1
+
+          }
+        }
+      });
+
+      return columnsMT;
     }
   }
 }

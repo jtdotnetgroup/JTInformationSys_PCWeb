@@ -71,6 +71,7 @@ export default {
         machine: '设备',
         fMachineID: 'fMachineID',
         worker: '员工',
+        userName:'员工账号',
         fWorkerID: '',
         fShift: '班次',
         fCommitAuxQty: '派工数量',

@@ -81,7 +81,7 @@
         <template v-if="FSystemUser">
           <a-form-item :labelCol="{span:5}" label="员工账户" class="inputmargin-left">
             <a-input
-              v-decorator="['UserName',{rules: [{required:true}]} ]"
+              v-decorator="['UserName',{rules: []} ]"
               :disabled="IsEdit&&!!this.mdl.UserName"
             ></a-input>
           </a-form-item>
@@ -109,7 +109,7 @@
         <!-- </a-col>
         <a-col :span="12">-->
         <a-form-item :labelCol="{span:5}" label="入职日期">
-          <a-date-picker
+          <a-date-picker 
             v-decorator="['FHiredate',{rules: [{ required: false, message: '请输入入职日期码' }]} ]"
           ></a-date-picker>
         </a-form-item>
@@ -261,7 +261,7 @@ export default {
             fSystemUser: this.FSystemUser ? 1 : 2, //1 是系统用户 2是系统用户
             fParentId: this.valueTree === '' ? 0 : this.valueTree, //上级主管
             fPhone: values.FPhone,
-            fHiredate: values.FHiredate,
+            fHiredate: values.FHiredate==='Invalid date'?this.$moment().format('YYYY-MM-DD'):values.fHiredate,
             fEmailAddress: values.FEmailAddress,
             ferpUser: values.FERPUser === '' ? 0 : values.FERPUser,
             ferpOfficeClerk: values.FERPOfficeClerk === '' ? 0 : values.ferpOfficeClerk,
@@ -271,6 +271,13 @@ export default {
               Password: values.Password
             }
           }
+
+
+          if(!!!params.user.UserName){
+            params.user.UserName=values.FMpno
+          }
+
+          console.log(params)
 
           if (this.FWorkingState == false) {
             this.$message.error('默认新增是员工必须为在职状态')
@@ -315,7 +322,7 @@ export default {
           values.FHiredate = this.$moment(values.FHiredate).format('YYYY-MM-DD')
 
           values.user = {
-            UserName: values.UserName,
+            UserName: !!values.UserName?values.UserName:values.fMpno,
             Password: values.Password
           }
 

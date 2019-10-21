@@ -109,6 +109,8 @@ export default {
     _LoadData() {
       var _this = this
 
+      this.selectedRowKeys=[];
+
       var params = {
         Id: this.treeId == '' ? 0 : this.treeId,
         SkipCount: this.pagination.current - 1,
