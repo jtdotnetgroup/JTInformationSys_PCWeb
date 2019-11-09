@@ -241,43 +241,6 @@ export default {
         .catch(err => {
           _this.HideLoad() 
         })
-      // if (obj.id === 0) {
-      //   DataAdd(obj).then(res => {
-      //     if (res.success) {
-      //       _this.$notification['success']({
-      //         message: '系统提示',
-      //         description: '添加成功'
-      //       })
-      //       _this.empty()
-      //       _this.hide()
-      //       _this.$emit('addSuccess')
-      //     } else {
-      //       _this.$notification['error']({
-      //         message: res.error.message,
-      //         description: res.error.details
-      //       })
-      //     }
-      //   })
-      // } else {
-      //   DataPUT(obj).then(res => {
-      //     if (res.success) {
-      //       _this.$notification['success']({
-      //         message: '系统提示',
-      //         description: '修改成功'
-      //       })
-      //       _this.empty()
-      //       _this.hide()
-      //       _this.$emit('addSuccess')
-      //     } else {
-      //       _this.$notification['error']({
-      //         message: res.error.message,
-      //         description: res.error.details
-      //       })
-      //     }
-      //   }).catch(errer=>{
-      //     _this.ShowLoad()
-      //   })
-      // }
     },
     // 获取明细
     GetDetailed(obj) {

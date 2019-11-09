@@ -34,3 +34,11 @@ export function CloseDispBill (params) {
     }
   })
 }
+
+export function DeleteDailyAndDispBill (params) {
+  return axios({
+    url: '/api/services/app/ICMODispBill/DeleteDailyAndDispBill',
+    method: 'DELETE',
+    data: params
+  })
+}

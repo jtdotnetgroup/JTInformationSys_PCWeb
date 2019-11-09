@@ -1,53 +1,90 @@
 <template>
-    <a-card>
-        <!-- 功能按钮 -->
-        <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonp" :reflash="reflash" />
-        <!-- 分页 -->
-        <pagination :current="pagination.current" :pageSizeOptions="pagination.pageSizeOptions" :defaultPageSize="pagination.defaultPageSize" :total="pagination.total" @pageChange="pageChangeClick" />
-        <!-- 表格 -->
-        <a-table :rowClassName="setRowClassName" :rowSelection=" {selectedRowKeys: selectedRowKeys, onChange: onSelectChange} " :dataSource="dataTable " :columns="columnsMain " :loading="taskschedulLoading " bordered onRow="{this.onClickRow} " :pagination="false " rowKey="Id " :scroll="scroll " size="small " :customRow="setRow ">
-            <template slot="serial " slot-scope="text ">
-                <span>{{dataTable.indexOf(text)+1}}</span>
-            </template>
-            <!-- <template slot="serial " slot-scope="indexname ">
+  <a-card>
+    <!-- 功能按钮 -->
+    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonp" :reflash="reflash" />
+    <!-- 分页 -->
+    <pagination
+      :current="pagination.current"
+      :pageSizeOptions="pagination.pageSizeOptions"
+      :defaultPageSize="pagination.defaultPageSize"
+      :total="pagination.total"
+      @pageChange="pageChangeClick"
+    />
+    <!-- 表格 -->
+    <a-table
+      :rowClassName="setRowClassName"
+      :rowSelection=" {selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+      :dataSource="dataTable"
+      :columns="columnsMain"
+      :loading="taskschedulLoading"
+      bordered
+      onRow="{this.onClickRow}"
+      :pagination="false"
+      rowKey="Id"
+      :scroll="scroll"
+      size="small"
+      :customRow="setRow"
+    >
+    <template slot="index" slot-scope="text">
+      <span>{{text}}</span>
+    </template>
+      <!-- <template slot="serial" slot-scope="text">
+        <span>{{dataTable.indexOf(text)+1}}</span>
+      </template> -->
+      <!-- <template slot="serial" slot-scope="indexname">
      <span  >{{dataTable.indexOf(indexname)+1}}</span>
       </template>-->
-        </a-table>
+    </a-table>
 
-        <div id="button ">
-            <a-button style="background-color: #E6F7FF;border-color:#E6F7FF ">
-                <a-icon type="schedule " />排产明细
-            </a-button>
-        </div>
+    <div id="button">
+      <a-button style="background-color: #E6F7FF;border-color:#E6F7FF">
+        <a-icon type="schedule" />排产明细
+      </a-button>
+    </div>
 
-        <a-table id="cardd" size="small " bordered :columns="columnsMX " :pagination="false " :dataSource="tableDataMX " :scroll="{x:1400,y:400} ">
-            <template slot="actions" slot-scope="text,record ">
-                <a-button @click="BJMX(record) " type="primary">编辑</a-button>
-                <a-button @click="GBMX(record) " type="danger">关闭</a-button>
-                <a-button @click="showException(record) ">异常</a-button>
-            </template>
-        </a-table>
+    <a-table
+      id="cardd"
+      size="small"
+      bordered
+      :columns="columnsMX"
+      :pagination="false"
+      :dataSource="tableDataMX"
+      :scroll="{x:1400,y:400}"
+    >
+      <template slot="actions" slot-scope="text,record">
+        <a-button @click="BJMX(record)" type="primary">编辑</a-button>
+        <a-button @click="GBMX(record)" type="danger">关闭</a-button>
+        <a-button @click="showException(record)">异常</a-button>
+      </template>
+    </a-table>
 
-        <DispatchWorkModalForm ref="DispatchWorkModalForm " @selectChange="SXsetRow " />
+    <DispatchWorkModalForm ref="DispatchWorkModalForm" @selectChange="SXsetRow" />
 
-        <ExceptionModal ref="ExceptionModal " />
-        <AddScheduling ref="AddScheduling " @addSuccess="SXsetRow " />
-        <SearchForm v-model="StrWhere " methodName="JIT.DIME2Barcode#ICMODailyAppService#GetGroupDailyList " ref="SearchForm " @input="_LoadMainData " />
-    </a-card>
+    <ExceptionModal ref="ExceptionModal" />
+    <AddScheduling ref="AddScheduling" @addSuccess="SXsetRow" />
+    <SearchForm
+      v-model="StrWhere"
+      methodName="JIT.DIME2Barcode#ICMODailyAppService#GetGroupDailyList"
+      ref="SearchForm"
+      @input="_LoadMainData"
+    />
+  </a-card>
 </template>
 
 <script>
 import buttons from './js/buttons'
 import { columnsMX, columnsMT, columns as mainColumns } from './js/tableheader'
 import { columns } from './js/tablehhe'
-import { GetAllDispBill, GetDailyDispBillList, CloseDispBill } from '@/api/DispBill'
+import { GetAllDispBill, GetDailyDispBillList, CloseDispBill,DeleteDailyAndDispBill } from '@/api/DispBill'
 
 import { getRoleList, getServiceList } from '@/api/manage'
 import { GetDailyAll, GetDispBillAll, CreateAll, GetDaily } from '@/api/test/get'
 import { ICMODailyGetAll, GetGroupDailyList } from '@/api/ICMODaily'
 import { constants } from 'crypto'
+import { Promise } from 'q';
 
 export default {
+  name:'Dworker',
   components: {
     // @是根目录 。。是上一级 。是当前目录
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
@@ -70,7 +107,40 @@ export default {
         defaultPageSize: 100
       },
       StrWhere: '',
-      buttonp: buttons.buttonp,
+      buttonp: [
+        
+        { text: '派工', icon: 'deployment-unit', type: 'default' },
+        { text: '删除', icon: 'delete', type: 'danger', onClick: () => {
+          const _this=this
+          this.$confirm({
+            title:'删除确认',
+            content:'确定要删除吗？此操作将同时删除日计划及其关联的派工单',
+            onOk(){
+              return new Promise((resolver,reject)=>{
+                var params=[]
+                _this.selectedRows.forEach(row => {
+                  params.push(row.fId)
+                });
+                DeleteDailyAndDispBill(params).then(res=>{
+                  _this.$message.success('删除成功'+res.result+'条数据')
+                  _this._LoadMainData()
+                  resolver(res)
+                })
+                .catch(err=>{
+                  reject(err)
+                })
+                .finally(()=>{
+                  _this.taskschedulLoading=false
+                  _this.selectedRowKeys=[]
+                  _this.selectedRows=[]
+                })
+              })
+            },
+            onCancel(){}
+          })
+        } },
+        { text: '增加排产', icon: 'tool', type: 'default' }
+      ],
       buttonps: buttons.buttonps,
       columnsMT: columnsMT,
       // 高级搜索 展开/关闭
@@ -98,7 +168,11 @@ export default {
       dataTableArrget: [],
       djsetRow: {},
       reflash: {
-        click() {}
+        _this:this,
+        click() {
+          this._this._LoadMainData();
+          this._this.tableDataMX=[]
+        }
       }
     }
   },

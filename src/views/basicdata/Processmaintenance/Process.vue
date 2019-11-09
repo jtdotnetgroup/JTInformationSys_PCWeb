@@ -151,7 +151,7 @@ export default {
           }
 
           break
-        case '删除':
+        case '禁用':
           var _this = this
 
           if (_this.selectedRows.length !== 1) {

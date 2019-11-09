@@ -1,11 +1,18 @@
 <template>
-  <a-modal :visible="visible" title="选择员工" :width="800" @ok="handleSubmit" @cancel="onClose">
-    <a-form :form="form" layout="inline">
+  <a-modal
+    :visible="visible"
+    title="选择员工"
+    :width="800"
+    @ok="handleSubmit"
+    @cancel="onClose"
+    :maskClosable="false"
+  >
+    <a-form :loading="loading" :form="form" layout="inline">
       <a-form-item label="员工姓名">
-        <a-input v-model="empName" placeholder="请输入员工姓名搜索"></a-input>
+        <a-input v-model="empName"   placeholder="请输入员工姓名搜索"></a-input>
       </a-form-item>
       <a-form-item label="车间">
-        <a-select v-model="workcenter" style="width:150px" allowClear>
+        <a-select v-model="workcenter" style="width:150px" @change="departmentChange" allowClear>
           <a-select-option
             v-for="(item,index) in workcenters"
             :key="index"
@@ -13,13 +20,17 @@
           >{{item.displayName}}</a-select-option>
         </a-select>
       </a-form-item>
+      <a-form-item>
+        <a-button type="primary" @click="searchEmp">搜索</a-button>
+      </a-form-item>
     </a-form>
 
     <a-table
       :dataSource="workers"
       :columns="columns"
-      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+      :rowSelection="{selectedRowKeys:rowSelection. selectedRowKeys, onChange:rowSelection.onChange}"
       :scroll="{x:1000,y:400}"
+      rowKey="id"
       :pagination="false"
       :customRow="setRow"
     >
@@ -48,13 +59,70 @@ export default {
         fPhone: '联系电话',
         department: '部门'
       },
-      selectedRowKeys: [],
-      selectedRows: [],
-      rowData: {}
+      rowData: {},
+      loading:false,
+      rowSelection: {
+        selectedRowKeys: [],
+        selectedRows: [],
+        onChange: (keys, rows) => {
+          this.rowSelection.selectedRowKeys = keys
+          this.rowSelection.selectedRows = rows
+        }
+      },
+
+      //行点击事件
+      customRowClick: record => ({
+        on: {
+          click: () => {
+
+            this.rowSelection.selectedRowKeys=[];
+            this.rowSelection.selectedRows=[];
+            this.rowSelection.selectedRows.push(record);
+            this.rowSelection.selectedRowKeys.push(record.id);
+
+          }
+        }
+      })
+    }
+  },
+  props: {
+    value: {
+      type: String | Number
     }
   },
   computed: {
     workcenters() {
+      // if (this.$store.getters.workcenters.length === 0) {
+      //   this.$store
+      //     .dispatch('GetWorkCenters')
+      //     .then(() => {
+      //       return this.$store.getters.workcenters
+      //     })
+      //     .catch(err => {
+      //       console.log(err)
+      //     })
+      // }
+
+      return this.$store.getters.workcenters
+    },
+    workers() {
+
+      let result = this.$store.getters.workers
+
+      return result
+    },
+    columns() {
+      return GenericColumns(this.cols)
+    },
+    loading() {
+      return this.$store.state.loading
+    }
+  },
+  created() {
+    this._getData()
+  },
+  methods: {
+    _getData() {
       if (this.$store.getters.workcenters.length === 0) {
         this.$store
           .dispatch('GetWorkCenters')
@@ -66,34 +134,38 @@ export default {
           })
       }
 
-      return this.$store.getters.workcenters
+      if(this.$store.getters.workers.length===0){
+        this.$store.dispatch('GetWorkers',{})
+      }
     },
-    workers() {
-      if (this.$store.getters.workers.length === 0) {
-        this.$store.dispatch('GetWorkers')
+    searchEmp(){
+      this.empNameChange("");
+    },
+     empNameChange(e) {
+
+      this.empName=this.empName.trim()
+
+       const params = {
+        Where: 'FName.Contains("' + this.empName + '")',
+        SkipCount: 0,
+        MaxResultCount: 50
       }
 
-      let result = this.$store.getters.workers
-      //过滤员工姓名
-      if (!!this.empName) {
-        result = result.filter(e => {
-          return e.fName.indexOf(this.empName) >= 0
-        })
-      }
+      this.loading=true;
+
       //过滤部门
       if (!!this.workcenter) {
-        result = result.filter(e => {
-          return e.department.id === this.workcenter
-        })
+        params.Where += '&&Department.id=' + this.workcenter
       }
 
-      return result
+        this.$store.dispatch('GetWorkers', params).then(()=>{
+          this.loading=false;
+        })
+
     },
-    columns() {
-      return GenericColumns(this.cols)
-    }
-  },
-  methods: {
+    departmentChange(){
+      this.empNameChange("");
+    },
     show(record) {
       this.rowData = record
       this.visible = true
@@ -101,27 +173,27 @@ export default {
     onClose() {
       this.visible = false
       this.rowData = {}
-      this.selectedRowKeys=[]
-      this.selectedRows=[]
+      this.rowSelection.selectedRowKeys = []
+      this.rowSelection.selectedRows = []
     },
     handleSubmit() {
-      if (this.selectedRowKeys.length > 1) {
+      if (this.rowSelection.selectedRowKeys.length > 1) {
         this.$message.warning('不能同时选择多名员工')
         return
       }
 
-      this.$emit('selectChange', this.selectedRows[0], this.rowData)
+      this.$emit('selectChange', this.rowSelection.selectedRows[0], this.rowData)
+      this.$emit('input', this.rowSelection.selectedRows[0].id)
       this.onClose()
     },
     onSelectChange(selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
+      this.rowSelection.selectedRowKeys = selectedRowKeys
+      this.rowSelection.selectedRows = selectedRows
     },
     setRow(record) {
       return {
         on: {
           click: () => {
-            console.log(record)
             // this.selectedRowKeys=[]
             // this.selectedRowKeys=[]
             // this.selectedRowKeys.push(record.id)

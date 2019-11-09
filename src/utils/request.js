@@ -12,17 +12,16 @@ import {
 } from '@/store/mutation-types'
 
 var url = window.location.host
-var baseURL = ''
-if (url.indexOf('http://222.72.134.71') >= 0) {
-  baseURL = 'http://222.72.134.71:8093'
-} else if (url.indexOf('localhost') >= 0) {
+var baseURL = 'http://116.236.156.186:8093'
+if (url.indexOf('localhost') >= 0) {
   // 开发环境
-  // baseURL = 'http://localhost:21021/'
+  console.log('开发')
   baseURL = 'http://localhost:21021'
 } else {
-  baseURL = 'http://222.72.134.71:8093'
-  // baseURL = 'http://192.168.1.214:21021'
+  // baseURL = url.replace('8094', '8093')
 }
+
+console.log(baseURL)
 
 // 创建 axios 实例
 const service = axios.create({
@@ -69,30 +68,14 @@ const err = (error) => {
         break
       }
     }
-
-    // if (error.response.status === 401 && !(data.result && data.result.isLogin)) {
-    //   message.error('未授权,请登录', 3)
-    //   if (token) {
-    //     store.dispatch('Logout').then(() => {
-    //       setTimeout(() => {
-    //         window.location.reload()
-    //       }, 1500)
-    //     })
-    //   }
-    // }
-    // if (error.response.status === 500) {
-    //   const err = error.response.data.error
-    //   message.error(err.message, 3)
-    // }
-    // if (error.response.status === 400) {
-    //   message.error(data.error.details, 3)
-    // }
   }
   return Promise.reject(error)
 }
 
 // request interceptor
 service.interceptors.request.use(config => {
+  store.commit('SET_LOADING', true)
+
   const token = Vue.ls.get(ACCESS_TOKEN)
   config.headers.common['.AspNetCore.Culture'] = 'zh-Hans'
   if (token) {
@@ -105,12 +88,7 @@ service.interceptors.request.use(config => {
 
 // response interceptor
 service.interceptors.response.use((response) => {
-  // var resData = response.data
-  // if (resData.success) {
-  //   message.success('操作成功', 3)
-  // } else {
-  //   message.error('操作异常请联系网管或稍候再试', 3)
-  // }
+  store.commit('SET_LOADING', false)
 
   return response.data
 }, err)

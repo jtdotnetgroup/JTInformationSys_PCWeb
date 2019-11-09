@@ -14,15 +14,17 @@
           :value="item.value"
         >{{item.title}}</a-select-option>
       </a-select>
-      <a-input style="width: 200px" v-model="formtext" placeholder="设备名称"/>
+      <a-input style="width: 200px" v-model="formtext" placeholder="设备名称" />
       <a-button type="primary" @click="loadData">搜索</a-button>
-      <br>
+      <br />
     </a-input-group>
     <a-table
+    :rowSelection="{selectedRowKeys:rowSelection. selectedRowKeys, onChange:rowSelection.onChange}"
       :columns="columns"
       :dataSource="data"
       size="small"
-      :rowSelection="{onChange: onSelectChange}"
+      :customRow="customRowClick"
+      rowKey="fNumber"
     ></a-table>
   </a-modal>
 </template>
@@ -61,31 +63,80 @@ export default {
         defaultValue: 0,
         option: []
       },
-      selectedRowKeys: [],
-      selectedRows: [],
-      rowData: {}
+      rowData: {},
+      rowSelection: {
+        selectedRowKeys: [],
+        selectedRows: [],
+        onChange: (keys, rows) => {
+          this.rowSelection.selectedRowKeys = keys
+          this.rowSelection.selectedRows = rows
+        }
+      },
+
+      //行点击事件
+      customRowClick: record => ({
+        on: {
+          click: () => {
+
+            this.rowSelection.selectedRowKeys=[];
+            this.rowSelection.selectedRows=[];
+            this.rowSelection.selectedRows.push(record);
+            this.rowSelection.selectedRowKeys.push(record.fNumber);
+
+            console.log(this.rowSelection.selectedRowKeys);
+          }
+        }
+      })
     }
   },
   methods: {
     // 选项卡切换时
     onSelectChange(selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
+      // this.selectedRowKeys = selectedRowKeys
+      // this.selectedRows = selectedRows
     },
     show(record) {
       this.visible = true
       this.rowData = record
-      this.selectedRowKeys = []
-      this.selectedRows = []
+      this.rowSelection.selectedRowKeys = []
+      this.rowSelection.selectedRows = []
       this.loadData()
     },
+    // setRow(record) {
+    //   return {
+    //     on: {
+    //       //表格行点击事件
+    //       click: () => {
+    //         console.log(this)
+
+    //         // let rowkeys = this.selectedRowKeys
+    //         // let exist = rowkeys.filter(e => {
+    //         //   return e === record.fNumber
+    //         // })
+
+    //         // if (!!exist.length) {
+    //         //   let filters = rowkeys.filter(e => {
+    //         //     return e !== record.fNumber
+    //         //   })
+    //         //   this.selectedRowKeys = filters
+    //         // } else {
+    //         //   rowkeys.push(record.fNumber)
+    //         // }
+
+    //         // this.selectedRowKeys=rowkeys;
+    //       }
+    //     }
+    //   }
+    // },
     handleOk(e) {
       var _this = this
-      if (_this.selectedRows.length === 1) {
-        this.$emit('selectChange', this.selectedRows[0], this.rowData)
-        this.confirmLoading = true 
+      if (_this.rowSelection.selectedRows.length === 1) {
+        this.$emit('selectChange', this.rowSelection.selectedRows[0], this.rowData)
+        this.confirmLoading = true
+        this.rowSelection.selectedRowKeys=[];
+        this.rowSelection.selectedRows=[];
         this.visible = false
-        this.confirmLoading = false 
+        this.confirmLoading = false
       } else {
         _this.$notification['error']({
           message: '系统提示',
@@ -106,6 +157,10 @@ export default {
       })
     },
     loadData() {
+
+      this.rowSelection.selectedRowKeys=[];
+      this.rowSelection.selectedRows=[];
+
       var obj = {
         fName: this.formtext,
         fWorkCenterID: this.selectModel.defaultValue,

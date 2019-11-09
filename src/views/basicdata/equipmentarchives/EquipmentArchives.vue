@@ -104,10 +104,11 @@ export default {
           if (this.selectedRows.length === 1) {
             this.$refs.ShiftForm.show(this.selectedRows[0].fInterID)
           }
+          break;
         }
         case '搜索': {
           this.$refs.SearchForm.show()
-          break
+          break;
         }
 
         default: {

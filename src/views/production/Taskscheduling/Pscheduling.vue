@@ -1,6 +1,6 @@
 <template>
   <a-card>
-    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonp"/>
+    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonp" :reflash="reflash"/>
 
     <pagination
       :current="pagination.current"
@@ -20,14 +20,8 @@
       :customRow="setRow"
       size="small"
     ></a-table>
-
-    <div id="button">
-      <a-button style="background-color: #E6F7FF;border-color:#E6F7FF">
-        <a-icon type="schedule"/>排产明细
-      </a-button>
-    </div>
-
-    <a-table
+    <a-tabs defaultActiveKey="2">
+      <a-tab-pane key="1" tab="排产汇部"><a-table
       id="card" size="small"
       bordered
       :dataSource="detailData"
@@ -35,9 +29,12 @@
       :pagination="false"
       :loading="detailLoading"
       :scroll="scroll"
-    ></a-table>
-
-    <dispatch ref="taskDispatch"/>
+    ></a-table></a-tab-pane>
+      <a-tab-pane key="2" tab="派工明细">
+        <dispatchtable ref="dispatchtable" :FMobillno="currentFMobillno" />
+      </a-tab-pane>
+    </a-tabs>
+    <dispatch ref="taskDispatch" />
     <ImportExcel ref="ImportExcel"/>
     <SearchForm v-model="where" methodName="JIT.DIME2Barcode#TaskSchedulingAppService#GetAll" ref="SearchForm" @input="_loadData"/>
   </a-card>
@@ -49,6 +46,8 @@ import tableheader from './tableheader'
 import { GetTaskSchedulData, GetAllDailyByFMOInterID } from '@/api/TaskScheduling'
 import columns from './columns'
 
+import {aoa2Excel} from '@/utils/helper/Export2Excel'
+
 export default {
   components: {
     // @是根目录 。。是上一级 。是当前目录
@@ -56,7 +55,8 @@ export default {
     pagination: () => import('@/JtComponents/Pagination'),
     dispatch: () => import('./Dispatch'),
     ImportExcel: () => import('./ImportExcel'),
-    SearchForm:()=>import('@/JtComponents/SearchForm')
+    SearchForm:()=>import('@/JtComponents/SearchForm'),
+    dispatchtable:()=>import('./dispatchtable')
   },
   data() {
     return {
@@ -64,6 +64,13 @@ export default {
         current: 1,
         total: 50,
         pageSize: 10
+      },
+      reflash:{
+        _this:this,
+        click:()=>{
+          this._loadData();
+          this.dataSourceMX=[]
+        }
       },
       where:'',
       buttonp: buttons.buttonp,
@@ -81,7 +88,9 @@ export default {
       },
       taskschedulLoading: false,
       dailyDataList: [],
-      detailLoading:false
+      detailLoading:false,
+      currentFMobillno:'',
+      activetab:'2'
     }
   },
   mounted() {
@@ -199,7 +208,30 @@ export default {
           this.$refs.SearchForm.show();
           break;
         }
+        case '导出':{
+          this.export();
+          break;
+        }
       }
+    },
+    export(){
+      if(this.selectedRowKeys.length===0){
+        return;
+      }
+
+      const today=this.$moment().format('YYYY/MM/DD');
+
+      const arr=[
+        ['序号','车间','机台号','任务单号','产品名称','工序名','班次','打包数量',today]
+      ]
+      for (let index = 0; index < this.selectedRows.length; index++) {
+        const row=this.selectedRows[index];
+        const temp=[index+1,row.车间,'',row.任务单号,row.产品名称,'',''];
+        arr.push(temp);
+      }
+
+      aoa2Excel(arr,'排产模板.xlsx')
+
     },
     onPaginationChange(page, size) {
       this.pagination.current = page
@@ -215,8 +247,12 @@ export default {
         on: {
           //表格行点击事件
           click: () => {
-            console.log(record)
+            
+            let fmobillno=record.任务单号
+            console.log(fmobillno)
             this.GetAllDailyData(record.fmoInterID)
+            this.$refs.dispatchtable.getData(fmobillno);
+
           }
         }
       }

@@ -12,6 +12,7 @@
             :current="pagination.current"
             :total="pagination.total"
             @pageChange="onPaginationChange"
+            v-model="pagination"
           />
           <a-table
             :loading="loading"
@@ -107,6 +108,8 @@ export default {
     //查询员工信息表
     _LoadData() {
       var _this = this
+
+      this.selectedRowKeys=[];
 
       var params = {
         Id: this.treeId == '' ? 0 : this.treeId,

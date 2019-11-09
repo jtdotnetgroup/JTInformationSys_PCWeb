@@ -3,17 +3,20 @@ const example = {
   'fDate': '日期',
   'fmoBillNo': '任务单号',
   'displayName': '车间',
-  'fItemID': '产品编码',
   'fItemName': '产品名称',
-  'fItemModel': '产品规格',
   'totalPlanAuxQty': '计划数量',
-  'fCommitAuxQty': '派工数量'
+  'fCommitAuxQty': '派工数量',
+  'fItemID': '产品编码',
+  'fItemModel': '产品规格',
+  'fshift': '班次'
+
 }
 
 const exampleMT = {
   'id': 'id',
   'fDate': '日期',
   'fid': 'fid',
+  'fItemName': '品番',
   'fmoBillNo': '任务单号',
   'fmoInterID': '',
   'fBillNo': '派工单号',
@@ -23,10 +26,12 @@ const exampleMT = {
   'worker': '员工',
   'fWorkerID': '',
   'fShift': '班次',
+  'fPackQty': '打包数量',
   'fCommitAuxQty': '派工数量',
   'fFinishAuxQty': '汇报数量',
   'fPassAuxQty': '合格数量',
   'fBiller': '计划员'
+
 }
 
 const exampleMX = {

@@ -10,13 +10,17 @@ import { asyncRouterMap, constantRouterMap } from '@/config/router.config'
 function hasPermission (permission, route) {
   if (route.meta && route.meta.permission) {
     const keys = Object.keys(permission)
-    for (var i = 0, len = keys.length; i < len; i++) {
-      if (route.meta.permission.includes(keys[i])) {
-        return true
-      }
-    }
+    // for (var i = 0, len = keys.length; i < len; i++) {
+    //   if (route.meta.permission.includes(keys[i])) {
+    //     return true
+    //   }
+    // }
+    // return false
 
-    return false
+    keys.map(e => {
+      const per = e.split('.')[0]
+      return route.meta.permission.includes(per)
+    })
   }
   return true
 }

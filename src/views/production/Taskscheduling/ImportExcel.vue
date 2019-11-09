@@ -1,8 +1,9 @@
 <!--页面代码-->
 <template>
-  <a-spin tip="导入中，请稍等..." :spinning="spinning">
+  
     <a-modal title="导入排产数据" :visible="visible" @ok="handleOk" @cancel="handleCancel" width="80%">
-      <a-button type="primary" icon="upload" :size="size" @click="upload">点击选择文件</a-button>
+      <a-spin tip="导入中，请稍等..." :spinning="spinning">
+      <a-button type="primary" icon="upload"  @click="upload">点击选择文件</a-button>
       <a-input
         v-model="uploadPath"
         ref="file_up"
@@ -15,12 +16,12 @@
       />
       <span>&nbsp;&nbsp;</span>
       <a-button @click="empty">清空内容</a-button>
-      <a-button @click="SaveAs">另存为…</a-button>
-      <a-button @click="Download">模板下载</a-button>
+      <!-- <a-button @click="SaveAs">另存为…</a-button> -->
+      <!-- <a-button @click="Download">模板下载</a-button> -->
       <!--表格-->
       <div style="padding-top:10px;">
         <!--数据表格-->
-        <a-table id="BJ" bordered :dataSource="dataSource" :columns="columns" :scroll="{x:3000,y:400}">
+        <a-table id="BJ" bordered :dataSource="dataSource" :columns="columns" :scroll="tablescroll">
           <template slot="name" slot-scope="text, record">
             <editable-cell :text="text" @change="onCellChange(record.key, 'name', $event)"/>
           </template>
@@ -28,8 +29,9 @@
         <!--校验表格-->
         <!--处理结果表格-->
       </div>
+       </a-spin>
     </a-modal>
-  </a-spin>
+ 
 </template>
 <!--脚本文件-->
 <script>
@@ -48,9 +50,17 @@ export default {
       dataSource: [], // 表格数据
       columns: [], // 表格列
       count: 0, // 数据长度
-      ListObj: { body: [], header: [] } //表格数据 和 表格列
+      ListObj: { body: [], header: [] }, //表格数据 和 表格列,
+      
     }
+    
   },
+  computed: {
+      tablescroll() {
+        let x=this.columns.length*150
+        return {x:x,y:400}
+      }
+    },
   // 所有方法
   methods: {
     // 另存为
@@ -176,7 +186,7 @@ export default {
       this.dataSource = this.ListObj.body
       var colobj = []
       this.ListObj.header.forEach(item => {
-        var col = { title: item, dataIndex: item }
+        var col = { title: item, dataIndex: item,width:'145' }
         colobj.push(col)
       })
       this.columns = colobj
@@ -189,22 +199,22 @@ export default {
       _this.ShowLoad() // 显示加载框
 
       var dataSource = this.dataSource // 表格所有数据
-      // var header = this.ListOb.header  // 列
-      // console.log(this.dataSource)
+
       const result = []
       // 生成最终传入接口的数据
       dataSource.forEach(item => {
         const keys = Object.keys(item)
         var row = { FMOBillNo: item.任务单号, Dailies: [] }
+        console.log(item)
         keys.forEach(key => {
           if (_this.IsValidDate(key)) {
             row.Dailies.push({
               FPlanAuxQty: item[key],
-              // FMachineID: item.机台号,
               FMachineName:item.机台号,
               FShift: item.班次,
               FOperID: item.工序名,
-              FDate: key
+              FDate: key,
+              PackQty:item.打包数量
             })
           }
         })
@@ -250,13 +260,12 @@ export default {
           }
         })
         .catch(error => {
-          
           _this.$notification['error']({
             message: '系统提示',
             description: '系统忙，导入失败请稍后重试！'
           })
         }).finally(()=>{
-
+          this.HideLoad();
         }) 
     },
     // 判断是否是有效日期

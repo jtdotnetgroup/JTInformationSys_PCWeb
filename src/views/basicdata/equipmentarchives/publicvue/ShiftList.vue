@@ -1,15 +1,25 @@
 <template>
   <a-modal :visible="visible" title="班次信息" @cancel="onClose" :width="800" @ok="handleSubmit">
-    <Buttons :buttons="buttons" :search="false" @btnClick="handelBtnClick"/>
-    <a-table size="small" :dataSource="tableData" :columns="columns" :pagination="false" key="index">
+    <Buttons :buttons="buttons" :search="false" @btnClick="handelBtnClick" />
+    <a-table
+      size="small"
+      :dataSource="tableData"
+      :columns="columns"
+      :pagination="false"
+      key="index"
+    >
       <template slot="fEmployeeID" slot-scope="text, record">
-        <a-select style="width: 150px" @change="handleEmployeeChange" v-model="record.fEmployeeID">
+        <!-- <a-select style="width: 150px" @change="handleEmployeeChange" v-model="record.fEmployeeID">
           <a-select-option
             v-for="(item,index) in workers"
             :key="index"
             :value="item.id"
           >{{item.fName}}</a-select-option>
-        </a-select>
+        </a-select>-->
+        <a-button @click="showSelectEmp(record)">
+          {{record.fEmpName}}
+          <a-icon type="search"></a-icon>
+        </a-button>
       </template>
       <template slot="fShift" slot-scope="text, record">
         <a-input @change="e=>handleShiftChange(e.target.value,record)" v-model="record.fShift"></a-input>
@@ -21,6 +31,7 @@
         <!-- <a-button type="" v-if="record.isEdit" >保存</a-button> -->
       </template>
     </a-table>
+    <SelectEmployee ref="SelectEmployee" @selectChange="handleEmployeeChange"/>
   </a-modal>
 </template>
 
@@ -30,7 +41,8 @@ import { buttonShift } from '../js/buttons'
 import { CreateOrUpdateShift, GetShiftList, DeleteShift } from '@/api/Equipment'
 export default {
   components: {
-    Buttons: () => import('@/JtComponents/TableOperatorButton')
+    Buttons: () => import('@/JtComponents/TableOperatorButton'),
+    SelectEmployee: () => import('@/JtComponents/EmployeeSelectForm')
   },
   data() {
     return {
@@ -48,13 +60,19 @@ export default {
       this.EquipmentID = EquipmentID
       this._loadData()
     },
-    handleEmployeeChange(value) {},
+    showSelectEmp(record){
+      this.$refs.SelectEmployee.show(record);
+    },
+    handleEmployeeChange(emp,row) {
+      this.tableData[row.index].fEmployeeID=emp.id
+      this.tableData[row.index].fEmpName=emp.fName
+    },
     handleShiftChange(value, record) {
       record.shiftName = value
     },
     onClose() {
       this.visible = false
-      this.tableData=[]
+      this.tableData = []
     },
     handelBtnClick(val) {
       switch (val) {
