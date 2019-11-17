@@ -14,17 +14,19 @@
       @input="_LoadData"
       v-model="pagination"
     />
-    <a-table 
+    <a-table
+      rowKey="fid"
       :columns="columns"
       :dataSource="dataList"
       :pagination="false"
-      :loading="loading" :scroll="{x:1595,y:550}"
-      :rowSelection="rowSelection"
+      :loading="loading"
+      :scroll="{x:1595,y:550}"
+      :rowSelection="{selectedRowKeys:selectedRowKeys, onChange:rowSelection.onChange}"
+      :customRow="customRowClick"
     >
-    <template slot="fBillNo" slot-scope="record,text">
-      {{text.fBillNo}}
-    </template>
+      <template slot="fBillNo" slot-scope="record,text">{{text.fBillNo}}</template>
     </a-table>
+    <icmoDispBillForm ref="icmoDispBillForm" />
   </a-card>
 </template>
 
@@ -37,28 +39,40 @@ export default {
   components: {
     page: () => import('@/JtComponents/Pagination'),
     buttons: () => import('@/JtComponents/ButtonsGroup'),
-    searchForm: () => import('@/JtComponents/SearchForm')
+    searchForm: () => import('@/JtComponents/SearchForm'),
+    icmoDispBillForm: () => import('./components/icmoDispBillForm')
   },
   data() {
     return {
       buttons: [
-        { text: '编辑', icon: 'edit', type: 'default', onClick: () => {} },
+        { text: '编辑', icon: 'edit', type: 'default', onClick: () => {
+          const billObject=this.selectedRows[0];
+          if(!!billObject){
+            this.$refs.icmoDispBillForm.show(billObject);
+          }
+        } },
         { text: '异常', icon: 'warning', type: 'default' },
         { text: '关闭', icon: 'close-circle', type: 'danger' },
-        {text: '刷新', icon: 'reload', type: 'default',onClick: () => {this._LoadData()}}
+        {
+          text: '刷新',
+          icon: 'reload',
+          type: 'default',
+          onClick: () => {
+            this._LoadData()
+          }
+        }
       ],
-      selectedRowKeys: [0,1],
+      selectedRowKeys: [],
       selectedRows: [],
       rowSelection: {
         onChange: (selectedRowKeys, selectedRows) => {
           this.selectedRowKeys = selectedRowKeys
           this.selectedRows = selectedRows
-        },
-        onSelect: (record, selected, selectedRows) => {
-          this.selectedRows = selectedRows
-        },
-        onSelectAll: (selected, selectedRows, changeRows) => {
         }
+        // onSelect: (record, selected, selectedRows) => {
+        //   this.selectedRows = selectedRows
+        // },
+        // onSelectAll: (selected, selectedRows, changeRows) => {}
       },
       columnsDic: {
         id: 'id',
@@ -66,12 +80,12 @@ export default {
         fid: 'fid',
         fmoBillNo: '任务单号',
         fmoInterID: '',
-        fBillNo: {title:'派工单号',width:250},
+        fBillNo: { title: '派工单号', width: 250 },
         fBillTime: '制单日期',
         machine: '设备',
         fMachineID: 'fMachineID',
         worker: '员工',
-        userName:'员工账号',
+        userName: '员工账号',
         fWorkerID: '',
         fShift: '班次',
         fCommitAuxQty: '派工数量',
@@ -87,7 +101,45 @@ export default {
         totalCount: 0
       },
       dataList: [],
-      loading: false
+      loading: false,
+      customRowClick: record => ({
+        on: {
+          click: () => {
+            let rowkeys = []
+            let rows = []
+
+            let exist = rowkeys.filter(e => {
+              return e['fid'] === record['fid']
+            })
+
+            let existRows = rows.filter(r => {
+              return r['fid'] === record['fid']
+            })
+
+            //单选
+            // if (this.options.multiple === false) {
+            //   this.rowSelection.selectedRowKeys = exist;
+            // }
+
+            if (exist.length > 0) {
+              let filters = rowkeys.filter(e => {
+                return e !== record['fid']
+              })
+              let rowFilters = rows.filter(r => {
+                return r['fid'] !== record['fid']
+              })
+              this.selectedRowKeys = filters
+              this.selectedRows = rowFilters
+            } else {
+              rowkeys.push(record['fid'])
+              rows.push(record)
+            }
+
+            this.selectedRowKeys = rowkeys
+            this.selectedRows = rows
+          }
+        }
+      })
     }
   },
   methods: {
@@ -104,7 +156,7 @@ export default {
           .then(res => {
             res.result.items.map(e => {
               e.fBillTime = this.$moment(e.fBillTime).format('YYYY-MM-D')
-              e.fDate=this.$moment(e.fDate).format('YYYY-MM-D')
+              e.fDate = this.$moment(e.fDate).format('YYYY-MM-D')
             })
             this.dataList = res.result.items
             this.pagination.totalCount = res.result.totalCount
@@ -119,10 +171,10 @@ export default {
     columns() {
       return GenericColumns(this.columnsDic)
     },
-    tablescroll(){
+    tablescroll() {
       return {
-        x:this.columns.length*120+120,
-        y:500
+        x: this.columns.length * 120 + 120,
+        y: 500
       }
     }
   },
