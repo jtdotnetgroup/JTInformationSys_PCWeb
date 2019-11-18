@@ -114,9 +114,9 @@ export default {
     columns() {
       return GenericColumns(this.cols)
     },
-    loading() {
-      return this.$store.state.loading
-    }
+    // loading() {
+    //   return this.$store.state.loading
+    // }
   },
   created() {
     this._getData()

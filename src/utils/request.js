@@ -21,7 +21,7 @@ if (url.indexOf('localhost') >= 0) {
   // baseURL = url.replace('8094', '8093')
 }
 
-console.log(baseURL)
+baseURL = 'http://localhost:21021'
 
 // 创建 axios 实例
 const service = axios.create({

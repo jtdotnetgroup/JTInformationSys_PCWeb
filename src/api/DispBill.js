@@ -42,3 +42,11 @@ export function DeleteDailyAndDispBill (params) {
     data: params
   })
 }
+
+export function UpdateDispBill (params) {
+  return axios({
+    url: '/api/services/app/ICMODispBill/UpdateDispBill',
+    method: 'PUT',
+    data: params
+  })
+}
