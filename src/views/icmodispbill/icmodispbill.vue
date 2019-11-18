@@ -28,7 +28,7 @@
     </a-table>
     <icmoDispBillForm ref="icmoDispBillForm" />
     <ExceptionModal ref="ExceptionModal" />
-    <DispatchWorkModalForm ref="DispatchWorkModalForm" />
+    <DispatchWorkModalForm ref="DispatchWorkModalForm" @selectChange="_LoadData()"  />
   </a-card>
 </template>
 
@@ -214,7 +214,7 @@ export default {
               .then(res => {
                 if (res.success) {
                   _this.$message.success('关闭成功')
-                  _this.SXsetRow()
+                  _this._LoadData();
                 } else {
                   _this.$notification['error']({
                     message: res.error.message,
