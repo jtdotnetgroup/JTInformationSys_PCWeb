@@ -124,6 +124,7 @@ export default {
           if (result) {
             _this.tableData = result.items
             _this.pagination.total = result.totalCount
+            _this.pagination.current=1;
             _this.loading = false
           }
         })

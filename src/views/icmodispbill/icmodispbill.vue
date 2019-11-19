@@ -106,6 +106,7 @@ export default {
         fid: 'fid',
         fmoBillNo: '任务单号',
         fmoInterID: '',
+        fItemName:'品番名称',
         fBillNo: { title: '派工单号', width: 250 },
         fBillTime: '制单日期',
         machine: '设备',
