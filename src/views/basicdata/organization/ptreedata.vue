@@ -1,0 +1,69 @@
+<template>
+  <div>
+    <a-tree
+      style="overflow-x:auto;overflow-y:hidden;width:100%;height:600px;"
+      :treeData="organizations"
+
+       v-if="organizations.length"
+         :defaultExpandedKeys="['001']"
+      @select="onButtonClick"
+    ></a-tree>
+  </div>
+</template>
+
+<script>
+import { GetTreeList } from '@/api/Organization'
+import store from '@/store'
+export default {
+  name:"outree",
+  data() {
+    return {
+      // organizations:store.getters.organizations
+      //organizations:[]
+    }
+  },
+  mounted() {
+    this._LoadData()
+  },
+
+  methods: {
+    _LoadData() {
+      var params = {
+        ParentID: 0
+      }
+      if (this.$store.getters.organizations.length === 0) {
+        this.$store.dispatch('GetOrganizations', params)
+      }
+      // var params={
+      //   ParentID:0
+      // }
+      //  GetTreeList(params).then(res => {
+      //      const results = res.result
+      //      this.organizations=results;
+      //     // consloe.log(results)
+      //  }).catch(err=>{
+      //       console.log(err)
+      //  })
+    },
+
+    onButtonClick(keys, e) {
+      this.$emit('btnClick', e)
+    },
+    onExpand() {}
+  },
+  computed: {
+    organizations() {
+      return store.getters.organizations
+    },
+  
+    defaultExpandKeys(){
+      const keys=[]
+      store.getters.organizations.forEach(e => {
+        keys.push(e.key)
+      });
+
+      return keys
+    }
+  }
+}
+</script>

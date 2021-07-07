@@ -6,6 +6,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store/'
 import { VueAxios } from './utils/request'
+import message from 'ant-design-vue/es/message'
 
 // mock
 import './mock'
@@ -15,12 +16,17 @@ import './core/use'
 import './permission' // permission control
 import './utils/filter' // global filter
 import { Localization } from './utils/helper/localization'
+// import { message } from 'ant-design-vue/es/message'
 
 import moment from 'moment'
 
 Vue.config.productionTip = false
 Vue.prototype.$moment = moment
 Vue.prototype.$Localiztion = Localization
+
+require('@/config/componentsRegister')
+
+// Vue.prototype.$message = message
 
 // mount axios Vue.$http and this.$http
 Vue.use(VueAxios)

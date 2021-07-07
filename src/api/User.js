@@ -2,7 +2,7 @@ import { axios } from '@/utils/request'
 
 export function GetAll (params) {
   return axios({
-    url: '/api/services/app/User/GetAll',
+    url: '/api/services/app/User/GetAll2',
     method: 'get',
     params: params
   })
@@ -45,15 +45,12 @@ export function DataPUT (params) {
   })
 }
 // 数据添加和修改
-export function DataAddOrPUT (url, params) {
-  return axios({
-    url: url,
-    method: 'POST',
-    data: params,
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
-  })
+export function DataAddOrPUT (params) {
+  if (params.id === 0) {
+    return DataAdd(params)
+  } else {
+    return DataPUT(params)
+  }
 }
 
 // 获取明细

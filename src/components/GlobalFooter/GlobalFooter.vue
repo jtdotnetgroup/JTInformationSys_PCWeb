@@ -16,7 +16,7 @@
     </div> -->
     <div class="copyright">
       Copyright
-      <a-icon type="copyright" /> 2019 <span>捷特软件</span>
+      <a-icon type="copyright" /> 2014 - 2019 <span>捷特软件</span>
     </div>
   </div>
 </template>

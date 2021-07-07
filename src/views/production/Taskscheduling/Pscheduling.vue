@@ -1,6 +1,6 @@
 <template>
   <a-card>
-    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonp"/>
+    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonp" :reflash="reflash"/>
 
     <pagination
       :current="pagination.current"
@@ -9,7 +9,7 @@
     />
 
     <a-table
-      rowKey="任务单号"
+      rowKey="fmoInterID"
       :dataSource="dataSource"
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
       :columns="columns"
@@ -18,18 +18,25 @@
       :loading="taskschedulLoading"
       :scroll="scroll"
       :customRow="setRow"
+      size="small"
     ></a-table>
-
-    <div id="button">
-      <a-button style="background-color: #E6F7FF;border-color:#E6F7FF">
-        <a-icon type="schedule"/>排产明细
-      </a-button>
-    </div>
-
-    <a-table id="card" bordered :dataSource="dataSourceMX" :columns="columnsMX" :pagination="false"></a-table>
-
-    <dispatch ref="taskDispatch"/>
+    <a-tabs defaultActiveKey="2">
+      <a-tab-pane key="1" tab="排产汇部"><a-table
+      id="card" size="small"
+      bordered
+      :dataSource="detailData"
+      :columns="detailColumns"
+      :pagination="false"
+      :loading="detailLoading"
+      :scroll="scroll"
+    ></a-table></a-tab-pane>
+      <a-tab-pane key="2" tab="派工明细">
+        <dispatchtable ref="dispatchtable" :FMobillno="currentFMobillno" />
+      </a-tab-pane>
+    </a-tabs>
+    <dispatch ref="taskDispatch" />
     <ImportExcel ref="ImportExcel"/>
+    <SearchForm v-model="where" methodName="JIT.DIME2Barcode#TaskSchedulingAppService#GetAll" ref="SearchForm" @input="_loadData"/>
   </a-card>
 </template>
 
@@ -39,13 +46,17 @@ import tableheader from './tableheader'
 import { GetTaskSchedulData, GetAllDailyByFMOInterID } from '@/api/TaskScheduling'
 import columns from './columns'
 
+import {aoa2Excel} from '@/utils/helper/Export2Excel'
+
 export default {
   components: {
     // @是根目录 。。是上一级 。是当前目录
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
     pagination: () => import('@/JtComponents/Pagination'),
     dispatch: () => import('./Dispatch'),
-    ImportExcel: () => import('./ImportExcel')
+    ImportExcel: () => import('./ImportExcel'),
+    SearchForm:()=>import('@/JtComponents/SearchForm'),
+    dispatchtable:()=>import('./dispatchtable')
   },
   data() {
     return {
@@ -54,6 +65,14 @@ export default {
         total: 50,
         pageSize: 10
       },
+      reflash:{
+        _this:this,
+        click:()=>{
+          this._loadData();
+          this.dataSourceMX=[]
+        }
+      },
+      where:'',
       buttonp: buttons.buttonp,
       selectedRowKeys: [],
       selectedRows: [],
@@ -61,55 +80,98 @@ export default {
       dataSource: [],
       columns: columns,
       columnsMT: tableheader.columnsMT,
-      columnsMX: tableheader.columnsMX,
+      columnsMX: [],
       dataSourceMX: tableheader.dataSourceMX,
       scroll: {
         x: 3100,
         y: 350
       },
-      taskschedulLoading: false
+      taskschedulLoading: false,
+      dailyDataList: [],
+      detailLoading:false,
+      currentFMobillno:'',
+      activetab:'2'
     }
   },
   mounted() {
     this._loadData()
   },
   computed: {
-    detailData(){
+    detailData() {
       //排产明细表数据
-            const groupData = []
-            let macid = -999
-            //生成行数据
-            var row = {}
-            this.dailyDataList.forEach(e => {
-              console.log(e)
-              if (macid !== e.FMachineID) {
-                macid = e.FMachineID
-                row = {
-                  macid: macid,
-                  sum: {
-                    plan: 0,
-                    commit: 0
-                  }
-                }
+      const result=[]
+      if(!!this.dailyDataList&&!!this.dailyDataList.details){
+        var row={
+          totalPlan:this.dailyDataList.totalPlan,
+          totalCommit:this.dailyDataList.totalCommit
+        };
+        this.dailyDataList.details.forEach(e => {
+          var date=this.$moment(e.fDate).format('MM-DD')
+          var plancol=date+'Plan'
+          var commitcol=date+'Commit'
+          row[plancol]=e.dayPlan
+          row[commitcol]=e.dayCommit
+        });
+        result.push(row)
+      }
+      return result;
+    },
+    detailColumns() {
+      const result = []
+
+      result.push({
+        title: '汇总',
+        children: [{ title: '计划', dataIndex: 'totalPlan',width:50 }, { title: '实际', dataIndex: 'totalCommit',width:50 }]
+      })
+      if (!!this.dailyDataList && !!this.dailyDataList.details) {
+        this.dailyDataList.details.forEach(r => {
+          var date=this.$moment(r.fDate).format('MM-DD')
+          var column = {
+            title: date,
+            children: [
+              {
+                title: '计划',
+                dataIndex: date + 'Plan',
+                algin:'center',
+                width:50
+              },
+              {
+                title: '实际',
+                dataIndex: date + 'Commit',
+                algin:'center',
+                width:50
               }
-              //汇总计划和派工数
-              row.sum.plan += e.FPlanAuxQty
-              row.sum.commit += e.FCommitAuxQty
-            })
+            ]
+          }
+          result.push(column)
+        })
+      }
+      return result
     }
   },
   methods: {
     _loadData() {
+
+      var _this=this
       var params = {
-        SkipCount: this.pagination.current - 1,
-        MaxResultCount: this.pagination.pageSize
+        SkipCount: (this.pagination.current - 1)*this.pagination.pageSize,
+        MaxResultCount: this.pagination.pageSize,
+        Where:this.where
       }
       this.taskschedulLoading = true
       GetTaskSchedulData(params)
         .then(res => {
           const result = res.result
+          this.dataSource=[];
           if (result) {
-            this.dataSource = result.items
+
+            result.items.forEach(e=>{
+              e.计划完工日期=this.$moment(e.计划完工日期).format('YYYY-MM-DD')
+              e.计划开工日期=this.$moment(e.计划开工日期).format('YYYY-MM-DD')
+
+               this.dataSource.push(e)
+            })
+
             this.pagination.total = result.totalCount
           }
           this.taskschedulLoading = false
@@ -127,19 +189,49 @@ export default {
     toggleAdvanced() {
       this.advanced = !this.advanced
     },
-
     handleBtnClick(val) {
-      if (val == '查询') {
-        this.visible = true
-      } else if (val == '排产') {
-        if (this.selectedRowKeys.length === 1) this.$refs.taskDispatch.show(this.selectedRows[0])
-        
-      } else if (val == '导入') {
-        console.log(val);
-        this.$refs.ImportExcel.show();
+
+      switch(val){
+        case '查询':{
+          this.visible = true
+          break;
+        }
+        case '排产':{
+           if (this.selectedRowKeys.length === 1) this.$refs.taskDispatch.show(this.selectedRows[0])
+          break;
+        }
+        case '导入':{
+          this.$refs.ImportExcel.show()
+          break;
+        }
+        case '搜索':{
+          this.$refs.SearchForm.show();
+          break;
+        }
+        case '导出':{
+          this.export();
+          break;
+        }
+      }
+    },
+    export(){
+      if(this.selectedRowKeys.length===0){
+        return;
       }
 
-      
+      const today=this.$moment().format('YYYY/MM/DD');
+
+      const arr=[
+        ['序号','车间','机台号','任务单号','产品名称','工序名','班次','打包数量',today]
+      ]
+      for (let index = 0; index < this.selectedRows.length; index++) {
+        const row=this.selectedRows[index];
+        const temp=[index+1,row.车间,'',row.任务单号,row.产品名称,'',''];
+        arr.push(temp);
+      }
+
+      aoa2Excel(arr,'排产模板.xlsx')
+
     },
     onPaginationChange(page, size) {
       this.pagination.current = page
@@ -155,29 +247,34 @@ export default {
         on: {
           //表格行点击事件
           click: () => {
-            console.log(record)
-            this.GetAllDailyData(record.fmoInterID)
             
+            let fmobillno=record.任务单号
+            console.log(fmobillno)
+            this.GetAllDailyData(record.fmoInterID)
+            this.$refs.dispatchtable.getData(fmobillno);
+
           }
         }
       }
     },
     GetAllDailyData(fmoInterID) {
+      this.detailLoading=true
       const params = {
         FMOInterID: fmoInterID
       }
-      this.detailLoading=true;
+      this.detailLoading = true
       GetAllDailyByFMOInterID(params)
         .then(res => {
-          this.detailLoading=false;
+          this.detailLoading = false
           const result = res.result
-          if (result && result.length > 0) {
-            this.dailyDataList=result;
-          }
+          this.dailyDataList = result
+          this.detailColumns();
+          this.detailLoading=false;
         })
         .catch(error => {
-          this.detailLoading=false
+          this.detailLoading = false
           console.log(error)
+          this.detailLoading=false
         })
     }
   }

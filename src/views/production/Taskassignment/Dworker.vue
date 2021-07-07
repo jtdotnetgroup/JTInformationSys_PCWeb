@@ -1,7 +1,8 @@
 <template>
   <a-card>
-    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonp"/>
-
+    <!-- 功能按钮 -->
+    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttonp" :reflash="reflash" />
+    <!-- 分页 -->
     <pagination
       :current="pagination.current"
       :pageSizeOptions="pagination.pageSizeOptions"
@@ -9,22 +10,27 @@
       :total="pagination.total"
       @pageChange="pageChangeClick"
     />
-
     <!-- 表格 -->
     <a-table
-      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+      :rowClassName="setRowClassName"
+      :rowSelection=" {selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
       :dataSource="dataTable"
-      :columns="columnsjs"
+      :columns="columnsMain"
       :loading="taskschedulLoading"
       bordered
       onRow="{this.onClickRow}"
       :pagination="false"
-      rowKey="任务单号" 
+      rowKey="Id"
       :scroll="scroll"
+      size="small"
+      :customRow="setRow"
     >
-      <template slot="serial" slot-scope="text">
+    <template slot="index" slot-scope="text">
+      <span>{{text}}</span>
+    </template>
+      <!-- <template slot="serial" slot-scope="text">
         <span>{{dataTable.indexOf(text)+1}}</span>
-      </template>
+      </template> -->
       <!-- <template slot="serial" slot-scope="indexname">
      <span  >{{dataTable.indexOf(indexname)+1}}</span>
       </template>-->
@@ -32,28 +38,53 @@
 
     <div id="button">
       <a-button style="background-color: #E6F7FF;border-color:#E6F7FF">
-        <a-icon type="schedule"/>排产明细
+        <a-icon type="schedule" />排产明细
       </a-button>
     </div>
 
-    <a-table id="cardd" bordered :columns="columnsMX" :pagination="false"></a-table>
+    <a-table
+      id="cardd"
+      size="small"
+      bordered
+      :columns="columnsMX"
+      :pagination="false"
+      :dataSource="tableDataMX"
+      :scroll="{x:1400,y:400}"
+    >
+      <template slot="actions" slot-scope="text,record">
+        <a-button @click="BJMX(record)" type="primary">编辑</a-button>
+        <a-button @click="GBMX(record)" type="danger">关闭</a-button>
+        <a-button @click="showException(record)">异常</a-button>
+      </template>
+    </a-table>
 
-    <DispatchWorkModalForm ref="DispatchWorkModalForm"/>
+    <DispatchWorkModalForm ref="DispatchWorkModalForm" @selectChange="SXsetRow" />
+
+    <ExceptionModal ref="ExceptionModal" />
+    <AddScheduling ref="AddScheduling" @addSuccess="SXsetRow" />
+    <SearchForm
+      v-model="StrWhere"
+      methodName="JIT.DIME2Barcode#ICMODailyAppService#GetGroupDailyList"
+      ref="SearchForm"
+      @input="_LoadMainData"
+    />
   </a-card>
 </template>
 
 <script>
 import buttons from './js/buttons'
-import tableheader from './js/tableheader'
-import { columns as mainColumns } from './js/tableheader'
+import { columnsMX, columnsMT, columns as mainColumns } from './js/tableheader'
 import { columns } from './js/tablehhe'
+import { GetAllDispBill, GetDailyDispBillList, CloseDispBill,DeleteDailyAndDispBill } from '@/api/DispBill'
 
 import { getRoleList, getServiceList } from '@/api/manage'
 import { GetDailyAll, GetDispBillAll, CreateAll, GetDaily } from '@/api/test/get'
-import{ICMODailyGetAll} from '@/api/ICMODaily'
+import { ICMODailyGetAll, GetGroupDailyList } from '@/api/ICMODaily'
 import { constants } from 'crypto'
+import { Promise } from 'q';
 
 export default {
+  name:'Dworker',
   components: {
     // @是根目录 。。是上一级 。是当前目录
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
@@ -61,7 +92,10 @@ export default {
 
     EditableCell: () => import('./pubilcvue/EditableCellSelect'),
     EditableCellInput: () => import('./pubilcvue/EditableCellInput'),
-    DispatchWorkModalForm: () => import('./DispatchWorkModalForm')
+    DispatchWorkModalForm: () => import('./DispatchWorkModalForm'),
+    ExceptionModal: () => import('./ICMOException'),
+    AddScheduling: () => import('./AddScheduling'),
+    SearchForm: () => import('@/JtComponents/SearchForm')
   },
   data() {
     return {
@@ -72,15 +106,49 @@ export default {
         pageSizeOptions: ['10', '50', '100'],
         defaultPageSize: 100
       },
-      buttonp: buttons.buttonp,
+      StrWhere: '',
+      buttonp: [
+        
+        { text: '派工', icon: 'deployment-unit', type: 'default' },
+        { text: '删除', icon: 'delete', type: 'danger', onClick: () => {
+          const _this=this
+          this.$confirm({
+            title:'删除确认',
+            content:'确定要删除吗？此操作将同时删除日计划及其关联的派工单',
+            onOk(){
+              return new Promise((resolver,reject)=>{
+                var params=[]
+                _this.selectedRows.forEach(row => {
+                  params.push(row.fId)
+                });
+                DeleteDailyAndDispBill(params).then(res=>{
+                  _this.$message.success('删除成功'+res.result+'条数据')
+                  _this._LoadMainData()
+                  resolver(res)
+                })
+                .catch(err=>{
+                  reject(err)
+                })
+                .finally(()=>{
+                  _this.taskschedulLoading=false
+                  _this.selectedRowKeys=[]
+                  _this.selectedRows=[]
+                })
+              })
+            },
+            onCancel(){}
+          })
+        } },
+        { text: '增加排产', icon: 'tool', type: 'default' }
+      ],
       buttonps: buttons.buttonps,
-      columnsMT: tableheader.columnsMT,
+      columnsMT: columnsMT,
       // 高级搜索 展开/关闭
       advanced: false,
       selectedRowKeys: [],
       selectedRows: [],
       scroll: {
-        x: 3100,
+        x: 1500,
         y: 350
       },
       queryParam: {},
@@ -90,48 +158,110 @@ export default {
 
       dataTable: [],
 
-      columnsjs: mainColumns,
+      columnsMain: mainColumns,
 
-      columnsMX: tableheader.columnsMX,
+      columnsMX: columnsMX,
       taskschedulLoading: false,
-      taskschedulLoadings: false,
       dataSource: [],
-
+      tableDataMX: [],
       dataTableArry: [],
-      dataTableArrget: []
+      dataTableArrget: [],
+      djsetRow: {},
+      reflash: {
+        _this:this,
+        click() {
+          this._this._LoadMainData();
+          this._this.tableDataMX=[]
+        }
+      }
     }
   },
-  mounted() {
+  created() {
     this._LoadMainData()
   },
 
   //一开始就执行的方法
   methods: {
-    
+    setRowClassName(record) {
+      if (record.fCommitAuxQty === record.totalPlanAuxQty && record.isICException !== 1) {
+        return 'RowGreen'
+      }
+      if (record.isICException === 1) {
+        return 'RowRed'
+      }
+    },
+    // 编辑明细
+    BJMX(record) {
+      console.log(record)
+      this.$refs.DispatchWorkModalForm.show([record])
+    },
+    // 关闭明细
+    GBMX(record) {
+      var _this = this
+      console.log(record)
+      this.$confirm({
+        title: '确定要关闭该任务吗?',
+        content: '系统提示',
+        onOk() {
+          var obj = { id: record.dispFid }
+          CloseDispBill(obj)
+            .then(res => {
+              if (res.success) {
+                _this.$message.success('关闭成功')
+                _this.SXsetRow()
+              } else {
+                _this.$notification['error']({
+                  message: res.error.message,
+                  description: res.error.details
+                })
+              }
+            })
+            .finally(() => {})
+        },
+        onCancel() {
+          console.log('Cancel')
+        },
+        class: 'test'
+      })
+    },
     _LoadMainData() {
       const params = {
-        SkipCount: this.pagination.current - 1,
-        MaxResultCount: this.pagination.pageSize
+        SkipCount: (this.pagination.current - 1) * this.pagination.pageSize,
+        MaxResultCount: this.pagination.pageSize,
+        where: this.StrWhere
       }
+      this.taskschedulLoading = true
       //后端获取数据
-      ICMODailyGetAll(params)
+      GetGroupDailyList(params)
         .then(res => {
           const result = res.result
-          this.dataTable=[]
+          this.pagination.total = result.totalCount
+          this.dataTable = []
           if (result && result.items.length > 0) {
             //绑定到表格上
-            this.dataTable = result.items
+            result.items.forEach(e => {
+              e.fDate = this.$moment(e.fDate).format('YYYY-MM-DD')
+              this.dataTable.push(e)
+            })
+            //this.dataTable = result.items
           }
-
         })
         .catch(err => {
           console.log(err)
         })
+        .finally(() => {
+          this.taskschedulLoading = false
+        })
+    },
+
+    showException(record) {
+      console.log(record)
+      this.$refs.ExceptionModal.show(record.dispFid)
     },
 
     pageChangeClick(page, pageSize) {
       ;(this.pagination.current = page), (this.pagination.pageSize = pageSize)
-      this._loadData();
+      this._LoadMainData()
     },
 
     hideModal() {
@@ -179,11 +309,11 @@ export default {
         this.count = count + 1
       } else if (val == '保存') {
         alert('保存')
-
         console.log(this.dataSource)
         var params = {
           details: this.dataSource
         }
+        console.log(params)
         CreateAll(params)
           .then(res => {
             console.log(res)
@@ -216,74 +346,60 @@ export default {
         this.dataSource = dataSource
       }
     },
-
-    _loadData(fSrcID) {
-      this.taskschedulLoadings = true
-      var params = {
-        SkipCount: this.pagination.current - 1,
-        MaxResultCount: this.pagination.pageSize,
-        FSrcID: fSrcID
-      }
-
-      var _this = this
-      GetDispBillAll(params)
-        .then(res => {
-          this.taskschedulLoadings = false
-          _this.dataSource = []
-          var data = res.result
-          if (data.items.length == 0) {
-            return
-          }
-          _this.dataTableArrget.push(data.items)
-
-          var result = []
-          var index = 0
-          data.items.forEach(item => {
-            index = index + 1
-            var datasss = {
-              key: index,
-              indexname: index,
-              日期: this.$moment(item.日期).format('YYYY-MM-DD'),
-              机台: item.机台,
-              班组: item.班组,
-              操作员: item.操作员,
-              派工数量: item.派工数量,
-              完成数量: item.完成数量,
-              合格数量: item.合格数量,
-              计划数量: item.计划数量,
-              任务单号: item.fmoBillNo
-            }
-            result.push(datasss)
-          })
-
-          _this.dataSource = result
-        })
-        .catch(function(error) {
-          console.log(error)
-          this.taskschedulLoadings = false
-        })
+    SXsetRow() {
+      console.log(this.djsetRow)
+      this.GetMXGetDailyDispBillList(this.djsetRow)
     },
-
+    setRow(record) {
+      return {
+        on: {
+          //表格行点击事件
+          click: () => {
+            this.djsetRow = record
+            this.GetMXGetDailyDispBillList(record)
+          }
+        }
+      }
+    },
+    GetMXGetDailyDispBillList(record) {
+      var params = { fmoBillNos: [record.fmoBillNo], DatelList: [record.fDate] }
+      GetDailyDispBillList(params)
+        .then(res => {
+          var result = res.result
+          if (result && result.items.length > 0) {
+            let index = 0
+            result.items.forEach(e => {
+              e.key = index
+              index++
+              e.fDate = this.$moment(e.fDate).format('YYYY-MM-D')
+              e.fBillTime = this.$moment(e.fBillTime).format('YYYY-MM-DD hh:mm:ss')
+            })
+            this.tableDataMX = result.items
+          }
+        })
+        .catch(err => {})
+        .finally(() => {})
+    },
     handleBtnClick(val) {
-      //   if (val == '查询') {
-      //   } else if (val == '派工') {
-      // if (this.selectedRowKeys.length === 1)
-      //     console.log(this.selectedRows[0])
-      //  this.visible = true
-      //  const dataTableArry = [...this.dataTableArry]
-      //  const dstarget = dataTableArry.find(item =>item.日期  === this.selectedRows[0].日期)
-      //   console.log(dstarget)
-      //     this._loadData(dstarget.fSrcID)
-      //   }
-
       switch (val) {
         case '派工': {
-          // if (this.selectedRows.length === 1) {
-          //   var row = this.selectedRows[0]
-          //   this.$refs.DispatchWorkModalForm.show(row)
-          // }
-          var row = this.selectedRows[0]
-          this.$refs.DispatchWorkModalForm.show(row)
+          if (this.selectedRows.length > 0) {
+            var rowSelection = this.selectedRows
+            this.$refs.DispatchWorkModalForm.show(rowSelection)
+          }
+          break
+        }
+        case '增加排产': {
+          if (this.selectedRows.length > 0) {
+            var rowSelection = this.selectedRows
+
+            this.$refs.AddScheduling.showModal(rowSelection)
+          }
+          break
+        }
+        case '搜索': {
+          this.$refs.SearchForm.show()
+          break
         }
       }
     },
@@ -304,5 +420,25 @@ export default {
 #button {
   margin-top: 10px;
   background-color: #e6f7ff;
+}
+/* #btn {
+    width:40px;
+    height: 40px;
+    position:fixed;
+    left:60%;
+    bottom:30px;
+    background:url(@/public/Thetopup)  no-repeat  left top ;
+    margin-left: 610px;
+} */
+/* #btn:hover {
+    background:url(@/public/Thetopup)  no-repeat  left -40px;
+} */
+</style>
+<style>
+.RowRed {
+  background-color: red !important;
+}
+.RowGreen {
+  background-color: #90d090 !important;
 }
 </style>

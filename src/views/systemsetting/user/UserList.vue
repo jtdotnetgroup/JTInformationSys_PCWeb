@@ -2,7 +2,7 @@
 <template>
   <a-card style="min-height:100%;">
     <!--功能按钮-->
-    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons" :search="true"/>
+    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons" :search="true" />
     <!-- 分页 -->
     <pagination
       :current="pagination.current"
@@ -11,15 +11,17 @@
     />
     <!--表格-->
     <a-table
+      size="small"
       bordered
       :dataSource="dataSource"
       :columns="columns"
       :loading="loading"
       :rowSelection="{onChange: onSelectChange}"
       :pagination="false"
+      rowKey="id"
     >
       <template slot="name" slot-scope="text, record">
-        <editable-cell :text="text" @change="onCellChange(record.key, 'name', $event)"/>
+        <editable-cell :text="text" @change="onCellChange(record.key, 'name', $event)" />
       </template>
       <span slot="isActive" slot-scope="isActive">
         <div v-if="isActive">
@@ -31,64 +33,64 @@
       </span>
     </a-table>
     <!--其他页面模板-->
-    <AddOrEdit ref="AddOrEdit" @addSuccess="loadTable"/>
+    <AddOrEdit ref="AddOrEdit" @addSuccess="loadTable" />
+     <SearchForm v-model="StrWhere" methodName="JIT.InformationSystem.Application#UserAppService#GetAll2" ref="SearchForm" @input="loadTable"/>
   </a-card>
 </template>
 <!--JS脚本-->
 <script>
+// 获取数据
+import { GetAll, DataDel } from '@/api/User'
 // 列名
 const columns = [
   {
     title: '序号',
-    dataIndex: 'XH'
+    dataIndex: 'XH',
+    width: 80
   },
   {
-    title: 'id',
-    dataIndex: 'id'
+    title: 'UserID',
+    dataIndex: 'id',
+    width: 150
   },
   {
-    title: '姓',
+    title: '姓名',
     dataIndex: 'surname'
   },
   {
     title: '用户名',
-    dataIndex: 'userName'
+    dataIndex: 'userName',
+    width: 150
   },
   {
     title: '邮箱地址',
-    dataIndex: 'emailAddress'
+    dataIndex: 'emailAddress',
+    width: 150
+  },
+  {
+    title: '角色',
+    dataIndex: 'roleName'
   },
   {
     title: '是否启用',
     dataIndex: 'isActive',
-    scopedSlots: { customRender: 'isActive' }
-  },
-  {
-    title: '角色',
-    dataIndex: 'roleNames'
+    scopedSlots: { customRender: 'isActive' },
+    width: 100
   },
   {
     title: '注册时间',
-    dataIndex: 'creationTime'
-  },
-  {
-    title: '描述',
-    dataIndex: 'email'
-  },
-  {
-    title: '最后登录时间',
-    dataIndex: 'lastLoginTime'
+    dataIndex: 'creationTime',
+    width: 150
   }
 ]
-// 获取数据
-import { GetAll, DataDel } from '@/api/User'
-//
+// 基础数据
 export default {
   // 组件
   components: {
     tableOperatorBtn: () => import('@/JtComponents/TableOperatorButton'),
     editCell: () => import('@/JtComponents/JITEditCell'),
     pagination: () => import('@/JtComponents/Pagination'),
+    SearchForm: () => import('@/JtComponents/SearchForm'),
     AddOrEdit: () => import('./AddOrEdit')
   },
   // 所有数据
@@ -99,6 +101,7 @@ export default {
         pageSize: 10,
         total: 50
       },
+      StrWhere:'',
       loading: false,
       columns,
       dataSource: [],
@@ -136,6 +139,10 @@ export default {
     handleBtnClick(val) {
       var _this = this
       switch (val) {
+        case '搜索': { 
+           _this.$refs.SearchForm.show()
+          break
+        }
         case '刷新': {
           _this.loadTable()
           break
@@ -180,17 +187,13 @@ export default {
                     _this.loadTable()
                   } else {
                     _this.$notification['error']({
-                      message: '系统提示',
-                      description: '删除失败，请稍后重试！'
+                      message: res.error.message,
+                      description: res.error.details
                     })
                   }
                   _this.HideLoad()
                 })
-                .catch(error => {
-                  _this.$notification['error']({
-                    message: '系统提示',
-                    description: '删除失败，请稍后重试！'
-                  })
+                .catch(function() {
                   _this.HideLoad()
                 })
             },
@@ -223,27 +226,27 @@ export default {
       _this.dataSource = []
       var obj = {
         SkipCount: (_this.pagination.current - 1) * _this.pagination.pageSize,
-        MaxResultCount: _this.pagination.pageSize
+        MaxResultCount: _this.pagination.pageSize,
+        where:_this.StrWhere
       }
-      console.log(obj)
+
       _this.ShowLoad()
       GetAll(obj)
         .then(res => {
           var result = res.result
           _this.pagination.total = result.totalCount
-          var i=0;
+          var i = 0
           res.result.items.forEach(element => {
-             element.XH = i + 1
+            element.XH = i + 1
+            element.creationTime = this.$moment(element.creationTime).format('YYYY-MM-DD HH:mm')
+            element.roleName = element.roleNames.join(',')
+
             _this.dataSource.push(element)
             i++
           })
           _this.HideLoad()
         })
-        .catch(error => {
-          _this.$notification['info']({
-            message: '系统提示',
-            description: '数据加载异常，请检查网络问题或请联系管理员'
-          })
+        .catch(function() {
           _this.HideLoad()
         })
     }

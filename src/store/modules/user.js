@@ -42,9 +42,11 @@ const user = {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
           const result = response.result
-          console.log(Vue.ls)
           Vue.ls.set(ACCESS_TOKEN, result.accessToken, 7 * 24 * 60 * 60 * 1000)
-          commit('SET_TOKEN', result.token)
+          Vue.ls.set('Name', result.name, 7 * 24 * 60 * 60 * 1000)
+          commit('SET_TOKEN', result.accessToken)
+          commit('SET_NAME', result.name)
+          sessionStorage.setItem('name', result.name)
           resolve()
         }).catch(error => {
           reject(error)
@@ -57,20 +59,7 @@ const user = {
       return new Promise((resolve, reject) => {
         getInfo().then(response => {
           const result = response.result
-          // if (result.role && result.role.permissions.length > 0) {
-
           if (result.auth.grantedPermissions) {
-            // const role = result.role
-            // role.permissions = result.role.permissions
-            // role.permissions.map(per => {
-            //   if (per.actionEntitySet != null && per.actionEntitySet.length > 0) {
-            //     const action = per.actionEntitySet.map(action => { return action.action })
-            //     per.actionList = action
-            //   }
-            // })
-            // role.permissionList = role.permissions.map(permission => { return permission.permissionId })
-            // commit('SET_ROLES', result.role)
-            // commit('SET_INFO', result)
             commit('SET_PERMISSIONS', result.auth.grantedPermissions)
           } else {
             reject(new Error('getInfo: roles must be a non-null array !'))

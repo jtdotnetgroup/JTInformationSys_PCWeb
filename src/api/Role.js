@@ -19,7 +19,7 @@ export function Create (data) {
 export function Update (data) {
   return axios({
     url: '/api/services/app/Role/Update',
-    method: 'post',
+    method: 'put',
     data: data
   })
 }
@@ -27,7 +27,7 @@ export function Update (data) {
 export function Delete (Id) {
   return axios({
     url: '/api/services/app/Role/Delete',
-    method: 'post',
-    data: { Id }
+    method: 'Delete',
+    params: { Id }
   })
 }

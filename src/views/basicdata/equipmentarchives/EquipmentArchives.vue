@@ -1,46 +1,54 @@
 <template>
   <a-card>
-    <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons"/>
-
-    <div>
-      <a-row :gutter="10">
-        <a-col :span="4" >
-          <treedata @btnClick="btnTree"/>
-        </a-col>
-        <a-col :span="20">
-          <pagination :current="pagination.current"
-          :pageSizeOptions="pagination.pageSizeOptions"
-          :defaultPageSize="pagination.defaultPageSize"
+    <!-- <div> -->
+    <a-row :gutter="10">
+      <a-col :span="4">
+        <treedata @btnClick="btnTree" />
+      </a-col>
+      <a-col :span="20">
+        <tableOperatorBtn @btnClick="handleBtnClick" :buttons="buttons" />
+        <pagination
+          :current="pagination.current"
           :total="pagination.total"
-           @pageChange="pageChangeClick"/>
+          @pageChange="onPaginationChange"
+        />
 
-          <a-table
-            :dataSource="tableData"
-            :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-            :columns="columns"
-            :pagination="false"
-            :customRow="setRow"
-          ></a-table>
+        <a-table
+          :loading="loading"
+          :dataSource="tableData"
+          :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+          :columns="columns"
+          :pagination="false"
+          :customRow="setRow"
+          size="small"
+          :scroll="{x: 1500,y: 500}"
+          :bordered="true"
+        ></a-table>
 
         <!-- 公共组件 明细table -->
-          <pTableVue ref="pTableVue"/>
-        </a-col>
+        <pTableVue ref="pTableVue" />
+      </a-col>
 
-        <!-- 公共组件 模态框 -->
-         <ModelFrom  ref="ModelFrom"/> 
+      <!-- 公共组件 模态框 -->
+      <ModelFrom ref="ModelFrom" @addSuccess="handelAddSuccess" />
 
-      
-
-
-      </a-row>
-    </div>
+      <ShiftForm ref="ShiftForm" />
+      <!-- 高级搜索 -->
+      <SearchForm
+        v-model="StrWhere"
+        methodName="JIT.DIME2Barcode#EquipmentAppService#GetAll"
+        ref="SearchForm"
+        @input="_loadData"
+      />
+    </a-row>
+    <!-- </div> -->
   </a-card>
 </template>
 
 <script>
-import buttons from './js/buttons'
-import columns from './js/columns'
-import tableData from './js/tableData'
+import { buttons } from './js/buttons'
+import { columns } from './js/columns'
+import { GetAll } from '@/api/Equipment'
 
 export default {
   components: {
@@ -48,79 +56,134 @@ export default {
     pagination: () => import('@/JtComponents/Pagination'),
     treedata: () => import('./publicvue/ptreedata'),
     pTableVue: () => import('./publicvue/pTable'),
-    ModelFrom:()=>import('./publicvue/ModelFrom'),
-    ImportExcelModal:()=>('./publicvue/ImportExcelModal')
-
-   
+    ModelFrom: () => import('./publicvue/ModelFrom'),
+    ImportExcelModal: () => './publicvue/ImportExcelModal',
+    ShiftForm: () => import('./publicvue/ShiftList'),
+    SearchForm: () => import('@/JtComponents/SearchForm')
   },
   data() {
     return {
-       pagination: {
+      pagination: {
         current: 1,
-        total: 50,
-        pageSize: 100,
-        pageSizeOptions: ['100', '200', '300'],
-        defaultPageSize: 100
+        total: 0,
+        size: 10
       },
-      tableData: tableData,
+      StrWhere: '',
+      tableData: [],
       columns: columns,
       selectedRowKeys: [],
-      buttons: buttons.buttons
+      selectedRows: [],
+      buttons: buttons.buttons,
+      loading: false,
+      OrganizationID: 0,
+      OrgCode: ''
     }
   },
   methods: {
-    onSelectChange(selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
+    onPaginationChange(page, size) {
+      this.pagination.current = page
+      this.pagination.size = size
+      this._loadData()
     },
     handleBtnClick(val) {
-        switch (val) {
-            case '新增':
-                 
-                 const obj={};
-
-                this.$refs.ModelFrom.showModal(obj)
-               
-                break;
-                case'维护':
-              
-                break;
-        
-            default:
-                break;
+      switch (val) {
+        case '新增': {
+          this.$refs.ModelFrom.showModal()
+          break
         }
 
-    },
-    pageChangeClick(){
+        case '维护': {
+          if (this.selectedRows.length !== 1) {
+            return
+          }
+          this.$refs.ModelFrom.showModal(this.selectedRows[0])
+          break
+        }
 
+        case '班次信息维护': {
+          if (this.selectedRows.length === 1) {
+            this.$refs.ShiftForm.show(this.selectedRows[0].fInterID)
+          }
+          break;
+        }
+        case '搜索': {
+          this.$refs.SearchForm.show()
+          break;
+        }
+
+        default: {
+          break
+        }
+      }
     },
-    setRow(render){
+    pageChangeClick() {},
+    onSelectChange(keys, rows) {
+      this.selectedRowKeys = keys
+      this.selectedRows = rows
+    },
+    setRow(render) {
       return {
-        on:{
-          click:()=>{
-
+        on: {
+          click: () => {
             this.$refs.pTableVue._loadData()
           }
         }
-
       }
     },
-   
+    _loadData() {
+      var params = {
+        SkipCount: (this.pagination.current - 1) * this.pagination.size,
+        MaxResultCount: this.pagination.size,
+        OrganizationID: this.OrganizationID > 0 ? this.OrganizationID : '',
+        OrganizationCode: this.OrgCode,
+        where: this.StrWhere
+      }
+      this.loading = true
+      GetAll(params)
+        .then(res => {
+          this.tableData = []
+          this.loading = false
+          const result = res.result
+          var index = 0
+          if (result) {
+            result.items.forEach(e => {
+              e.findex = index + 1
+              this.tableData.push(e)
+              index++
+            })
 
-    btnTree() {
-      // alert('单击')
-    }
+            //this.tableData = result.items
+            this.pagination.total = result.totalCount
+          }
+        })
+        .catch(err => {
+          this.loading = false
+        })
+    },
+
+    btnTree(keys, e) {
+      if (keys.length === 0) {
+        return
+      }
+
+      this.OrgCode = keys[0]
+
+      this._loadData()
+    },
+    handelAddSuccess() {
+      this.loading = false
+      this.selectedRowKeys = []
+      this._loadData()
+    },
+    getOrgID(code) {}
   },
 
   //计算属性用于响应式的改变函数
-  computed: {
-
-    test(){
-
-      alert("方法执行")
-    }
-    
-  },
+  computed: {},
+  mounted() {
+    this._loadData()
+    this.$store.dispatch('GetWorkCenters')
+  }
 }
 </script>
 

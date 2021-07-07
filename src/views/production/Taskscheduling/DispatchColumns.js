@@ -2,7 +2,7 @@ const dataExample = {
   'fid': '0b08b65f-40c4-480a-8da4-eff94e7e0bb8',
   '日期': '2015-12-01T00:00:00',
   '机台': 0,
-  '班组': 0,
+  '班次': 0,
   '操作员': '',
   '计划数量': 123,
   '派工数量': 466,
@@ -34,7 +34,7 @@ keys.forEach(key => {
       title: key,
       dataIndex: key,
       key: key,
-      width: 60,
+      width: 100,
       align: 'center'
     }
 

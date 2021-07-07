@@ -52,6 +52,7 @@
       :pagination="false"
       :bordered="true"
       :loading="dataLoading"
+      :scroll="scroll"
     >
       <template v-for="(col,index) in editColumns" :slot="col" slot-scope="text, record, index">
         <editCell :key="index" :text="text" @change="onCellChange(record.日期, col, $event)"/>
@@ -86,7 +87,11 @@ export default {
       dataLoading: false,
       selectedRowKeys: [],
       selectedRows: [],
-      dataSource: []
+      dataSource: [],
+      scroll:{
+        x:2000,
+        y:400
+      }
     }
   },
   props: {
@@ -105,16 +110,18 @@ export default {
 
       GetDailyListByFMOInterID(params)
         .then(res => {
-          console.log('ok')
           var result = res.result
-          this.dataLoading = false
           if (result) {
+            result.forEach(row => {
+              row.fBillTime=this.$moment('YYYY-MM-D')
+            });
             this.dataSource = result
           }
         })
         .catch(err => {
-          this.dataLoading = false
           console.log(err)
+        }).finally(()=>{
+          this.dataLoading=false
         })
     },
     saveDailyList() {
@@ -123,11 +130,15 @@ export default {
         fmoBillNo: this.formData.任务单号,
         dailies: []
       }
+
       //添加明细
       this.dataSource.forEach(row => {
         data.dailies.push({
+          fid:row.fid,
+          FMachineName:row.机台,
           fDate: row.日期,
-          fPlanAuxQty: row.计划数量
+          FShift:row.班次,
+          fPlanAuxQty: row.计划数量,
         })
       })
 
@@ -178,7 +189,6 @@ export default {
       this.selectedRows = selectedRows
     },
     onCellChange(key, dataIndex, value) {
-      console.log(value)
       const dataSource = [...this.dataSource]
       const dstarget = dataSource.find(item => this.$moment(item.日期).format('YYYY-MM-D') === key)
       const tabletarget = this.tableData.find(item => item.日期 === key)
@@ -210,6 +220,16 @@ export default {
   },
   computed: {
     tableData() {
+
+      if(this.dataSource.length>0){
+
+        this.dataSource.forEach(row => {
+          row.日期=this.$moment(row.日期).format('YYYY-MM-D')
+        });
+
+        return this.dataSource;
+      }
+
       let startDate = this.$moment(this.formData.计划开工日期)
       //结束日期推后一天
       let endDate = this.$moment(this.formData.计划完工日期).add(1, 'days')
@@ -218,32 +238,44 @@ export default {
       var index = 0
 
       while (startDate.isBefore(endDate)) {
-        var data = {
-          key: index,
-          日期: startDate.format('YYYY-MM-D'),
-          机台: '',
-          班组: '',
-          操作员: '',
-          派工数量: 0,
-          完成数量: 0,
-          合格数量: 0,
-          fmoBillNo: this.formData.任务单号,
-          fmoInterID: this.formData.fmoInterID,
-          计划数量: 0
-        }
-
         var item = this.dataSource.filter(e => {
           return startDate.isSame(e.日期, 'day')
         })
 
-        if (item.length > 0) {
-          data.计划数量 = item[0].计划数量
-          data.派工数量 = item[0].派工数量
-          data.完成数量 = item[0].完成数量
-          data.合格数量 = item[0].合格数量
-        }
+        item.forEach(row => {
+          var data = {
+            key: index,
+            日期: startDate.format('YYYY-MM-D'),
+            机台: '',
+            班次: '',
+            操作员: '',
+            派工数量: 0,
+            完成数量: 0,
+            合格数量: 0,
+            fmoBillNo: this.formData.任务单号,
+            fmoInterID: this.formData.fmoInterID,
+            计划数量: 0
+          }
 
-        result.push(data)
+          data.计划数量 = row.计划数量
+          data.派工数量 = row.派工数量
+          data.完成数量 = row.完成数量
+          data.合格数量 = row.合格数量
+          data.机台 = row.机台
+          data.班次 = row.班次
+          data.操作员 = row.操作员
+
+          result.push(data)
+        })
+
+        // if (item.length > 0) {
+        //   data.计划数量 = item[0].计划数量
+        //   data.派工数量 = item[0].派工数量
+        //   data.完成数量 = item[0].完成数量
+        //   data.合格数量 = item[0].合格数量
+        // }
+
+        // result.push(data)
         startDate = startDate.add(1, 'days')
         index = index + 1
       }
@@ -264,8 +296,6 @@ export default {
 .editable-cell-input-wrapper,
 .editable-cell-text-wrapper {
   padding-right: 24px;
-
-  
 }
 
 .editable-cell-text-wrapper {
